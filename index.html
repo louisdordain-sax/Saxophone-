@@ -3862,47 +3862,152 @@ function renderWeekView(body){
 }
 
 /* ── VUE JOUR ── */
+function _evtToMins(e){
+  // Convertit un événement en [startMin, endMin] (en minutes depuis minuit)
+  if(!e.timeStart) return null;
+  var sh=parseInt(e.timeStart.split(':')[0]), sm=parseInt(e.timeStart.split(':')[1]);
+  var endTime=e.timeEnd||_addHour(e.timeStart);
+  var eh=parseInt(endTime.split(':')[0]), em=parseInt(endTime.split(':')[1]);
+  var s=sh*60+sm, en=eh*60+em;
+  if(en<=s) en=s+30; // sécurité durée min
+  return [s, en];
+}
+
+function _computeColumns(evts){
+  // Algorithme de placement en colonnes sans chevauchement
+  // Retourne un tableau [{evt, col, totalCols}]
+  var placed = [];
+  var columns = []; // chaque colonne = tableau de [endMin]
+
+  evts.forEach(function(e){
+    var range = _evtToMins(e);
+    if(!range){ placed.push({evt:e, col:0, totalCols:1}); return; }
+    var start = range[0], end = range[1];
+    // Trouver la première colonne libre
+    var col = -1;
+    for(var c=0; c<columns.length; c++){
+      if(columns[c] <= start){ col=c; break; }
+    }
+    if(col===-1){ col=columns.length; columns.push(0); }
+    columns[col] = end;
+    placed.push({evt:e, col:col, totalCols:0, start:start, end:end});
+  });
+
+  // Calculer totalCols : pour chaque événement, combien de colonnes coexistent ?
+  placed.forEach(function(p){
+    if(!p.start && p.start!==0){ p.totalCols=1; return; }
+    var maxCol = p.col;
+    placed.forEach(function(q){
+      if(q===p || !q.start && q.start!==0) return;
+      // Chevauchement ?
+      if(q.start < p.end && q.end > p.start){
+        if(q.col > maxCol) maxCol = q.col;
+      }
+    });
+    p.totalCols = maxCol + 1;
+  });
+
+  return placed;
+}
+
 function renderDayView(body){
   var iso=fmtISO(_agDate), today=todayISO();
   var HOURS=24;
   var wrap=document.createElement('div'); wrap.className='ag-day-wrap';
+
   // Header
   var corner=document.createElement('div'); corner.className='ag-month-daylabel ag-time-gutter'; corner.style.borderBottom='0.5px solid var(--cbr-tertiary)'; wrap.appendChild(corner);
   var dayHdr=document.createElement('div'); dayHdr.className='ag-week-daylabel'+(iso===today?' today':'');
   dayHdr.innerHTML='<span>'+DAYS_FR_LONG[_agDate.getDay()]+'</span><span class="ag-week-daynum">'+_agDate.getDate()+' '+MONTHS_FR[_agDate.getMonth()]+'</span>';
   wrap.appendChild(dayHdr);
-  // Colonne principale avec événements
-  var dayEvts=agendaEvents.filter(function(e){ return e.date===iso; });
+
+  // Tous les événements du jour
+  var dayEvts = agendaEvents.filter(function(e){ return e.date===iso; });
+  var timedEvts = dayEvts.filter(function(e){ return !!e.timeStart; });
+  var allDayEvts = dayEvts.filter(function(e){ return !e.timeStart; });
+
+  // Calcul des colonnes pour gérer les chevauchements
+  var placed = _computeColumns(timedEvts);
+
+  // Construction de la grille heure par heure
+  // On crée une colonne unique qui contient TOUS les events en position absolue
+  // via un conteneur plein-hauteur (HOURS*48px)
+  var timeCol = document.createElement('div');
+  timeCol.style.cssText = 'grid-column:1;display:contents';
+
+  // Rangées de l'axe temporel (gauche)
   for(var h=0;h<HOURS;h++){
-    var ts=document.createElement('div'); ts.className='ag-time-slot ag-time-gutter'; ts.textContent=h===0?'':pad(h)+':00'; wrap.appendChild(ts);
-    var col=document.createElement('div'); col.style.cssText='position:relative;height:48px;border-right:0.5px solid var(--cbr-tertiary);border-bottom:0.5px solid var(--cbr-tertiary);cursor:'+(profMode?'pointer':'default');
-    dayEvts.forEach(function(e){
-      var startH=e.timeStart?parseInt(e.timeStart.split(':')[0]):null;
-      var startM=e.timeStart?parseInt(e.timeStart.split(':')[1]):null;
-      if(e.timeStart && startH===h){
-        var endH=e.timeEnd?parseInt(e.timeEnd.split(':')[0]):startH+1;
-        var endM=e.timeEnd?parseInt(e.timeEnd.split(':')[1]):0;
-        var durMins=(endH*60+endM)-(startH*60+startM);
-        var topPx=(startM/60)*48;
-        var heightPx=Math.max(24,(durMins/60)*48);
-        var ev=document.createElement('div'); ev.className='ag-day-event';
-        ev.style.cssText='top:'+topPx+'px;height:'+heightPx+'px;background:'+EVT_COLORS[e.type||'cours'];
-        ev.innerHTML='<div style="font-weight:600">'+e.title+'</div>'+(e.lieu?'<div style="opacity:.8;font-size:9px">📍 '+e.lieu+'</div>':'')+(e.timeStart?'<div style="opacity:.7;font-size:9px">'+e.timeStart+(e.timeEnd?' – '+e.timeEnd:'')+'</div>':'');
-        (function(evt){ ev.onclick=function(ev2){ ev2.stopPropagation(); _agSelDate=iso; _renderEvtPanel(iso); }; })(e);
-        col.appendChild(ev);
-      } else if(!e.timeStart && h===0){
-        var ev2=document.createElement('div'); ev2.className='ag-day-event';
-        ev2.style.cssText='top:2px;height:22px;background:'+EVT_COLORS[e.type||'cours'];
-        ev2.textContent='🗓 '+e.title+(e.lieu?' – '+e.lieu:'');
-        col.appendChild(ev2);
-      }
-    });
-    (function(hH){ if(profMode) col.onclick=function(){ document.getElementById('evt-date').value=iso; document.getElementById('evt-time-start').value=pad(hH)+':00'; document.getElementById('evt-time-end').value=pad(hH+1)+':00'; openAddEvtModal(); }; })(h);
-    wrap.appendChild(col);
+    var ts=document.createElement('div'); ts.className='ag-time-slot ag-time-gutter';
+    ts.textContent=h===0?'':pad(h)+':00';
+    wrap.appendChild(ts);
+
+    // Cellule vide pour la grille (fond + clic)
+    var cell=document.createElement('div');
+    cell.style.cssText='position:relative;height:48px;border-right:0.5px solid var(--cbr-tertiary);border-bottom:0.5px solid var(--cbr-tertiary);cursor:'+(profMode?'pointer':'default');
+    (function(hH){
+      if(profMode) cell.onclick=function(){
+        document.getElementById('evt-date').value=iso;
+        document.getElementById('evt-time-start').value=pad(hH)+':00';
+        document.getElementById('evt-time-end').value=pad(hH+1)+':00';
+        openAddEvtModal();
+      };
+    })(h);
+    wrap.appendChild(cell);
   }
+
+  // Superposer les événements dans un conteneur absolu par-dessus la grille
+  // On utilise un div overlay positionné sur la colonne de droite
+  var overlay=document.createElement('div');
+  overlay.style.cssText='position:absolute;top:48px;left:44px;right:0;height:'+(HOURS*48)+'px;pointer-events:none;z-index:3';
+
+  // Événements journée entière en haut
+  allDayEvts.forEach(function(e){
+    var ev=document.createElement('div'); ev.className='ag-day-event';
+    ev.style.cssText='top:2px;left:4px;right:4px;height:22px;background:'+EVT_COLORS[e.type||'cours']+';pointer-events:auto';
+    ev.textContent='🗓 '+e.title+(e.lieu?' – '+e.lieu:'');
+    (function(evt){ ev.onclick=function(ev2){ ev2.stopPropagation(); _agSelDate=iso; _renderEvtPanel(iso); }; })(e);
+    overlay.appendChild(ev);
+  });
+
+  // Événements avec heure — avec gestion des chevauchements
+  placed.forEach(function(p){
+    var e=p.evt;
+    var range=_evtToMins(e); if(!range) return;
+    var startMin=range[0], endMin=range[1];
+    var topPx=(startMin/60)*48;
+    var heightPx=Math.max(24,((endMin-startMin)/60)*48);
+
+    // Largeur et position horizontale selon la colonne
+    var totalCols=Math.max(1,p.totalCols);
+    var widthPct=100/totalCols;
+    var leftPct=p.col*widthPct;
+    var GAP=2; // px entre colonnes
+
+    var ev=document.createElement('div'); ev.className='ag-day-event';
+    ev.style.cssText=
+      'top:'+topPx+'px;'
+      +'height:'+heightPx+'px;'
+      +'left:calc('+leftPct+'% + '+GAP+'px);'
+      +'width:calc('+widthPct+'% - '+(GAP*2)+'px);'
+      +'right:auto;'
+      +'background:'+EVT_COLORS[e.type||'cours']+';'
+      +'pointer-events:auto;'
+      +'box-shadow:0 1px 4px rgba(0,0,0,0.25)';
+    ev.innerHTML='<div style="font-weight:600;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+e.title+'</div>'
+      +(e.lieu && heightPx>36?'<div style="opacity:.8;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">📍 '+e.lieu+'</div>':'')
+      +(e.timeStart && heightPx>24?'<div style="opacity:.7;font-size:9px">'+e.timeStart+(e.timeEnd?' – '+e.timeEnd:'')+'</div>':'');
+    (function(evt){ ev.onclick=function(ev2){ ev2.stopPropagation(); _agSelDate=iso; _renderEvtPanel(iso); }; })(e);
+    overlay.appendChild(ev);
+  });
+
+  // Positionner l'overlay par rapport au wrap
+  wrap.style.position='relative';
+  wrap.appendChild(overlay);
+
   body.appendChild(wrap);
   setTimeout(function(){ body.scrollTop=8*48; },50);
 }
+
 
 /* ── Panneau liste événements ── */
 function _renderEvtPanel(dateISO){
