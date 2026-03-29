@@ -3562,6 +3562,10 @@ html.light .ag-week-wrap,.html.light .ag-month-grid{border-color:var(--cbr-terti
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg> Retour
     </button>
     <span style="font-size:15px;font-weight:600;color:var(--ct-primary);flex:1">Agenda</span>
+    <button class="btn btn-sm btn-info" onclick="openAgSync()" title="Synchroniser avec Google Agenda" style="margin-right:4px;display:flex;align-items:center;gap:5px">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
+      Sync
+    </button>
     <div class="ag-view-seg">
       <button class="ag-view-btn active" id="ag-btn-month" onclick="setAgView('month')">Mois</button>
       <button class="ag-view-btn" id="ag-btn-week" onclick="setAgView('week')">Semaine</button>
@@ -3777,7 +3781,12 @@ function renderMonthView(body){
       cell.appendChild(chip);
     });
     if(evts.length>2){ var more=document.createElement('div'); more.className='ag-month-more'; more.textContent='+'+( evts.length-2)+' autres'; cell.appendChild(more); }
-    (function(isoD){ cell.onclick=function(){ _agSelDate=(_agSelDate===isoD?null:isoD); renderAgenda(); _renderEvtPanel(isoD); }; })(iso);
+    (function(isoD){ cell.onclick=function(){
+      // Ouvrir directement la vue jour pour cette date
+      _agDate = isoToDate(isoD);
+      _agSelDate = isoD;
+      setAgView('day');
+    }; })(iso);
     grid.appendChild(cell);
   }
   // Compléter
@@ -3991,16 +4000,219 @@ setTimeout(function(){
     if(document.getElementById('sc-agenda').classList.contains('active')){ renderAgenda(); _renderEvtPanel(_agSelDate); }
   });
 }, 2500);
+
+/* ══ SYNC GOOGLE AGENDA ══ */
+
+function openAgSync(){
+  // Générer le fichier ICS avec tous les événements
+  var ics = _buildICS(agendaEvents);
+  var blob = new Blob([ics], {type:'text/calendar;charset=utf-8'});
+  var url = URL.createObjectURL(blob);
+
+  // Construire l'interface du modal
+  var modal = document.getElementById('modal-ag-sync');
+  if(!modal){
+    modal = document.createElement('div');
+    modal.id = 'modal-ag-sync';
+    modal.className = 'modal-overlay';
+    modal.innerHTML = `
+    <div class="modal-box" style="max-width:460px">
+      <h3>🔄 Synchroniser avec Google Agenda</h3>
+      <p style="margin-bottom:14px;font-size:12px;color:var(--ct-secondary)">
+        Choisissez comment importer tous les événements dans votre Google Agenda.
+      </p>
+
+      <!-- Option 1 : Télécharger ICS -->
+      <div style="background:var(--cb-secondary);border:0.5px solid var(--cbr-tertiary);border-radius:var(--br-lg);padding:14px;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <span style="font-size:18px">📥</span>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--ct-primary)">Télécharger le fichier .ics</div>
+            <div style="font-size:11px;color:var(--ct-secondary)">Import unique — à refaire si l'agenda change</div>
+          </div>
+        </div>
+        <button class="btn btn-info" id="btn-dl-ics" style="width:100%">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:middle;margin-right:4px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Télécharger saxophone-agenda.ics
+        </button>
+        <div style="font-size:10px;color:var(--ct-tertiary);margin-top:6px">
+          Puis dans Google Agenda : <b>+</b> → Autres agendas → Importer
+        </div>
+      </div>
+
+      <!-- Option 2 : Ouvrir dans Google Agenda -->
+      <div style="background:var(--cb-secondary);border:0.5px solid var(--cbr-tertiary);border-radius:var(--br-lg);padding:14px;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <span style="font-size:18px">🌐</span>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--ct-primary)">Ouvrir dans Google Agenda</div>
+            <div style="font-size:11px;color:var(--ct-secondary)">Import rapide via le navigateur</div>
+          </div>
+        </div>
+        <button class="btn btn-info" id="btn-open-gcal" style="width:100%">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:middle;margin-right:4px"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Ouvrir Google Agenda avec tous les événements
+        </button>
+        <div style="font-size:10px;color:var(--ct-tertiary);margin-top:6px">
+          Chaque événement s'ouvrira pré-rempli pour confirmation
+        </div>
+      </div>
+
+      <!-- Option 3 : Abonnement URL -->
+      <div style="background:var(--cb-secondary);border:0.5px solid var(--cbr-tertiary);border-radius:var(--br-lg);padding:14px;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <span style="font-size:18px">🔔</span>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--ct-primary)">Abonnement automatique</div>
+            <div style="font-size:11px;color:var(--ct-secondary)">Les familles se synchronisent en temps réel — rien à refaire</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px">
+          <input id="ag-ics-url" readonly value="https://louisdordain-sax.github.io/Saxophone-/calendar.ics"
+            style="font-size:10px;font-family:monospace;background:var(--cb-primary);color:var(--ct-info);border-color:var(--cbr-info);margin:0;flex:1">
+          <button class="btn btn-sm btn-info" onclick="_copyIcsUrl()" id="btn-copy-ics" style="white-space:nowrap;flex-shrink:0">Copier</button>
+        </div>
+        <button class="btn btn-success" style="width:100%;margin-bottom:6px" onclick="window.open('https://calendar.google.com/calendar/r/settings/addbyurl?url='+encodeURIComponent('https://louisdordain-sax.github.io/Saxophone-/calendar.ics'),'_blank')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:middle;margin-right:4px"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
+          S'abonner dans Google Agenda
+        </button>
+        <div style="font-size:10px;color:var(--ct-tertiary)">
+          ⚠️ Nécessite d'avoir déployé le fichier <code>generate-ics.js</code> sur GitHub. Se met à jour toutes les 6h.
+        </div>
+      </div>
+
+      <!-- Info -->
+      <div style="background:var(--cb-info);border:0.5px solid var(--cbr-info);border-radius:var(--br-md);padding:10px;margin-bottom:14px">
+        <div style="font-size:11px;color:var(--ct-info);display:flex;gap:6px;align-items:flex-start">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span><b>Comment ça marche :</b> GitHub génère automatiquement le fichier <code>calendar.ics</code> toutes les 6h. Les familles s'abonnent une seule fois via l'URL ci-dessus et voient les nouveaux événements automatiquement.</span>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn" onclick="closeModal('modal-ag-sync')">Fermer</button>
+      </div>
+    </div>`;
+    document.body.appendChild(modal);
+  }
+
+  // Brancher les boutons avec l'ICS frais
+  var ics2 = _buildICS(agendaEvents);
+  var blob2 = new Blob([ics2], {type:'text/calendar;charset=utf-8'});
+  var dlUrl = URL.createObjectURL(blob2);
+
+  var dlBtn = document.getElementById('btn-dl-ics');
+  var newDl = dlBtn.cloneNode(true);
+  dlBtn.parentNode.replaceChild(newDl, dlBtn);
+  newDl.onclick = function(){
+    var a = document.createElement('a');
+    a.href = dlUrl;
+    a.download = 'saxophone-agenda.ics';
+    a.click();
+    setTimeout(function(){ URL.revokeObjectURL(dlUrl); }, 2000);
+  };
+
+  var gcalBtn = document.getElementById('btn-open-gcal');
+  var newGcal = gcalBtn.cloneNode(true);
+  gcalBtn.parentNode.replaceChild(newGcal, gcalBtn);
+  newGcal.onclick = function(){
+    // Ouvrir chaque événement dans Google Agenda (max 5 pour ne pas spammer)
+    var evts = agendaEvents.slice(0, 10);
+    evts.forEach(function(evt, i){
+      setTimeout(function(){ window.open(_buildGCalUrl(evt), '_blank'); }, i * 400);
+    });
+    if(agendaEvents.length > 10){
+      alert('Plus de 10 événements — seuls les 10 premiers ont été ouverts. Utilisez le fichier .ics pour importer tous les événements.');
+    }
+  };
+
+  openModal('modal-ag-sync');
+}
+
+function _buildICS(events){
+  var now = new Date();
+  var stamp = now.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
+
+  var lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Saxophone Compétences//Agenda//FR',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'X-WR-CALNAME:Saxophone — Agenda',
+    'X-WR-TIMEZONE:Europe/Paris',
+  ];
+
+  events.forEach(function(evt){
+    var d = evt.date.replace(/-/g,'');
+    var dtStart, dtEnd;
+    if(evt.timeStart){
+      dtStart = d + 'T' + evt.timeStart.replace(':','') + '00';
+      var endTime = evt.timeEnd || _addHour(evt.timeStart);
+      dtEnd   = d + 'T' + endTime.replace(':','') + '00';
+    } else {
+      dtStart = d;
+      var nd = new Date(evt.date + 'T12:00:00');
+      nd.setDate(nd.getDate()+1);
+      dtEnd = fmtISO(nd).replace(/-/g,'');
+    }
+    var desc = (evt.note || '');
+    var location = evt.lieu || '';
+    var summary = EVT_EMOJIS[evt.type||'cours'] + ' ' + evt.title;
+
+    lines.push('BEGIN:VEVENT');
+    lines.push('UID:' + (evt.id || ('evt'+Date.now())) + '@saxophone-competences');
+    lines.push('DTSTAMP:' + stamp + 'Z');
+    if(evt.timeStart){
+      lines.push('DTSTART;TZID=Europe/Paris:' + dtStart);
+      lines.push('DTEND;TZID=Europe/Paris:' + dtEnd);
+    } else {
+      lines.push('DTSTART;VALUE=DATE:' + dtStart);
+      lines.push('DTEND;VALUE=DATE:' + dtEnd);
+    }
+    lines.push('SUMMARY:' + _icsEscape(summary));
+    if(location) lines.push('LOCATION:' + _icsEscape(location));
+    if(desc)     lines.push('DESCRIPTION:' + _icsEscape(desc));
+    // Couleur par type (propriété non standard mais supportée par Google)
+    var colorMap = {cours:'1', examen:'5', concert:'9'};
+    if(colorMap[evt.type]) lines.push('COLOR:' + colorMap[evt.type]);
+    lines.push('END:VEVENT');
+  });
+
+  lines.push('END:VCALENDAR');
+  return lines.join('\r\n');
+}
+
+function _copyIcsUrl(){
+  var url = 'https://louisdordain-sax.github.io/Saxophone-/calendar.ics';
+  navigator.clipboard.writeText(url).then(function(){
+    var btn = document.getElementById('btn-copy-ics');
+    if(btn){ btn.textContent = '✓ Copié !'; setTimeout(function(){ btn.textContent = 'Copier'; }, 2000); }
+  }).catch(function(){
+    document.getElementById('ag-ics-url').select();
+    document.execCommand('copy');
+  });
+}
+
+function _icsEscape(s){
+  return String(s||'').replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n');
+}
+
 </script>
 
 
 <!-- ══ BARRE FLOTTANTE PERSISTANTE ══ -->
 <style>
 #global-bar{
-  position:fixed;bottom:16px;right:16px;z-index:9990;
+  position:fixed;bottom:16px;right:16px;z-index:50;
   display:flex;flex-direction:column;align-items:flex-end;gap:6px;
   pointer-events:none;
 }
+/* Masquer la barre flottante sur les écrans fullscreen */
+#sc-agenda.active ~ #global-bar,
+#sc-toolbox.active ~ #global-bar,
+#sc-board.active ~ #global-bar,
+#sc-tree.active ~ #global-bar { display:none !important; }
 #global-bar>*{pointer-events:auto}
 .gbar-btn{
   display:flex;align-items:center;gap:6px;
