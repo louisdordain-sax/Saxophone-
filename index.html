@@ -1222,6 +1222,22 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
 </div>
 
 <script>
+/* ════════════════════════════════════════════════════════
+   ██████  CONFIGURATION FIREBASE  ██████
+   → Remplacez les valeurs ci-dessous par les vôtres
+     après avoir créé votre projet sur console.firebase.google.com
+   ════════════════════════════════════════════════════════ */
+const firebaseConfig = {
+  apiKey: "AIzaSyD0JKAEWhMmZkaitKItgbF3PwqgB7uJ3wg",
+  authDomain: "saxophone-competences.firebaseapp.com",
+  databaseURL: "https://saxophone-competences-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "saxophone-competences",
+  storageBucket: "saxophone-competences.firebasestorage.app",
+  messagingSenderId: "864723364018",
+  appId: "1:864723364018:web:1cebed384612fe8daf81ab"
+};
+/* ════════════════════════════════════════════════════════ */
+
 const SK='sax_v11';
 const COLORS_POOL=['#378ADD','#1D9E75','#7F77DD','#D85A30','#EF9F27'];
 var BRANCHES=[
@@ -1289,22 +1305,6 @@ let tiltX=0,tiltY=0,tiltTarget={x:0,y:0}; /* conservés pour compat mais inutili
 let pendingCongratsStudent=null;
 let animFrame=null,t3d=0;
 let tileInteractions={};
-
-/* ════════════════════════════════════════════════════════
-   ██████  CONFIGURATION FIREBASE  ██████
-   → Remplacez les valeurs ci-dessous par les vôtres
-     après avoir créé votre projet sur console.firebase.google.com
-   ════════════════════════════════════════════════════════ */
-const firebaseConfig = {
-  apiKey: "AIzaSyD0JKAEWhMmZkaitKItgbF3PwqgB7uJ3wg",
-  authDomain: "saxophone-competences.firebaseapp.com",
-  databaseURL: "https://saxophone-competences-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "saxophone-competences",
-  storageBucket: "saxophone-competences.firebasestorage.app",
-  messagingSenderId: "864723364018",
-  appId: "1:864723364018:web:1cebed384612fe8daf81ab"
-};
-/* ════════════════════════════════════════════════════════ */
 
 const FIREBASE_PATH = 'sax_data_v1';
 let _db = null;
