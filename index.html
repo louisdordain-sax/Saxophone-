@@ -7,6 +7,18 @@
 <!-- Firebase SDK (compat) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<!-- CONFIGURATION FIREBASE - MODIFIEZ CES VALEURS -->
+<script>
+const FIREBASE_CONFIG = {
+  apiKey:            "VOTRE_API_KEY",
+  authDomain:        "VOTRE_PROJECT.firebaseapp.com",
+  databaseURL:       "https://VOTRE_PROJECT-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:         "VOTRE_PROJECT",
+  storageBucket:     "VOTRE_PROJECT.appspot.com",
+  messagingSenderId: "VOTRE_SENDER_ID",
+  appId:             "VOTRE_APP_ID"
+};
+</script>
 <style>
 :root{
   --font-sans:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
@@ -933,7 +945,7 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
       </div>
 
       <!-- Carte Partage -->
-      <div class="home-card" id="card-share" onclick="openSharePanel()" style="min-width:140px;flex:1">
+      <div class="home-card" id="card-share" onclick="openBoard(true);" style="min-width:140px;flex:1">
         <div class="home-card-icon">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         </div>
@@ -3461,5 +3473,111 @@ loadLocal();
     </div>
   </div>
 </div>
+<!-- ══ BARRE FLOTTANTE PERSISTANTE ══ -->
+<style>
+#global-bar{
+  position:fixed;bottom:16px;right:16px;z-index:9990;
+  display:flex;flex-direction:column;align-items:flex-end;gap:6px;
+  pointer-events:none;
+}
+#global-bar>*{pointer-events:auto}
+.gbar-btn{
+  display:flex;align-items:center;gap:6px;
+  padding:7px 13px;border-radius:99px;
+  border:0.5px solid var(--cbr-secondary);
+  background:rgba(15,20,32,0.82);
+  color:var(--ct-secondary);
+  font-size:11px;font-family:var(--font-sans);
+  cursor:pointer;backdrop-filter:blur(8px);
+  transition:all .15s;white-space:nowrap;
+  box-shadow:0 2px 12px rgba(0,0,0,0.35);
+}
+.gbar-btn:hover{color:var(--ct-primary);border-color:var(--cbr-info);background:rgba(30,42,64,0.92)}
+.gbar-btn.danger:hover{background:var(--cb-danger);color:var(--ct-danger);border-color:var(--cbr-danger)}
+html.light .gbar-btn{background:rgba(255,255,255,0.9);border-color:var(--cbr-secondary);box-shadow:0 2px 12px rgba(100,120,160,0.15)}
+html.light .gbar-btn:hover{background:#fff;border-color:var(--cbr-info);color:var(--ct-primary)}
+/* Masquer sur l'écran login */
+#sc-login.active ~ #global-bar{display:none}
+/* Toggle expand */
+#global-bar-menu{display:none;flex-direction:column;align-items:flex-end;gap:6px}
+#global-bar-menu.open{display:flex}
+</style>
+
+<div id="global-bar">
+  <!-- Menu déroulant -->
+  <div id="global-bar-menu">
+    <!-- Thème -->
+    <button class="gbar-btn" onclick="toggleTheme();_updateGlobalBar()" id="gbar-theme">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      <span id="gbar-theme-label">Mode clair</span>
+    </button>
+    <!-- Paramètres (prof uniquement) -->
+    <button class="gbar-btn" id="gbar-settings" onclick="_gbarGoSettings()" style="display:none">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Paramètres
+    </button>
+    <!-- Déconnexion -->
+    <button class="gbar-btn danger" id="gbar-logout" onclick="_gbarLogout()" style="display:none">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Déconnexion
+    </button>
+  </div>
+  <!-- Bouton principal toggle -->
+  <button class="gbar-btn" id="gbar-toggle" onclick="_gbarToggle()" style="border-radius:99px;padding:8px 14px">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+  </button>
+</div>
+
+<script>
+var _gbarOpen = false;
+function _gbarToggle(){
+  _gbarOpen = !_gbarOpen;
+  document.getElementById('global-bar-menu').classList.toggle('open', _gbarOpen);
+  _updateGlobalBar();
+}
+function _updateGlobalBar(){
+  // Thème
+  var isLight = document.documentElement.classList.contains('light');
+  var lbl = document.getElementById('gbar-theme-label');
+  var btn = document.getElementById('gbar-theme');
+  if(lbl) lbl.textContent = isLight ? 'Mode sombre' : 'Mode clair';
+  if(btn) btn.querySelector('svg').style.stroke = isLight ? '#f59e0b' : 'currentColor';
+  // Afficher déconnexion et paramètres seulement si connecté
+  var loggedIn = profMode || !!currentStudent;
+  var logoutBtn = document.getElementById('gbar-logout');
+  var settingsBtn = document.getElementById('gbar-settings');
+  if(logoutBtn) logoutBtn.style.display = loggedIn ? 'flex' : 'none';
+  if(settingsBtn) settingsBtn.style.display = profMode ? 'flex' : 'none';
+  // Masquer la barre entière sur l'écran login
+  var bar = document.getElementById('global-bar');
+  var onLogin = document.getElementById('sc-login').classList.contains('active');
+  if(bar) bar.style.display = onLogin ? 'none' : 'flex';
+}
+function _gbarLogout(){
+  _gbarOpen = false;
+  document.getElementById('global-bar-menu').classList.remove('open');
+  doLogout();
+  _updateGlobalBar();
+}
+function _gbarGoSettings(){
+  _gbarOpen = false;
+  document.getElementById('global-bar-menu').classList.remove('open');
+  // Aller aux paramètres prof
+  show('sc-home');
+  showProfTab('parametres');
+}
+
+// Mettre à jour la barre à chaque changement d'écran
+var _origShow = window.show;
+window.show = function(id){
+  _origShow(id);
+  setTimeout(_updateGlobalBar, 50);
+};
+// Init
+document.addEventListener('DOMContentLoaded', function(){
+  _updateGlobalBar();
+});
+setTimeout(_updateGlobalBar, 1500);
+</script>
 </body>
 </html>
