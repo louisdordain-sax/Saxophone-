@@ -947,7 +947,7 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
       </div>
 
       <!-- Carte Partage -->
-      <div class="home-card" id="card-share" onclick="openBoard(true);" style="min-width:140px;flex:1">
+      <div class="home-card" id="card-share" onclick="openBoard(profMode);" style="min-width:140px;flex:1">
         <div class="home-card-icon">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         </div>
@@ -1514,7 +1514,6 @@ function doLoginEleve(){
   const school=document.getElementById('login-school').value;
   document.getElementById('login-err-eleve').style.display='none';
   saveSchoolPref();
-  /* Recherche souple : comparaison insensible à la casse/accents */
   const normInput=nameInput.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
   const s=students.find(x=>{
     const normName=x.name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
@@ -1523,16 +1522,27 @@ function doLoginEleve(){
   if(!s){document.getElementById('login-err-eleve').textContent='Prénom / nom non reconnu pour cette école';document.getElementById('login-err-eleve').style.display='block';return}
   ensurePassword(s);
   if(pwd!==s.password){document.getElementById('login-err-eleve').textContent='Mot de passe incorrect';document.getElementById('login-err-eleve').style.display='block';return}
+  // Sauvegarder la session
+  try{sessionStorage.setItem('sax_session',JSON.stringify({role:'eleve',studentId:s.id}));}catch(e){}
+  try{localStorage.setItem('sax_session',JSON.stringify({role:'eleve',studentId:s.id}));}catch(e){}
   profMode=false;openTree(s.id);
 }
 function doLoginProf(){
   const v=document.getElementById('login-code-prof').value.trim();
   document.getElementById('login-err-prof').style.display='none';
-  if(v===profCode){profMode=true;show('sc-home');renderHome();return}
+  if(v===profCode){
+    profMode=true;
+    try{sessionStorage.setItem('sax_session',JSON.stringify({role:'prof'}));}catch(e){}
+    try{localStorage.setItem('sax_session',JSON.stringify({role:'prof'}));}catch(e){}
+    show('sc-home');renderHome();return;
+  }
   document.getElementById('login-err-prof').style.display='block';
 }
 function doLogout(){
   profMode=false;
+  currentStudent=null;
+  try{sessionStorage.removeItem('sax_session');}catch(e){}
+  try{localStorage.removeItem('sax_session');}catch(e){}
   document.getElementById('login-code-eleve').value='';
   document.getElementById('login-pwd-eleve').value='';
   document.getElementById('login-code-prof').value='';
@@ -2356,7 +2366,8 @@ function buildTileEl(tile,colIdx,tileIdx,colId){
   let previewHtml='';
   if(showPreview){
     if(tile.type==='image'&&(tile.imgData||tile.url)){
-      previewHtml=`<img class="tile-preview" src="${tile.imgData||tile.url}" draggable="false" onerror="this.style.display='none'">`;
+      const imgSrc=tile.imgData||tile.url;
+      previewHtml=`<img class="tile-preview" src="${imgSrc}" draggable="false" style="cursor:zoom-in" onclick="event.stopPropagation();openLightbox('${imgSrc.replace(/'/g,"\\'")}','${(tile.title||'image').replace(/'/g,"\\'")}');trackInteraction('${tile.id}')" onerror="this.style.display='none'">`;
     } else if(tile.type==='link'){
       let domain='';try{domain=new URL(tile.url).hostname}catch(e){}
       const favicon=domain?`<img src="https://www.google.com/s2/favicons?domain=${domain}&sz=64" style="width:32px;height:32px;border-radius:6px" onerror="this.style.display='none'">`:'';
@@ -2468,7 +2479,10 @@ function openBoard(isProf){
 }
 function closeBoardScreen(){
   if(boardIsProfMode){show('sc-home');renderHome();}
-  else{if(currentStudent)openTree(currentStudent.id);else show('sc-login');}
+  else if(currentStudent){
+    // Élève : retour à l'arbre (pas déconnexion)
+    show('sc-tree'); renderTreeScreen();
+  } else { show('sc-login'); }
 }
 
 
@@ -3476,7 +3490,25 @@ document.addEventListener('DOMContentLoaded', ()=>{
   const sl = document.getElementById('sc-login');
   if(sl) sl.style.display='none';
 });
-loadLocal();
+loadLocal().then(()=>{ _restoreSession(); });
+
+function _restoreSession(){
+  try{
+    // Essayer sessionStorage d'abord (même onglet), puis localStorage (autre onglet/refresh)
+    var raw = sessionStorage.getItem('sax_session') || localStorage.getItem('sax_session');
+    if(!raw) return;
+    var session = JSON.parse(raw);
+    if(session.role==='prof'){
+      profMode=true; show('sc-home'); renderHome(); return;
+    }
+    if(session.role==='eleve' && session.studentId){
+      var s = students.find(function(x){ return x.id===session.studentId; });
+      if(s){ profMode=false; openTree(s.id); return; }
+    }
+  }catch(e){}
+  // Session invalide ou expirée
+  try{ sessionStorage.removeItem('sax_session'); localStorage.removeItem('sax_session'); }catch(e){}
+}
 </script>
 <div class="modal-overlay" id="modal-interactions">
   <div class="modal-box" style="max-width:520px;max-height:88vh;overflow-y:auto">
@@ -3538,6 +3570,17 @@ loadLocal();
 .ag-day-wrap{display:grid;grid-template-columns:44px 1fr;border-left:0.5px solid var(--cbr-tertiary);border-top:0.5px solid var(--cbr-tertiary)}
 .ag-day-event{position:absolute;left:4px;right:4px;border-radius:6px;padding:4px 6px;font-size:11px;color:#fff;overflow:hidden;cursor:pointer;z-index:2}
 .ag-day-event:hover{filter:brightness(1.12)}
+
+/* ── LIGHTBOX ── */
+#lightbox{position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.93);display:none;flex-direction:column;align-items:center;justify-content:center}
+#lightbox.open{display:flex}
+#lightbox-img{max-width:92vw;max-height:80vh;border-radius:8px;object-fit:contain;box-shadow:0 8px 40px rgba(0,0,0,0.6)}
+#lightbox-toolbar{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:linear-gradient(to bottom,rgba(0,0,0,0.7),transparent);z-index:9999}
+#lightbox-title{font-size:13px;color:#fff;font-weight:500;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb-btn{background:rgba(255,255,255,0.12);border:0.5px solid rgba(255,255,255,0.2);border-radius:99px;color:#fff;cursor:pointer;font-size:11px;padding:5px 12px;display:flex;align-items:center;gap:5px;transition:all .15s;font-family:var(--font-sans)}
+.lb-btn:hover{background:rgba(255,255,255,0.22)}
+#lightbox-close{position:fixed;top:12px;right:14px;font-size:22px;color:#fff;cursor:pointer;background:none;border:none;line-height:1;padding:4px 8px;opacity:.8;z-index:9999}
+#lightbox-close:hover{opacity:1}
 /* ── Liste événements (sélection) ── */
 .ag-evt-panel{padding:12px 14px;border-top:0.5px solid var(--cbr-tertiary);flex-shrink:0;max-height:35vh;overflow-y:auto}
 .ag-evt-item{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;background:var(--cb-secondary);border-radius:var(--br-md);border:0.5px solid var(--cbr-tertiary);margin-bottom:6px;position:relative}
@@ -4305,6 +4348,58 @@ function _icsEscape(s){
 
 </script>
 
+
+
+<!-- ══ LIGHTBOX PLEIN ÉCRAN ══ -->
+<div id="lightbox">
+  <div id="lightbox-toolbar">
+    <div id="lightbox-title"></div>
+    <div style="display:flex;gap:6px">
+      <button class="lb-btn" id="lb-dl-btn" onclick="_lbDownload()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Télécharger
+      </button>
+      <button class="lb-btn" id="lb-print-btn" onclick="_lbPrint()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Imprimer
+      </button>
+    </div>
+  </div>
+  <button id="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt="" onclick="event.stopPropagation()">
+</div>
+
+<script>
+var _lbSrc = '', _lbName = '';
+
+function openLightbox(src, name){
+  _lbSrc = src; _lbName = name || 'image';
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox-title').textContent = name || '';
+  document.getElementById('lightbox').classList.add('open');
+  document.addEventListener('keydown', _lbKeyHandler);
+}
+function closeLightbox(){
+  document.getElementById('lightbox').classList.remove('open');
+  document.getElementById('lightbox-img').src = '';
+  document.removeEventListener('keydown', _lbKeyHandler);
+}
+function _lbKeyHandler(e){ if(e.key==='Escape') closeLightbox(); }
+document.getElementById('lightbox').addEventListener('click', function(e){
+  if(e.target===this) closeLightbox();
+});
+function _lbDownload(){
+  var a = document.createElement('a');
+  a.href = _lbSrc;
+  a.download = _lbName;
+  a.click();
+}
+function _lbPrint(){
+  var w = window.open('');
+  w.document.write('<html><body style="margin:0;display:flex;align-items:center;justify-content:center;min-height:100vh"><img src="'+_lbSrc+'" style="max-width:100%;max-height:100vh" onload="window.print();window.close()"></body></html>');
+  w.document.close();
+}
+</script>
 
 <!-- ══ BARRE FLOTTANTE PERSISTANTE ══ -->
 <style>
