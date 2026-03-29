@@ -166,6 +166,7 @@ canvas{display:block;width:100%;height:100%;cursor:default;position:absolute;ins
 .hud-layer{position:absolute;inset:0;pointer-events:none;z-index:5}
 .hud-corner{position:absolute;width:20px;height:20px}
 .hud-corner.tl{top:10px;left:10px;border-top:1.5px solid rgba(55,138,221,0.5);border-left:1.5px solid rgba(55,138,221,0.5)}
+.hud-corner.tl.hidden{opacity:0}
 .hud-corner.tr{top:10px;right:10px;border-top:1.5px solid rgba(55,138,221,0.5);border-right:1.5px solid rgba(55,138,221,0.5)}
 .hud-corner.bl{bottom:10px;left:10px;border-bottom:1.5px solid rgba(55,138,221,0.5);border-left:1.5px solid rgba(55,138,221,0.5)}
 .hud-corner.br{bottom:10px;right:10px;border-bottom:1.5px solid rgba(55,138,221,0.5);border-right:1.5px solid rgba(55,138,221,0.5)}
@@ -175,8 +176,9 @@ canvas{display:block;width:100%;height:100%;cursor:default;position:absolute;ins
 
 /* HUD barre haut : retour + badges + éditer */
 .hud-topbar{position:absolute;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;gap:8px;padding:10px 14px;
-  background:linear-gradient(to bottom,rgba(6,9,20,0.85) 0%,transparent 100%);
+  background:transparent;
   pointer-events:none}
+.hud-topbar.has-controls{background:linear-gradient(to bottom,rgba(6,9,20,0.85) 0%,transparent 100%)}
 .hud-topbar>*{pointer-events:auto}
 
 /* HUD barre bas : légende */
@@ -802,7 +804,7 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
 
   <!-- HUD coins -->
   <div class="hud-layer">
-    <div class="hud-corner tl"></div><div class="hud-corner tr"></div>
+    <div class="hud-corner tl" id="hud-corner-tl"></div><div class="hud-corner tr"></div>
     <div class="hud-corner bl"></div><div class="hud-corner br"></div>
     <div class="hud-label top" id="hud-top">cycle — élève</div>
     <div class="hud-label bot" id="hud-bot">saxophone · progression</div>
@@ -1769,6 +1771,11 @@ function openTree(id){
   const modeBadge=document.getElementById('mode-badge');
   if(backBtn) backBtn.style.display=profMode?'inline-flex':'none';
   if(modeBadge) modeBadge.style.display=profMode?'inline-flex':'none';
+  // Topbar background et coin TL : visibles seulement en mode prof
+  const topbar=document.getElementById('hud-topbar');
+  const cornerTl=document.getElementById('hud-corner-tl');
+  if(topbar){ if(profMode) topbar.classList.add('has-controls'); else topbar.classList.remove('has-controls'); }
+  if(cornerTl){ if(profMode) cornerTl.classList.remove('hidden'); else cornerTl.classList.add('hidden'); }
   document.getElementById('btn-edit-mode').textContent='Éditer';
   document.getElementById('view-edit').style.display='none';
   document.getElementById('view-exam').style.display='none';
@@ -3481,94 +3488,145 @@ loadLocal();
 
 <!-- ══ ÉCRAN AGENDA ══ -->
 <div id="sc-agenda" class="screen" style="position:fixed;inset:0;z-index:16;display:none;flex-direction:column;background:var(--body-bg)">
-
 <style>
 #sc-agenda.active{display:flex}
-.agenda-topbar{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:0.5px solid var(--cbr-tertiary);flex-shrink:0;background:var(--cb-primary)}
-.agenda-body{flex:1;overflow-y:auto;padding:16px}
-.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.cal-month{font-size:16px;font-weight:600;color:var(--ct-primary)}
-.cal-nav{background:none;border:0.5px solid var(--cbr-tertiary);border-radius:99px;color:var(--ct-secondary);cursor:pointer;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .15s}
-.cal-nav:hover{border-color:var(--cbr-info);color:var(--ct-info)}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:16px}
-.cal-day-label{text-align:center;font-size:10px;color:var(--ct-tertiary);padding:4px 0;font-weight:500}
-.cal-day{min-height:36px;border-radius:var(--br-md);padding:3px;cursor:pointer;position:relative;transition:all .12s;border:0.5px solid transparent}
-.cal-day:hover{background:var(--cb-secondary);border-color:var(--cbr-tertiary)}
-.cal-day.today{border-color:var(--cbr-info)!important;background:var(--cb-info)}
-.cal-day.has-event::after{content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--ct-info)}
-.cal-day.other-month .cal-day-num{opacity:.3}
-.cal-day-num{font-size:11px;color:var(--ct-primary);text-align:center;line-height:1.4;font-weight:500}
-.cal-day.selected{background:var(--cb-info);border-color:var(--cbr-info)}
-.evt-list{display:flex;flex-direction:column;gap:8px}
-.evt-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--cb-secondary);border-radius:var(--br-lg);border:0.5px solid var(--cbr-tertiary);position:relative}
-.evt-color{width:4px;border-radius:99px;flex-shrink:0;align-self:stretch;min-height:36px}
-.evt-body{flex:1;min-width:0}
-.evt-title{font-size:13px;font-weight:500;color:var(--ct-primary);margin-bottom:2px}
-.evt-meta{font-size:11px;color:var(--ct-secondary)}
-.evt-gcal{display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:10px;padding:3px 8px;border-radius:99px;border:0.5px solid var(--cbr-info);color:var(--ct-info);background:var(--cb-info);cursor:pointer;text-decoration:none;transition:all .15s}
-.evt-gcal:hover{background:var(--cbr-info);color:#fff}
-.evt-del{position:absolute;top:8px;right:8px;background:none;border:none;cursor:pointer;color:var(--ct-tertiary);font-size:14px;padding:2px 5px;border-radius:4px;transition:all .15s}
-.evt-del:hover{color:var(--ct-danger);background:var(--cb-danger)}
-.agenda-fab{position:fixed;bottom:24px;right:20px;z-index:100;width:48px;height:48px;border-radius:50%;background:#378ADD;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(55,138,221,0.45);transition:all .15s}
-.agenda-fab:hover{transform:scale(1.08);box-shadow:0 6px 20px rgba(55,138,221,0.55)}
-.evt-type-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:3px}
+/* ── Topbar ── */
+.ag-topbar{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:0.5px solid var(--cbr-tertiary);flex-shrink:0;background:var(--cb-primary)}
+/* ── Vues ── */
+.ag-view-seg{display:flex;gap:3px;background:var(--cb-secondary);border-radius:99px;padding:3px;border:0.5px solid var(--cbr-tertiary)}
+.ag-view-btn{font-size:11px;padding:4px 12px;border-radius:99px;border:none;background:none;color:var(--ct-secondary);cursor:pointer;font-family:var(--font-sans);transition:all .15s}
+.ag-view-btn.active{background:var(--cb-info);color:var(--ct-info)}
+/* ── Navigation mois/semaine/jour ── */
+.ag-nav{display:flex;align-items:center;gap:6px;padding:8px 14px;flex-shrink:0}
+.ag-nav-btn{background:none;border:0.5px solid var(--cbr-tertiary);border-radius:99px;color:var(--ct-secondary);cursor:pointer;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s;flex-shrink:0}
+.ag-nav-btn:hover{border-color:var(--cbr-info);color:var(--ct-info)}
+.ag-period-label{font-size:13px;font-weight:600;color:var(--ct-primary);flex:1;text-align:center}
+.ag-today-btn{font-size:11px;padding:3px 10px;border-radius:99px;border:0.5px solid var(--cbr-tertiary);color:var(--ct-secondary);background:none;cursor:pointer;font-family:var(--font-sans);transition:all .15s}
+.ag-today-btn:hover{border-color:var(--cbr-info);color:var(--ct-info)}
+/* ── Corps scrollable ── */
+.ag-body{flex:1;overflow-y:auto;overflow-x:hidden}
+/* ── Vue MOIS ── */
+.ag-month-grid{display:grid;grid-template-columns:repeat(7,1fr);border-left:0.5px solid var(--cbr-tertiary);border-top:0.5px solid var(--cbr-tertiary)}
+.ag-month-daylabel{text-align:center;font-size:10px;color:var(--ct-tertiary);padding:5px 0;font-weight:600;border-right:0.5px solid var(--cbr-tertiary);border-bottom:0.5px solid var(--cbr-tertiary);background:var(--cb-primary)}
+.ag-month-cell{min-height:72px;border-right:0.5px solid var(--cbr-tertiary);border-bottom:0.5px solid var(--cbr-tertiary);padding:4px;cursor:pointer;transition:background .1s;position:relative}
+.ag-month-cell:hover{background:var(--cb-secondary)}
+.ag-month-cell.today{background:var(--cb-info)}
+.ag-month-cell.other-month .ag-month-num{opacity:.3}
+.ag-month-cell.selected{outline:2px solid var(--cbr-info);outline-offset:-2px}
+.ag-month-num{font-size:11px;font-weight:600;color:var(--ct-primary);text-align:right;margin-bottom:2px}
+.ag-month-chip{font-size:9px;padding:1px 5px;border-radius:3px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;margin-bottom:1px;line-height:1.4}
+.ag-month-more{font-size:9px;color:var(--ct-tertiary);padding-left:2px}
+/* ── Vue SEMAINE ── */
+.ag-week-wrap{display:grid;grid-template-columns:44px repeat(7,1fr);border-left:0.5px solid var(--cbr-tertiary);border-top:0.5px solid var(--cbr-tertiary)}
+.ag-week-daylabel{text-align:center;padding:5px 2px;border-right:0.5px solid var(--cbr-tertiary);border-bottom:0.5px solid var(--cbr-tertiary);font-size:10px;color:var(--ct-tertiary);font-weight:600;background:var(--cb-primary);cursor:pointer;transition:background .1s}
+.ag-week-daylabel:hover{background:var(--cb-secondary)}
+.ag-week-daylabel.today{background:var(--cb-info);color:var(--ct-info)}
+.ag-week-daylabel .ag-week-daynum{font-size:16px;font-weight:700;color:var(--ct-primary);display:block}
+.ag-week-daylabel.today .ag-week-daynum{color:var(--ct-info)}
+.ag-time-gutter{border-right:0.5px solid var(--cbr-tertiary)}
+.ag-time-slot{height:48px;border-bottom:0.5px solid var(--cbr-tertiary);font-size:9px;color:var(--ct-tertiary);padding:2px 4px 0;text-align:right;font-family:var(--font-mono)}
+.ag-week-col{border-right:0.5px solid var(--cbr-tertiary);position:relative;cursor:pointer;transition:background .1s}
+.ag-week-col:hover{background:rgba(55,138,221,0.04)}
+.ag-week-col.today-col{background:rgba(55,138,221,0.04)}
+.ag-week-event{position:absolute;left:2px;right:2px;border-radius:4px;padding:2px 4px;font-size:10px;color:#fff;overflow:hidden;cursor:pointer;z-index:2;line-height:1.3}
+.ag-week-event:hover{filter:brightness(1.15)}
+/* ── Vue JOUR ── */
+.ag-day-wrap{display:grid;grid-template-columns:44px 1fr;border-left:0.5px solid var(--cbr-tertiary);border-top:0.5px solid var(--cbr-tertiary)}
+.ag-day-event{position:absolute;left:4px;right:4px;border-radius:6px;padding:4px 6px;font-size:11px;color:#fff;overflow:hidden;cursor:pointer;z-index:2}
+.ag-day-event:hover{filter:brightness(1.12)}
+/* ── Liste événements (sélection) ── */
+.ag-evt-panel{padding:12px 14px;border-top:0.5px solid var(--cbr-tertiary);flex-shrink:0;max-height:35vh;overflow-y:auto}
+.ag-evt-item{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;background:var(--cb-secondary);border-radius:var(--br-md);border:0.5px solid var(--cbr-tertiary);margin-bottom:6px;position:relative}
+.ag-evt-bar{width:3px;border-radius:99px;align-self:stretch;flex-shrink:0;min-height:32px}
+.ag-evt-title{font-size:12px;font-weight:500;color:var(--ct-primary);margin-bottom:2px}
+.ag-evt-meta{font-size:10px;color:var(--ct-secondary)}
+.ag-evt-gcal{display:inline-flex;align-items:center;gap:3px;margin-top:5px;font-size:10px;padding:2px 7px;border-radius:99px;border:0.5px solid var(--cbr-info);color:var(--ct-info);background:var(--cb-info);cursor:pointer;text-decoration:none;transition:all .15s}
+.ag-evt-gcal:hover{background:var(--cbr-info);color:#fff}
+.ag-evt-del{position:absolute;top:6px;right:6px;background:none;border:none;cursor:pointer;color:var(--ct-tertiary);font-size:13px;padding:2px 4px;border-radius:3px}
+.ag-evt-del:hover{color:var(--ct-danger);background:var(--cb-danger)}
+/* ── FAB ── */
+.ag-fab{position:fixed;bottom:20px;right:18px;z-index:200;width:46px;height:46px;border-radius:50%;background:#378ADD;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(55,138,221,0.45);transition:all .15s}
+.ag-fab:hover{transform:scale(1.08)}
+/* ── Light mode ── */
+html.light .ag-month-cell.today{background:var(--cb-info)}
+html.light .ag-week-wrap,.html.light .ag-month-grid{border-color:var(--cbr-tertiary)}
 </style>
 
   <!-- Topbar -->
-  <div class="agenda-topbar">
+  <div class="ag-topbar">
     <button class="btn btn-sm" onclick="closeAgenda()">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg> Retour
     </button>
     <span style="font-size:15px;font-weight:600;color:var(--ct-primary);flex:1">Agenda</span>
-    <span id="agenda-prof-badge" style="display:none;font-size:10px;padding:2px 8px;border-radius:99px;background:var(--cb-warning);color:var(--ct-warning);border:0.5px solid var(--cbr-warning)">Prof</span>
+    <div class="ag-view-seg">
+      <button class="ag-view-btn active" id="ag-btn-month" onclick="setAgView('month')">Mois</button>
+      <button class="ag-view-btn" id="ag-btn-week" onclick="setAgView('week')">Semaine</button>
+      <button class="ag-view-btn" id="ag-btn-day" onclick="setAgView('day')">Jour</button>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="ag-nav">
+    <button class="ag-nav-btn" onclick="agNav(-1)">&#8249;</button>
+    <button class="ag-today-btn" onclick="agGoToday()">Aujourd'hui</button>
+    <div class="ag-period-label" id="ag-period-label"></div>
+    <button class="ag-nav-btn" onclick="agNav(1)">&#8250;</button>
   </div>
 
   <!-- Corps -->
-  <div class="agenda-body" id="agenda-body">
-    <!-- Calendrier -->
-    <div class="cal-header">
-      <button class="cal-nav" onclick="agendaPrevMonth()">&#8249;</button>
-      <div class="cal-month" id="cal-month-label"></div>
-      <button class="cal-nav" onclick="agendaNextMonth()">&#8250;</button>
-    </div>
-    <div class="cal-grid" id="cal-grid"></div>
+  <div class="ag-body" id="ag-body"></div>
 
-    <!-- Séparateur -->
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
-      <div style="flex:1;height:0.5px;background:var(--cbr-tertiary)"></div>
-      <div id="cal-selected-label" style="font-size:11px;color:var(--ct-secondary);white-space:nowrap">Tous les événements</div>
-      <div style="flex:1;height:0.5px;background:var(--cbr-tertiary)"></div>
-    </div>
-
-    <!-- Liste des événements -->
-    <div class="evt-list" id="evt-list"></div>
-    <div id="evt-empty" style="text-align:center;padding:2rem;font-size:13px;color:var(--ct-tertiary);display:none">Aucun événement</div>
+  <!-- Panneau événements sélectionnés -->
+  <div class="ag-evt-panel" id="ag-evt-panel" style="display:none">
+    <div style="font-size:11px;font-weight:600;color:var(--ct-secondary);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px" id="ag-evt-panel-title"></div>
+    <div id="ag-evt-list"></div>
   </div>
 
-  <!-- FAB Ajouter (prof seulement) -->
-  <button class="agenda-fab" id="agenda-fab" onclick="openAddEvtModal()" title="Ajouter un événement" style="display:none">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+  <!-- FAB -->
+  <button class="ag-fab" id="ag-fab" onclick="openAddEvtModal()" title="Ajouter" style="display:none">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
   </button>
 </div>
 
-<!-- Modal ajout événement -->
+<!-- ══ MODAL AJOUT ÉVÉNEMENT ══ -->
 <div class="modal-overlay" id="modal-evt">
-  <div class="modal-box" style="max-width:420px">
+  <div class="modal-box" style="max-width:440px;max-height:90vh;overflow-y:auto">
     <h3 id="evt-modal-title">Ajouter un événement</h3>
+
+    <!-- Type avec couleur -->
     <div class="field-label">Type</div>
-    <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">
-      <button class="btn evt-type-btn btn-info" data-type="cours" data-color="#378ADD" onclick="selectEvtType(this)" style="flex:1">🎵 Cours</button>
-      <button class="btn evt-type-btn" data-type="examen" data-color="#EF9F27" onclick="selectEvtType(this)" style="flex:1">🎓 Examen</button>
-      <button class="btn evt-type-btn" data-type="concert" data-color="#7F77DD" onclick="selectEvtType(this)" style="flex:1">🎤 Concert / Audition</button>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px">
+      <button class="btn evt-type-btn" id="etyp-cours"   data-type="cours"   onclick="selectEvtType(this)" style="flex-direction:column;gap:3px;padding:8px 4px;font-size:11px">
+        <span style="font-size:18px">🎵</span>Cours
+        <span style="width:18px;height:4px;border-radius:99px;background:#378ADD;margin-top:2px"></span>
+      </button>
+      <button class="btn evt-type-btn" id="etyp-examen"  data-type="examen"  onclick="selectEvtType(this)" style="flex-direction:column;gap:3px;padding:8px 4px;font-size:11px">
+        <span style="font-size:18px">🎓</span>Examen
+        <span style="width:18px;height:4px;border-radius:99px;background:#EF9F27;margin-top:2px"></span>
+      </button>
+      <button class="btn evt-type-btn" id="etyp-concert" data-type="concert" onclick="selectEvtType(this)" style="flex-direction:column;gap:3px;padding:8px 4px;font-size:11px">
+        <span style="font-size:18px">🎤</span>Concert
+        <span style="width:18px;height:4px;border-radius:99px;background:#7F77DD;margin-top:2px"></span>
+      </button>
     </div>
+
     <div class="field-label">Titre</div>
     <input type="text" id="evt-title" placeholder="ex: Cours de saxophone">
+
+    <div class="field-label">Date</div>
+    <input type="date" id="evt-date">
+
     <div style="display:flex;gap:8px">
-      <div style="flex:1"><div class="field-label">Date</div><input type="date" id="evt-date"></div>
-      <div style="flex:1"><div class="field-label">Heure <span style="opacity:.5">(optionnel)</span></div><input type="time" id="evt-time"></div>
+      <div style="flex:1"><div class="field-label">Heure de début</div><input type="time" id="evt-time-start"></div>
+      <div style="flex:1"><div class="field-label">Heure de fin</div><input type="time" id="evt-time-end"></div>
     </div>
-    <div class="field-label">Note <span style="opacity:.5">(optionnel)</span></div>
+
+    <div class="field-label">Lieu <span style="opacity:.5;font-weight:400">(optionnel)</span></div>
+    <input type="text" id="evt-lieu" placeholder="ex: Salle 3, Conservatoire">
+
+    <div class="field-label">Note <span style="opacity:.5;font-weight:400">(optionnel)</span></div>
     <textarea id="evt-note" rows="2" placeholder="Informations complémentaires..."></textarea>
+
     <div class="err" id="evt-err">Titre et date requis</div>
     <div class="modal-footer">
       <button class="btn" onclick="closeModal('modal-evt')">Annuler</button>
@@ -3578,235 +3636,359 @@ loadLocal();
 </div>
 
 <script>
-/* ══ AGENDA ══ */
+/* ══════════════════════════════════════════════
+   AGENDA — Vue Mois / Semaine / Jour
+══════════════════════════════════════════════ */
 var agendaEvents = [];
-var _agendaMonth = new Date().getMonth();
-var _agendaYear  = new Date().getFullYear();
-var _agendaSelDate = null;
+var _agView = 'month';
+var _agDate = new Date(); _agDate.setHours(0,0,0,0);
+var _agSelDate = null;
 var _evtType = 'cours';
-var _evtColor = '#378ADD';
 var _editEvtId = null;
 
 var EVT_COLORS = {cours:'#378ADD', examen:'#EF9F27', concert:'#7F77DD'};
 var EVT_LABELS = {cours:'Cours', examen:'Examen', concert:'Concert / Audition'};
 var EVT_EMOJIS = {cours:'🎵', examen:'🎓', concert:'🎤'};
+var MONTHS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+var DAYS_FR_LONG = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+var DAYS_FR_SHORT = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
 
+/* ── Ouverture / Fermeture ── */
 function openAgenda(){
-  // Charger les événements depuis Firebase ou localStorage
   _loadAgendaEvents();
-  document.getElementById('agenda-prof-badge').style.display = profMode ? 'inline-flex' : 'none';
-  document.getElementById('agenda-fab').style.display = profMode ? 'flex' : 'none';
-  var sc = document.getElementById('sc-agenda');
-  sc.style.display = 'flex';
-  sc.classList.add('active');
-  renderCalendar();
-  renderEvtList(null);
+  document.getElementById('ag-fab').style.display = profMode ? 'flex' : 'none';
+  document.getElementById('sc-agenda').style.display = 'flex';
+  document.getElementById('sc-agenda').classList.add('active');
+  renderAgenda();
 }
 function closeAgenda(){
-  var sc = document.getElementById('sc-agenda');
-  sc.style.display = 'none';
-  sc.classList.remove('active');
+  document.getElementById('sc-agenda').style.display = 'none';
+  document.getElementById('sc-agenda').classList.remove('active');
 }
 
-function _agendaStorageKey(){ return 'sax_agenda_v1'; }
-
+/* ── Storage Firebase ── */
 function _loadAgendaEvents(){
-  // Charger depuis Firebase si disponible
-  if(_db){
+  if(typeof _db !== 'undefined' && _db){
     _db.ref('sax_agenda_v1').once('value').then(function(snap){
       var d = snap.val();
-      agendaEvents = d ? (Array.isArray(d) ? d : Object.values(d)) : [];
-      renderCalendar(); renderEvtList(_agendaSelDate);
-    }).catch(function(){ _loadAgendaLocal(); });
-  } else { _loadAgendaLocal(); }
+      agendaEvents = d ? (Array.isArray(d) ? d : Object.values(d).filter(Boolean)) : [];
+      renderAgenda(); _renderEvtPanel(_agSelDate);
+    }).catch(function(){ _loadAgLocal(); });
+  } else { _loadAgLocal(); }
 }
-function _loadAgendaLocal(){
-  try{ var r=localStorage.getItem(_agendaStorageKey()); agendaEvents=r?JSON.parse(r):[]; }catch(e){ agendaEvents=[]; }
+function _loadAgLocal(){
+  try{ var r=localStorage.getItem('sax_agenda_v1'); agendaEvents=r?JSON.parse(r):[]; }catch(e){ agendaEvents=[]; }
 }
 function _saveAgendaEvents(){
-  try{ localStorage.setItem(_agendaStorageKey(), JSON.stringify(agendaEvents)); }catch(e){}
-  if(_db){
-    _db.ref('sax_agenda_v1').set(agendaEvents).catch(function(e){ console.warn('Agenda save err:',e); });
+  try{ localStorage.setItem('sax_agenda_v1', JSON.stringify(agendaEvents)); }catch(e){}
+  if(typeof _db !== 'undefined' && _db){
+    _db.ref('sax_agenda_v1').set(agendaEvents).catch(function(e){ console.warn('Agenda Firebase save error:',e); });
   }
 }
 
-function agendaPrevMonth(){ _agendaMonth--; if(_agendaMonth<0){_agendaMonth=11;_agendaYear--;} renderCalendar(); renderEvtList(_agendaSelDate); }
-function agendaNextMonth(){ _agendaMonth++; if(_agendaMonth>11){_agendaMonth=0;_agendaYear++;} renderCalendar(); renderEvtList(_agendaSelDate); }
-
-var MONTHS_FR=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
-var DAYS_FR=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
-
-function renderCalendar(){
-  document.getElementById('cal-month-label').textContent = MONTHS_FR[_agendaMonth] + ' ' + _agendaYear;
-  var grid = document.getElementById('cal-grid');
-  grid.innerHTML = '';
-  // En-têtes jours
-  DAYS_FR.forEach(function(d){ var el=document.createElement('div'); el.className='cal-day-label'; el.textContent=d; grid.appendChild(el); });
-  // Premier jour du mois (lundi=0)
-  var first = new Date(_agendaYear, _agendaMonth, 1);
-  var startDow = (first.getDay()+6)%7; // 0=lundi
-  var daysInMonth = new Date(_agendaYear, _agendaMonth+1, 0).getDate();
-  var prevDays = new Date(_agendaYear, _agendaMonth, 0).getDate();
-  var today = new Date(); today.setHours(0,0,0,0);
-
-  // Jours du mois précédent
-  for(var i=startDow-1;i>=0;i--){
-    var d=document.createElement('div'); d.className='cal-day other-month';
-    var n=document.createElement('div'); n.className='cal-day-num'; n.textContent=prevDays-i; d.appendChild(n); grid.appendChild(d);
-  }
-  // Jours du mois courant
-  for(var day=1;day<=daysInMonth;day++){
-    var dt = new Date(_agendaYear,_agendaMonth,day);
-    var dtStr = fmtDateISO(dt);
-    var hasEvt = agendaEvents.some(function(e){ return e.date===dtStr; });
-    var isToday = dt.getTime()===today.getTime();
-    var isSel = _agendaSelDate===dtStr;
-    var el=document.createElement('div');
-    el.className='cal-day'+(isToday?' today':'')+(hasEvt?' has-event':'')+(isSel?' selected':'');
-    var num=document.createElement('div'); num.className='cal-day-num'; num.textContent=day; el.appendChild(num);
-    // Point coloré pour le type d'événement
-    if(hasEvt){
-      var evtsDay = agendaEvents.filter(function(e){ return e.date===dtStr; });
-      var dot=document.createElement('div');
-      dot.style.cssText='width:5px;height:5px;border-radius:50%;background:'+evtsDay[0].color+';margin:1px auto 0';
-      el.appendChild(dot);
-    }
-    (function(ds){ el.onclick=function(){ _agendaSelDate=(_agendaSelDate===ds?null:ds); renderCalendar(); renderEvtList(_agendaSelDate); }; })(dtStr);
-    grid.appendChild(el);
-  }
-  // Compléter la grille
-  var total = startDow + daysInMonth;
-  var remaining = total%7===0?0:7-total%7;
-  for(var r=1;r<=remaining;r++){
-    var d=document.createElement('div'); d.className='cal-day other-month';
-    var n=document.createElement('div'); n.className='cal-day-num'; n.textContent=r; d.appendChild(n); grid.appendChild(d);
-  }
+/* ── Navigation ── */
+function setAgView(v){
+  _agView = v;
+  ['month','week','day'].forEach(function(x){
+    document.getElementById('ag-btn-'+x).classList.toggle('active', x===v);
+  });
+  _agSelDate = null;
+  document.getElementById('ag-evt-panel').style.display = 'none';
+  renderAgenda();
+}
+function agNav(dir){
+  var d = new Date(_agDate);
+  if(_agView==='month'){ d.setMonth(d.getMonth()+dir); }
+  else if(_agView==='week'){ d.setDate(d.getDate()+dir*7); }
+  else { d.setDate(d.getDate()+dir); }
+  _agDate = d; _agSelDate = null;
+  document.getElementById('ag-evt-panel').style.display = 'none';
+  renderAgenda();
+}
+function agGoToday(){
+  _agDate = new Date(); _agDate.setHours(0,0,0,0);
+  _agSelDate = null;
+  document.getElementById('ag-evt-panel').style.display = 'none';
+  renderAgenda();
 }
 
-function fmtDateISO(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
-function fmtDateFR(iso){ if(!iso)return''; var p=iso.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
+/* ── Helpers dates ── */
+function fmtISO(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+function pad(n){ return String(n).padStart(2,'0'); }
+function fmtFR(iso){ if(!iso)return''; var p=iso.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
+function todayISO(){ return fmtISO(new Date()); }
+function isoToDate(iso){ return new Date(iso+'T12:00:00'); }
+function getWeekStart(d){ var day=d.getDay(), diff=(day===0?-6:1-day); var r=new Date(d); r.setDate(r.getDate()+diff); return r; }
 
-function renderEvtList(dateFilter){
-  var lbl = document.getElementById('cal-selected-label');
-  var list = document.getElementById('evt-list');
-  var empty = document.getElementById('evt-empty');
-  var now = new Date(); now.setHours(0,0,0,0);
+/* ── Rendu principal ── */
+function renderAgenda(){
+  var body = document.getElementById('ag-body'); body.innerHTML='';
+  if(_agView==='month') renderMonthView(body);
+  else if(_agView==='week') renderWeekView(body);
+  else renderDayView(body);
+  updatePeriodLabel();
+}
 
-  var evts = agendaEvents.slice().sort(function(a,b){ return a.date.localeCompare(b.date); });
-  if(dateFilter){
-    evts = evts.filter(function(e){ return e.date===dateFilter; });
-    var d=new Date(dateFilter+'T12:00:00'); lbl.textContent=d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+function updatePeriodLabel(){
+  var lbl = document.getElementById('ag-period-label');
+  if(_agView==='month') lbl.textContent = MONTHS_FR[_agDate.getMonth()]+' '+_agDate.getFullYear();
+  else if(_agView==='week'){
+    var ws = getWeekStart(_agDate);
+    var we = new Date(ws); we.setDate(we.getDate()+6);
+    if(ws.getMonth()===we.getMonth()) lbl.textContent = ws.getDate()+' – '+we.getDate()+' '+MONTHS_FR[ws.getMonth()]+' '+ws.getFullYear();
+    else lbl.textContent = ws.getDate()+' '+MONTHS_FR[ws.getMonth()]+' – '+we.getDate()+' '+MONTHS_FR[we.getMonth()]+' '+ws.getFullYear();
   } else {
-    // Afficher les événements à venir (30 derniers jours + futur)
-    var cutoff = new Date(now); cutoff.setDate(cutoff.getDate()-7);
-    var cutStr = fmtDateISO(cutoff);
-    evts = evts.filter(function(e){ return e.date>=cutStr; });
-    lbl.textContent = evts.length ? 'Événements à venir' : 'Tous les événements';
+    lbl.textContent = DAYS_FR_LONG[_agDate.getDay()]+' '+_agDate.getDate()+' '+MONTHS_FR[_agDate.getMonth()]+' '+_agDate.getFullYear();
   }
+}
 
+/* ── VUE MOIS ── */
+function renderMonthView(body){
+  var grid = document.createElement('div'); grid.className='ag-month-grid';
+  var dayOrder = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+  dayOrder.forEach(function(d){ var el=document.createElement('div'); el.className='ag-month-daylabel'; el.textContent=d; grid.appendChild(el); });
+  var y=_agDate.getFullYear(), m=_agDate.getMonth();
+  var first=new Date(y,m,1), startDow=(first.getDay()+6)%7;
+  var daysInMonth=new Date(y,m+1,0).getDate();
+  var prevDays=new Date(y,m,0).getDate();
+  var today=todayISO();
+  // Jours mois précédent
+  for(var i=startDow-1;i>=0;i--){
+    var cell=document.createElement('div'); cell.className='ag-month-cell other-month';
+    var num=document.createElement('div'); num.className='ag-month-num'; num.textContent=prevDays-i; cell.appendChild(num);
+    grid.appendChild(cell);
+  }
+  // Jours du mois
+  for(var day=1;day<=daysInMonth;day++){
+    var dt=new Date(y,m,day), iso=fmtISO(dt);
+    var evts=agendaEvents.filter(function(e){ return e.date===iso; }).sort(function(a,b){ return (a.timeStart||'00:00').localeCompare(b.timeStart||'00:00'); });
+    var cell=document.createElement('div');
+    cell.className='ag-month-cell'+(iso===today?' today':'')+(iso===_agSelDate?' selected':'');
+    var num=document.createElement('div'); num.className='ag-month-num'; num.textContent=day; cell.appendChild(num);
+    var shown=evts.slice(0,2);
+    shown.forEach(function(e){
+      var chip=document.createElement('div'); chip.className='ag-month-chip';
+      chip.style.background=EVT_COLORS[e.type||'cours'];
+      chip.textContent=(e.timeStart?e.timeStart+' ':'')+e.title;
+      cell.appendChild(chip);
+    });
+    if(evts.length>2){ var more=document.createElement('div'); more.className='ag-month-more'; more.textContent='+'+( evts.length-2)+' autres'; cell.appendChild(more); }
+    (function(isoD){ cell.onclick=function(){ _agSelDate=(_agSelDate===isoD?null:isoD); renderAgenda(); _renderEvtPanel(isoD); }; })(iso);
+    grid.appendChild(cell);
+  }
+  // Compléter
+  var total=startDow+daysInMonth, rem=total%7===0?0:7-total%7;
+  for(var r=1;r<=rem;r++){
+    var cell=document.createElement('div'); cell.className='ag-month-cell other-month';
+    var num=document.createElement('div'); num.className='ag-month-num'; num.textContent=r; cell.appendChild(num);
+    grid.appendChild(cell);
+  }
+  body.appendChild(grid);
+}
+
+/* ── VUE SEMAINE ── */
+function renderWeekView(body){
+  var ws=getWeekStart(_agDate);
+  var today=todayISO();
+  var HOURS=24;
+  var wrap=document.createElement('div'); wrap.className='ag-week-wrap';
+  // En-têtes
+  var cornerCell=document.createElement('div'); cornerCell.className='ag-month-daylabel ag-time-gutter'; cornerCell.style.borderBottom='0.5px solid var(--cbr-tertiary)'; wrap.appendChild(cornerCell);
+  for(var d=0;d<7;d++){
+    var day=new Date(ws); day.setDate(ws.getDate()+d);
+    var iso=fmtISO(day);
+    var lbl=document.createElement('div');
+    lbl.className='ag-week-daylabel'+(iso===today?' today':'');
+    lbl.innerHTML='<span>'+DAYS_FR_SHORT[(day.getDay())%7]+'</span><span class="ag-week-daynum">'+day.getDate()+'</span>';
+    (function(isoD){ lbl.onclick=function(){ _agDate=isoToDate(isoD); setAgView('day'); }; })(iso);
+    wrap.appendChild(lbl);
+  }
+  // Lignes horaires
+  for(var h=0;h<HOURS;h++){
+    var tslot=document.createElement('div'); tslot.className='ag-time-slot ag-time-gutter';
+    tslot.textContent=h===0?'':pad(h)+':00'; wrap.appendChild(tslot);
+    for(var d2=0;d2<7;d2++){
+      var dayD=new Date(ws); dayD.setDate(ws.getDate()+d2);
+      var isoD=fmtISO(dayD);
+      var col=document.createElement('div');
+      col.className='ag-week-col'+(isoD===today?' today-col':'');
+      col.style.height='48px';
+      col.style.position='relative';
+      // Événements pour cette heure/jour
+      agendaEvents.filter(function(e){ return e.date===isoD; }).forEach(function(e){
+        var startH=e.timeStart?parseInt(e.timeStart.split(':')[0]):null;
+        var startM=e.timeStart?parseInt(e.timeStart.split(':')[1]):null;
+        if(startH===h){
+          var endH=e.timeEnd?parseInt(e.timeEnd.split(':')[0]):startH+1;
+          var endM=e.timeEnd?parseInt(e.timeEnd.split(':')[1]):0;
+          var durMins=(endH*60+endM)-(startH*60+startM);
+          var topPx=(startM/60)*48;
+          var heightPx=Math.max(20,(durMins/60)*48);
+          var ev=document.createElement('div'); ev.className='ag-week-event';
+          ev.style.cssText='top:'+topPx+'px;height:'+heightPx+'px;background:'+EVT_COLORS[e.type||'cours'];
+          ev.textContent=e.title;
+          (function(evt){ ev.onclick=function(e2){ e2.stopPropagation(); _agSelDate=evt.date; _renderEvtPanel(evt.date); }; })(e);
+          col.appendChild(ev);
+        } else if(!e.timeStart){
+          // Journée entière — afficher en haut de h=0
+          if(h===0){
+            var ev2=document.createElement('div'); ev2.className='ag-week-event';
+            ev2.style.cssText='top:2px;height:20px;background:'+EVT_COLORS[e.type||'cours'];
+            ev2.textContent=e.title;
+            col.appendChild(ev2);
+          }
+        }
+      });
+      (function(iD,hH){ col.onclick=function(){ if(profMode){ document.getElementById('evt-date').value=iD; document.getElementById('evt-time-start').value=pad(hH)+':00'; document.getElementById('evt-time-end').value=pad(hH+1)+':00'; openAddEvtModal(); } }; })(isoD, h);
+      wrap.appendChild(col);
+    }
+  }
+  body.appendChild(wrap);
+  // Scroll vers 8h
+  setTimeout(function(){ body.scrollTop=8*48; },50);
+}
+
+/* ── VUE JOUR ── */
+function renderDayView(body){
+  var iso=fmtISO(_agDate), today=todayISO();
+  var HOURS=24;
+  var wrap=document.createElement('div'); wrap.className='ag-day-wrap';
+  // Header
+  var corner=document.createElement('div'); corner.className='ag-month-daylabel ag-time-gutter'; corner.style.borderBottom='0.5px solid var(--cbr-tertiary)'; wrap.appendChild(corner);
+  var dayHdr=document.createElement('div'); dayHdr.className='ag-week-daylabel'+(iso===today?' today':'');
+  dayHdr.innerHTML='<span>'+DAYS_FR_LONG[_agDate.getDay()]+'</span><span class="ag-week-daynum">'+_agDate.getDate()+' '+MONTHS_FR[_agDate.getMonth()]+'</span>';
+  wrap.appendChild(dayHdr);
+  // Colonne principale avec événements
+  var dayEvts=agendaEvents.filter(function(e){ return e.date===iso; });
+  for(var h=0;h<HOURS;h++){
+    var ts=document.createElement('div'); ts.className='ag-time-slot ag-time-gutter'; ts.textContent=h===0?'':pad(h)+':00'; wrap.appendChild(ts);
+    var col=document.createElement('div'); col.style.cssText='position:relative;height:48px;border-right:0.5px solid var(--cbr-tertiary);border-bottom:0.5px solid var(--cbr-tertiary);cursor:'+(profMode?'pointer':'default');
+    dayEvts.forEach(function(e){
+      var startH=e.timeStart?parseInt(e.timeStart.split(':')[0]):null;
+      var startM=e.timeStart?parseInt(e.timeStart.split(':')[1]):null;
+      if(e.timeStart && startH===h){
+        var endH=e.timeEnd?parseInt(e.timeEnd.split(':')[0]):startH+1;
+        var endM=e.timeEnd?parseInt(e.timeEnd.split(':')[1]):0;
+        var durMins=(endH*60+endM)-(startH*60+startM);
+        var topPx=(startM/60)*48;
+        var heightPx=Math.max(24,(durMins/60)*48);
+        var ev=document.createElement('div'); ev.className='ag-day-event';
+        ev.style.cssText='top:'+topPx+'px;height:'+heightPx+'px;background:'+EVT_COLORS[e.type||'cours'];
+        ev.innerHTML='<div style="font-weight:600">'+e.title+'</div>'+(e.lieu?'<div style="opacity:.8;font-size:9px">📍 '+e.lieu+'</div>':'')+(e.timeStart?'<div style="opacity:.7;font-size:9px">'+e.timeStart+(e.timeEnd?' – '+e.timeEnd:'')+'</div>':'');
+        (function(evt){ ev.onclick=function(ev2){ ev2.stopPropagation(); _agSelDate=iso; _renderEvtPanel(iso); }; })(e);
+        col.appendChild(ev);
+      } else if(!e.timeStart && h===0){
+        var ev2=document.createElement('div'); ev2.className='ag-day-event';
+        ev2.style.cssText='top:2px;height:22px;background:'+EVT_COLORS[e.type||'cours'];
+        ev2.textContent='🗓 '+e.title+(e.lieu?' – '+e.lieu:'');
+        col.appendChild(ev2);
+      }
+    });
+    (function(hH){ if(profMode) col.onclick=function(){ document.getElementById('evt-date').value=iso; document.getElementById('evt-time-start').value=pad(hH)+':00'; document.getElementById('evt-time-end').value=pad(hH+1)+':00'; openAddEvtModal(); }; })(h);
+    wrap.appendChild(col);
+  }
+  body.appendChild(wrap);
+  setTimeout(function(){ body.scrollTop=8*48; },50);
+}
+
+/* ── Panneau liste événements ── */
+function _renderEvtPanel(dateISO){
+  var panel=document.getElementById('ag-evt-panel');
+  var title=document.getElementById('ag-evt-panel-title');
+  var list=document.getElementById('ag-evt-list');
+  if(!dateISO){ panel.style.display='none'; return; }
+  var d=isoToDate(dateISO);
+  title.textContent=DAYS_FR_LONG[d.getDay()]+' '+d.getDate()+' '+MONTHS_FR[d.getMonth()]+' '+d.getFullYear();
+  var evts=agendaEvents.filter(function(e){ return e.date===dateISO; }).sort(function(a,b){ return (a.timeStart||'').localeCompare(b.timeStart||''); });
   list.innerHTML='';
-  if(!evts.length){ empty.style.display='block'; return; }
-  empty.style.display='none';
-
+  if(!evts.length){ list.innerHTML='<div style="font-size:12px;color:var(--ct-tertiary);text-align:center;padding:8px">Aucun événement</div>'; panel.style.display='block'; return; }
   evts.forEach(function(evt){
-    var isPast = evt.date < fmtDateISO(now);
-    var item=document.createElement('div'); item.className='evt-item'; item.style.opacity=isPast?'0.55':'1';
-    // Barre couleur
-    var bar=document.createElement('div'); bar.className='evt-color'; bar.style.background=evt.color||'#378ADD'; item.appendChild(bar);
-    // Corps
-    var body=document.createElement('div'); body.className='evt-body';
-    body.innerHTML='<div class="evt-title">'+EVT_EMOJIS[evt.type||'cours']+' '+evt.title+'</div>'
-      +'<div class="evt-meta">'+fmtDateFR(evt.date)+(evt.time?' · '+evt.time:'')
-      +' <span style="padding:1px 6px;border-radius:99px;font-size:9px;background:'+evt.color+'22;color:'+evt.color+';border:0.5px solid '+evt.color+'66">'+EVT_LABELS[evt.type||'cours']+'</span></div>'
-      +(evt.note?'<div style="font-size:11px;color:var(--ct-tertiary);margin-top:3px">'+evt.note+'</div>':'')
-      +'<a class="evt-gcal" href="'+buildGCalUrl(evt)+'" target="_blank" rel="noopener">'
-      +'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>'
+    var item=document.createElement('div'); item.className='ag-evt-item';
+    var bar=document.createElement('div'); bar.className='ag-evt-bar'; bar.style.background=EVT_COLORS[evt.type||'cours']; item.appendChild(bar);
+    var body2=document.createElement('div'); body2.style.flex='1';
+    var hours=(evt.timeStart?evt.timeStart+(evt.timeEnd?' – '+evt.timeEnd:''):'Journée entière');
+    body2.innerHTML='<div class="ag-evt-title">'+EVT_EMOJIS[evt.type||'cours']+' '+evt.title+'</div>'
+      +'<div class="ag-evt-meta">'+hours+(evt.lieu?' · 📍 '+evt.lieu:'')+'</div>'
+      +(evt.note?'<div style="font-size:10px;color:var(--ct-tertiary);margin-top:2px">'+evt.note+'</div>':'')
+      +'<a class="ag-evt-gcal" href="'+_buildGCalUrl(evt)+'" target="_blank" rel="noopener">'
+      +'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>'
       +' Ajouter à Google Agenda</a>';
-    item.appendChild(body);
-    // Bouton supprimer (prof)
+    item.appendChild(body2);
     if(profMode){
-      var del=document.createElement('button'); del.className='evt-del'; del.innerHTML='×'; del.title='Supprimer';
-      (function(id){ del.onclick=function(){ if(confirm('Supprimer cet événement ?')){ agendaEvents=agendaEvents.filter(function(e){return e.id!==id;}); _saveAgendaEvents(); renderCalendar(); renderEvtList(_agendaSelDate); } }; })(evt.id);
+      var del=document.createElement('button'); del.className='ag-evt-del'; del.innerHTML='×';
+      (function(id){ del.onclick=function(){ if(confirm('Supprimer ?')){ agendaEvents=agendaEvents.filter(function(e){ return e.id!==id; }); _saveAgendaEvents(); renderAgenda(); _renderEvtPanel(dateISO); } }; })(evt.id);
       item.appendChild(del);
     }
     list.appendChild(item);
   });
+  panel.style.display='block';
 }
 
-function buildGCalUrl(evt){
-  // Format Google Calendar: YYYYMMDDTHHMMSS
-  var d = evt.date.replace(/-/g,'');
-  var start, end;
-  if(evt.time){
-    var t = evt.time.replace(':','')+'00';
-    // Fin = +1h par défaut
-    var h = parseInt(evt.time.split(':')[0]);
-    var m = parseInt(evt.time.split(':')[1]);
-    var endH = String(h+1).padStart(2,'0');
-    var endT = endH+String(m).padStart(2,'0')+'00';
-    start = d+'T'+t; end = d+'T'+endT;
+function _buildGCalUrl(evt){
+  var d=evt.date.replace(/-/g,'');
+  var start,end;
+  if(evt.timeStart){
+    start=d+'T'+evt.timeStart.replace(':','')+'00';
+    var endTime=evt.timeEnd||_addHour(evt.timeStart);
+    end=d+'T'+endTime.replace(':','')+'00';
   } else {
-    // Journée entière
-    var nd = new Date(evt.date+'T12:00:00'); nd.setDate(nd.getDate()+1);
-    start = d; end = fmtDateISO(nd).replace(/-/g,'');
+    var nd=new Date(evt.date+'T12:00:00'); nd.setDate(nd.getDate()+1);
+    start=d; end=fmtISO(nd).replace(/-/g,'');
   }
-  var details = evt.note||'';
+  var details=(evt.note||'')+(evt.lieu?'\nLieu: '+evt.lieu:'');
   return 'https://calendar.google.com/calendar/render?action=TEMPLATE'
     +'&text='+encodeURIComponent(evt.title)
     +'&dates='+start+'/'+end
+    +'&location='+encodeURIComponent(evt.lieu||'')
     +'&details='+encodeURIComponent(details)
     +'&sf=true&output=xml';
 }
+function _addHour(t){ var p=t.split(':'); var h=parseInt(p[0])+1; return pad(Math.min(h,23))+':'+p[1]; }
 
+/* ── Modal ajout/édition ── */
 function selectEvtType(btn){
-  document.querySelectorAll('.evt-type-btn').forEach(function(b){ b.className='btn evt-type-btn'; });
+  document.querySelectorAll('.evt-type-btn').forEach(function(b){ b.classList.remove('btn-info'); });
   btn.classList.add('btn-info');
-  _evtType = btn.dataset.type;
-  _evtColor = btn.dataset.color;
+  _evtType=btn.dataset.type;
 }
-
 function openAddEvtModal(){
-  _editEvtId = null;
+  _editEvtId=null;
   document.getElementById('evt-modal-title').textContent='Ajouter un événement';
   document.getElementById('evt-title').value='';
-  document.getElementById('evt-date').value=_agendaSelDate||fmtDateISO(new Date());
-  document.getElementById('evt-time').value='';
+  if(!document.getElementById('evt-date').value) document.getElementById('evt-date').value=_agSelDate||fmtISO(_agDate);
+  document.getElementById('evt-lieu').value='';
   document.getElementById('evt-note').value='';
   document.getElementById('evt-err').style.display='none';
-  // Reset type
-  selectEvtType(document.querySelector('.evt-type-btn[data-type="cours"]'));
+  selectEvtType(document.getElementById('etyp-cours'));
   openModal('modal-evt');
 }
-
 function confirmAddEvt(){
-  var title = document.getElementById('evt-title').value.trim();
-  var date  = document.getElementById('evt-date').value;
-  var time  = document.getElementById('evt-time').value;
-  var note  = document.getElementById('evt-note').value.trim();
-  var err   = document.getElementById('evt-err');
-  err.style.display='none';
+  var title=document.getElementById('evt-title').value.trim();
+  var date=document.getElementById('evt-date').value;
+  var ts=document.getElementById('evt-time-start').value;
+  var te=document.getElementById('evt-time-end').value;
+  var lieu=document.getElementById('evt-lieu').value.trim();
+  var note=document.getElementById('evt-note').value.trim();
+  var err=document.getElementById('evt-err'); err.style.display='none';
   if(!title||!date){ err.style.display='block'; return; }
-  var evt = { id:'evt'+Date.now(), title:title, date:date, time:time, note:note, type:_evtType, color:_evtColor };
+  var evt={id:'evt'+Date.now(),title:title,date:date,timeStart:ts,timeEnd:te,lieu:lieu,note:note,type:_evtType,color:EVT_COLORS[_evtType]};
   agendaEvents.push(evt);
   _saveAgendaEvents();
   closeModal('modal-evt');
-  renderCalendar(); renderEvtList(_agendaSelDate);
+  renderAgenda(); _renderEvtPanel(date);
 }
 
-// Écoute temps réel Firebase pour l'agenda
-if(typeof _db !== 'undefined' && _db){
-  setTimeout(function(){
-    if(!_db) return;
-    _db.ref('sax_agenda_v1').on('value', function(snap){
-      var d = snap.val();
-      agendaEvents = d ? (Array.isArray(d) ? d : Object.values(d)) : [];
-      if(document.getElementById('sc-agenda').classList.contains('active')){
-        renderCalendar(); renderEvtList(_agendaSelDate);
-      }
-    });
-  }, 2000);
-}
+// Écoute temps réel Firebase
+setTimeout(function(){
+  if(typeof _db === 'undefined' || !_db) return;
+  _db.ref('sax_agenda_v1').on('value', function(snap){
+    var d=snap.val();
+    agendaEvents=d?(Array.isArray(d)?d:Object.values(d).filter(Boolean)):[];
+    if(document.getElementById('sc-agenda').classList.contains('active')){ renderAgenda(); _renderEvtPanel(_agSelDate); }
+  });
+}, 2500);
 </script>
+
 
 <!-- ══ BARRE FLOTTANTE PERSISTANTE ══ -->
 <style>
