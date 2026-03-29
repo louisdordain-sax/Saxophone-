@@ -2571,12 +2571,19 @@ function openToolboxScreen(){
 }
 function closeToolboxScreen(){
   _stopMetro();
-  if(_toolboxFromTree&&currentStudent){
+  if(_toolboxFromTree && currentStudent){
+    // Retour à l'arbre (élève ou prof depuis l'arbre)
     show('sc-tree');
+    renderTreeScreen();
   } else if(profMode){
-    show('sc-home');renderHome();
+    // Prof depuis la home
+    show('sc-home'); renderHome();
+  } else if(currentStudent){
+    // Élève — retour à son arbre dans tous les cas
+    show('sc-tree');
+    renderTreeScreen();
   } else {
-    show('sc-login');
+    doLogout();
   }
 }
 function openBoardFromToolbox(){closeToolboxScreen();openBoard(profMode);}
@@ -2938,10 +2945,7 @@ function deleteFamily(id){
   if(_currentProfTab==='competences') renderCEHome();
 }
 
-/* Sauvegarder BRANCHES dans localStorage */
-function saveLocal(){
-  try{localStorage.setItem(SK,JSON.stringify({students,skills:skillsData,profCode,schools,boardColumns,tileInteractions,branches:BRANCHES,branchAngles:BRANCH_ANGLES}))}catch(e){}
-}
+/* saveLocal() est défini plus haut avec sync Firebase */
 
 /* Sync compteur accueil après renderHome */
 var _renderHomeOrig=renderHome;
