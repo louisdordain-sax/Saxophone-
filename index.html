@@ -1240,6 +1240,14 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
 </div>
 
 <script>
+/* ════════════════════════════════════════════════════════
+   ██████  CONFIGURATION FIREBASE  ██████
+   → Remplacez les valeurs ci-dessous par les vôtres
+     après avoir créé votre projet sur console.firebase.google.com
+   ════════════════════════════════════════════════════════ */
+
+/* ════════════════════════════════════════════════════════ */
+
 const SK='sax_v11';
 const COLORS_POOL=['#378ADD','#1D9E75','#7F77DD','#D85A30','#EF9F27'];
 var BRANCHES=[
@@ -3563,11 +3571,8 @@ window.show = function(id){
   _origShow(id);
   setTimeout(_updateGlobalBar, 50);
 };
-// Init
-document.addEventListener('DOMContentLoaded', function(){
-  _updateGlobalBar();
-});
-setTimeout(_updateGlobalBar, 1500);
+// Init — délai pour laisser le temps au script principal de se charger
+setTimeout(_updateGlobalBar, 2000);
 </script>
 </body>
 </html>
