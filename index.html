@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Classes de Louis DORDAIN — Saxophone 🎷 (En ligne)</title>
+<title>Arbre de compétences — Saxophone 🎷 (En ligne)</title>
 <!-- Firebase SDK (compat) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -19,11 +19,7 @@ const FIREBASE_CONFIG = {
   appId: "1:864723364018:web:1cebed384612fe8daf81ab"
 };
 
-/* ── Google Places Autocomplete (optionnel) ──
-   Même clé que Firebase — activez "Places API"
-   sur console.cloud.google.com/apis/library
-   Laissez "VOTRE_API_KEY" pour désactiver     */
-const GOOGLE_PLACES_KEY = "VOTRE_API_KEY";
+
 </script>
 <style>
 :root{
@@ -1030,19 +1026,17 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
 </div><!-- /sc-toolbox -->
 
 <!-- BOARD PARTAGE -->
-<div id="sc-board" class="screen">
+<div id="sc-board" style="position:fixed;inset:0;z-index:10;background:var(--cb-primary);display:none;flex-direction:column;padding:0">
   <div class="board-inner">
-    <div class="board-header">
-      <div>
+    <div class="board-header" style="display:flex;align-items:center;gap:10px">
+      <button class="btn btn-sm" onclick="closeBoardScreen()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg> Retour</button>
+      <div style="flex:1">
         <div class="board-header-title" id="board-main-title">Espace de partage</div>
         <div class="board-header-sub" id="board-subtitle">Documents, liens, enregistrements</div>
       </div>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        <span id="board-mode-badge" class="badge badge-prof" style="display:none">Mode prof</span>
-        <button class="btn btn-sm" id="btn-board-interactions" onclick="openInteractionsModal()" style="display:none"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Interactions</button>
-        <button class="btn btn-info" id="btn-add-col" onclick="addColumn()" style="display:none"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Section</button>
-        <button class="btn" onclick="closeBoardScreen()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg> Retour</button>
-      </div>
+      <span id="board-mode-badge" class="badge badge-prof" style="display:none">Mode prof</span>
+      <button class="btn btn-sm" id="btn-board-interactions" onclick="openInteractionsModal()" style="display:none"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Interactions</button>
+      <button class="btn btn-info btn-sm" id="btn-add-col" onclick="addColumn()" style="display:none"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Section</button>
     </div>
     <div class="board-columns-wrap">
       <div class="board-columns" id="board-columns"></div>
@@ -1517,7 +1511,6 @@ function doLoginEleve(){
   if(pwd!==s.password){document.getElementById('login-err-eleve').textContent='Mot de passe incorrect';document.getElementById('login-err-eleve').style.display='block';return}
   // Sauvegarder la session
   try{sessionStorage.setItem('sax_session',JSON.stringify({role:'eleve',studentId:s.id}));}catch(e){}
-  try{localStorage.setItem('sax_session',JSON.stringify({role:'eleve',studentId:s.id}));}catch(e){}
   profMode=false;openTree(s.id);
 }
 function doLoginProf(){
@@ -1526,7 +1519,6 @@ function doLoginProf(){
   if(v===profCode){
     profMode=true;
     try{sessionStorage.setItem('sax_session',JSON.stringify({role:'prof'}));}catch(e){}
-    try{localStorage.setItem('sax_session',JSON.stringify({role:'prof'}));}catch(e){}
     show('sc-home');renderHome();return;
   }
   document.getElementById('login-err-prof').style.display='block';
@@ -1535,7 +1527,6 @@ function doLogout(){
   profMode=false;
   currentStudent=null;
   try{sessionStorage.removeItem('sax_session');}catch(e){}
-  try{localStorage.removeItem('sax_session');}catch(e){}
   document.getElementById('login-code-eleve').value='';
   document.getElementById('login-pwd-eleve').value='';
   document.getElementById('login-code-prof').value='';
@@ -2468,14 +2459,15 @@ function openBoard(isProf){
   document.getElementById('board-mode-badge').style.display=isProf?'inline-flex':'none';
   document.getElementById('btn-add-col').style.display=isProf?'block':'none';
   const ib=document.getElementById('btn-board-interactions');if(ib)ib.style.display=isProf?'inline-flex':'none';
-  renderBoard();show('sc-board');
+  renderBoard();
+  document.getElementById('sc-board').style.display='flex';
+  _updateStudentFab();
 }
 function closeBoardScreen(){
+  document.getElementById('sc-board').style.display='none';
   if(boardIsProfMode){show('sc-home');renderHome();}
-  else if(currentStudent){
-    // Élève : retour à l'arbre (pas déconnexion)
-    show('sc-tree'); renderTreeScreen();
-  } else { show('sc-login'); }
+  else if(currentStudent){ show('sc-tree'); renderTreeScreen(); }
+  else { show('sc-login'); }
 }
 
 
@@ -3488,7 +3480,7 @@ loadLocal().then(()=>{ _restoreSession(); });
 function _restoreSession(){
   try{
     // Essayer sessionStorage d'abord (même onglet), puis localStorage (autre onglet/refresh)
-    var raw = sessionStorage.getItem('sax_session') || localStorage.getItem('sax_session');
+    var raw = sessionStorage.getItem('sax_session');
     if(!raw) return;
     var session = JSON.parse(raw);
     if(session.role==='prof'){
@@ -3500,7 +3492,7 @@ function _restoreSession(){
     }
   }catch(e){}
   // Session invalide ou expirée
-  try{ sessionStorage.removeItem('sax_session'); localStorage.removeItem('sax_session'); }catch(e){}
+  try{ sessionStorage.removeItem('sax_session'); }catch(e){}
 }
 </script>
 <div class="modal-overlay" id="modal-interactions">
@@ -3516,7 +3508,7 @@ function _restoreSession(){
 </div>
 
 <!-- ══ ÉCRAN AGENDA ══ -->
-<div id="sc-agenda" class="screen" style="position:fixed;inset:0;z-index:16;display:none;flex-direction:column;background:var(--body-bg)">
+<div id="sc-agenda" style="position:fixed;inset:0;z-index:16;display:none;flex-direction:column;background:var(--body-bg)">
 <style>
 #sc-agenda.active{display:flex}
 /* ── Topbar ── */
@@ -3576,12 +3568,7 @@ function _restoreSession(){
 .time-picker-btn:hover{border-color:var(--cbr-info);background:var(--cb-info)}
 .time-picker-btn.has-value{border-color:var(--cbr-info);color:var(--ct-info)}
 html.light .time-picker-btn{background:#fff;border-color:var(--cbr-tertiary)}
-/* Autocomplete dropdown */
-.places-item{padding:9px 12px;font-size:12px;color:var(--ct-primary);cursor:pointer;border-bottom:0.5px solid var(--cbr-tertiary);display:flex;align-items:center;gap:8px;line-height:1.3}
-.places-item:last-child{border-bottom:none}
-.places-item:hover{background:var(--cb-info);color:var(--ct-info)}
-.places-item-main{font-weight:500}
-.places-item-sec{font-size:10px;color:var(--ct-tertiary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
 
 /* ── LIGHTBOX ── */
 #lightbox{position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.93);display:none;flex-direction:column;align-items:center;justify-content:center}
@@ -3746,11 +3733,7 @@ html.light .ag-week-wrap,.html.light .ag-month-grid{border-color:var(--cbr-terti
     </div>
 
     <div class="field-label">Lieu <span style="opacity:.5;font-weight:400">(optionnel)</span></div>
-    <div style="position:relative;margin-bottom:10px">
-      <input type="text" id="evt-lieu" placeholder="ex: Conservatoire de Paris..." autocomplete="off"
-        style="margin-bottom:0" oninput="_placesSearch(this.value)" onfocus="_placesSearch(this.value)">
-      <div id="places-dropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:9999;background:var(--cb-primary);border:0.5px solid var(--cbr-info);border-radius:0 0 var(--br-md) var(--br-md);max-height:200px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,0.4)"></div>
-    </div>
+    <input type="text" id="evt-lieu" placeholder="ex: Conservatoire de musique, Salle 3">
 
     <div class="field-label">Note <span style="opacity:.5;font-weight:400">(optionnel)</span></div>
     <textarea id="evt-note" rows="2" placeholder="Informations complémentaires..."></textarea>
@@ -3796,8 +3779,9 @@ function openAgenda(){
   renderAgenda();
 }
 function closeAgenda(){
-  document.getElementById('sc-agenda').style.display = 'none';
+  document.getElementById('sc-agenda').style.display='none';
   document.getElementById('sc-agenda').classList.remove('active');
+  _updateStudentFab();
 }
 
 /* ── Storage Firebase ── */
@@ -4455,71 +4439,6 @@ function clockDragEnd(e){
   if(_clockMode==='h') setTimeout(function(){ switchClockMode('m'); },200);
 }
 
-/* ══════════════════════════════════════════════
-   GOOGLE PLACES AUTOCOMPLETE
-══════════════════════════════════════════════ */
-var _placesTimer = null;
-var _placesSession = null;
-
-function _placesSearch(query){
-  var dd = document.getElementById('places-dropdown');
-  if(!dd) return;
-  if(!query || query.length < 2){ dd.style.display='none'; return; }
-  if(!GOOGLE_PLACES_KEY || GOOGLE_PLACES_KEY==='VOTRE_API_KEY'){
-    // Pas de clé API — désactivé silencieusement
-    dd.style.display='none'; return;
-  }
-  clearTimeout(_placesTimer);
-  _placesTimer = setTimeout(function(){
-    var url = 'https://maps.googleapis.com/maps/api/place/autocomplete/json'
-      +'?input='+encodeURIComponent(query)
-      +'&language=fr'
-      +'&key='+GOOGLE_PLACES_KEY;
-    // Utiliser un proxy CORS — Google Places bloque les appels directs depuis le navigateur
-    // On passe par une URL alternative compatible navigateur
-    var proxyUrl = 'https://maps.googleapis.com/maps/api/place/autocomplete/json?input='
-      +encodeURIComponent(query)+'&language=fr&key='+GOOGLE_PLACES_KEY+'&callback=_placesCallback';
-    // Injection via script tag (JSONP)
-    var old = document.getElementById('places-jsonp');
-    if(old) old.remove();
-    var sc = document.createElement('script');
-    sc.id = 'places-jsonp';
-    sc.src = proxyUrl;
-    document.head.appendChild(sc);
-  }, 300);
-}
-
-window._placesCallback = function(data){
-  var dd = document.getElementById('places-dropdown');
-  if(!dd) return;
-  if(!data || !data.predictions || !data.predictions.length){
-    dd.style.display='none'; return;
-  }
-  dd.innerHTML = data.predictions.slice(0,5).map(function(p){
-    var main = p.structured_formatting ? p.structured_formatting.main_text : p.description;
-    var sec  = p.structured_formatting ? p.structured_formatting.secondary_text : '';
-    return '<div class="places-item" onclick="_selectPlace('+JSON.stringify(p.description)+')">'
-      +'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ct-tertiary)" stroke-width="2" stroke-linecap="round" style="flex-shrink:0"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>'
-      +'<div style="min-width:0"><div class="places-item-main">'+main+'</div>'+(sec?'<div class="places-item-sec">'+sec+'</div>':'')+'</div>'
-      +'</div>';
-  }).join('');
-  dd.style.display='block';
-};
-
-function _selectPlace(description){
-  var input = document.getElementById('evt-lieu');
-  if(input) input.value = description;
-  var dd = document.getElementById('places-dropdown');
-  if(dd) dd.style.display='none';
-}
-
-// Fermer dropdown si clic ailleurs
-document.addEventListener('click', function(e){
-  var dd=document.getElementById('places-dropdown');
-  var inp=document.getElementById('evt-lieu');
-  if(dd && inp && !inp.contains(e.target) && !dd.contains(e.target)) dd.style.display='none';
-});
-
 /* Mettre à jour les boutons d'heure lors du chargement d'un événement existant */
 function _syncTimeButtons(){
   ['start','end'].forEach(function(t){
@@ -4902,6 +4821,8 @@ window.show = function(id){
   _sfabOrigShow(id);
   setTimeout(_updateStudentFab, 60);
 };
+// Alias pour rétrocompatibilité
+window._showOrig = _sfabOrigShow;
 setTimeout(_updateStudentFab, 1500);
 
 // Fermer le menu si on clique ailleurs
@@ -4913,112 +4834,8 @@ document.addEventListener('click', function(e){
 
 <!-- ══ BARRE FLOTTANTE PERSISTANTE ══ -->
 <style>
-#global-bar{
-  position:fixed;bottom:16px;right:16px;z-index:50;
-  display:flex;flex-direction:column;align-items:flex-end;gap:6px;
-  pointer-events:none;
-}
-/* Masquer la barre flottante sur les écrans avec leur propre navigation */
-#sc-agenda.active ~ #global-bar,
-#sc-toolbox.active ~ #global-bar,
-#sc-board.active ~ #global-bar,
-#sc-tree.active ~ #global-bar,
-#sc-home.active ~ #global-bar { display:none !important; }
-#global-bar>*{pointer-events:auto}
-.gbar-btn{
-  display:flex;align-items:center;gap:6px;
-  padding:7px 13px;border-radius:99px;
-  border:0.5px solid var(--cbr-secondary);
-  background:rgba(15,20,32,0.82);
-  color:var(--ct-secondary);
-  font-size:11px;font-family:var(--font-sans);
-  cursor:pointer;backdrop-filter:blur(8px);
-  transition:all .15s;white-space:nowrap;
-  box-shadow:0 2px 12px rgba(0,0,0,0.35);
-}
-.gbar-btn:hover{color:var(--ct-primary);border-color:var(--cbr-info);background:rgba(30,42,64,0.92)}
-.gbar-btn.danger:hover{background:var(--cb-danger);color:var(--ct-danger);border-color:var(--cbr-danger)}
-html.light .gbar-btn{background:rgba(255,255,255,0.9);border-color:var(--cbr-secondary);box-shadow:0 2px 12px rgba(100,120,160,0.15)}
-html.light .gbar-btn:hover{background:#fff;border-color:var(--cbr-info);color:var(--ct-primary)}
-/* Masquer sur l'écran login */
-#sc-login.active ~ #global-bar{display:none}
-/* Toggle expand */
-#global-bar-menu{display:none;flex-direction:column;align-items:flex-end;gap:6px}
-#global-bar-menu.open{display:flex}
-</style>
 
-<div id="global-bar">
-  <!-- Menu déroulant -->
-  <div id="global-bar-menu">
-    <!-- Thème -->
-    <button class="gbar-btn" onclick="toggleTheme();_updateGlobalBar()" id="gbar-theme">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-      <span id="gbar-theme-label">Mode clair</span>
-    </button>
-    <!-- Paramètres (prof uniquement) -->
-    <button class="gbar-btn" id="gbar-settings" onclick="_gbarGoSettings()" style="display:none">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-      Paramètres
-    </button>
-    <!-- Déconnexion -->
-    <button class="gbar-btn danger" id="gbar-logout" onclick="_gbarLogout()" style="display:none">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-      Déconnexion
-    </button>
-  </div>
-  <!-- Bouton principal toggle -->
-  <button class="gbar-btn" id="gbar-toggle" onclick="_gbarToggle()" style="border-radius:99px;padding:8px 14px">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
-  </button>
-</div>
 
-<script>
-var _gbarOpen = false;
-function _gbarToggle(){
-  _gbarOpen = !_gbarOpen;
-  document.getElementById('global-bar-menu').classList.toggle('open', _gbarOpen);
-  _updateGlobalBar();
-}
-function _updateGlobalBar(){
-  // Thème
-  var isLight = document.documentElement.classList.contains('light');
-  var lbl = document.getElementById('gbar-theme-label');
-  var btn = document.getElementById('gbar-theme');
-  if(lbl) lbl.textContent = isLight ? 'Mode sombre' : 'Mode clair';
-  if(btn) btn.querySelector('svg').style.stroke = isLight ? '#f59e0b' : 'currentColor';
-  // Afficher déconnexion et paramètres seulement si connecté
-  var loggedIn = profMode || !!currentStudent;
-  var logoutBtn = document.getElementById('gbar-logout');
-  var settingsBtn = document.getElementById('gbar-settings');
-  if(logoutBtn) logoutBtn.style.display = loggedIn ? 'flex' : 'none';
-  if(settingsBtn) settingsBtn.style.display = profMode ? 'flex' : 'none';
-  // Masquer la barre entière sur l'écran login
-  var bar = document.getElementById('global-bar');
-  var onLogin = document.getElementById('sc-login').classList.contains('active');
-  if(bar) bar.style.display = onLogin ? 'none' : 'flex';
-}
-function _gbarLogout(){
-  _gbarOpen = false;
-  document.getElementById('global-bar-menu').classList.remove('open');
-  doLogout();
-  _updateGlobalBar();
-}
-function _gbarGoSettings(){
-  _gbarOpen = false;
-  document.getElementById('global-bar-menu').classList.remove('open');
-  // Aller aux paramètres prof
-  show('sc-home');
-  showProfTab('parametres');
-}
 
-// Mettre à jour la barre à chaque changement d'écran
-var _origShow = window.show;
-window.show = function(id){
-  _origShow(id);
-  setTimeout(_updateGlobalBar, 50);
-};
-// Init — délai pour laisser le temps au script principal de se charger
-setTimeout(_updateGlobalBar, 2000);
-</script>
 </body>
 </html>
