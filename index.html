@@ -7,7 +7,7 @@
 <!-- Firebase SDK (compat) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<!-- CONFIGURATION FIREBASE - MODIFIEZ CES VALEURS -->
+<!-- CONFIGURATION - MODIFIEZ CES VALEURS -->
 <script>
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyD0JKAEWhMmZkaitKItgbF3PwqgB7uJ3wg",
@@ -18,6 +18,12 @@ const FIREBASE_CONFIG = {
   messagingSenderId: "864723364018",
   appId: "1:864723364018:web:1cebed384612fe8daf81ab"
 };
+
+/* ── Google Places Autocomplete (optionnel) ──
+   Même clé que Firebase — activez "Places API"
+   sur console.cloud.google.com/apis/library
+   Laissez "VOTRE_API_KEY" pour désactiver     */
+const GOOGLE_PLACES_KEY = "AIzaSyD0JKAEWhMmZkaitKItgbF3PwqgB7uJ3wg";
 </script>
 <style>
 :root{
@@ -624,31 +630,18 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
       <div class="home-welcome">
         <div class="home-welcome-title">Bonjour !</div>
         <div class="home-welcome-sub">Que souhaitez-vous faire ?</div>
-        <div class="home-cards">
+        <div class="home-cards" style="grid-template-columns:repeat(3,1fr);max-width:480px">
           <div class="home-card" onclick="showProfTab('eleves')">
             <div class="home-card-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
             <div class="home-card-title">Élèves</div>
-            
           </div>
           <div class="home-card" onclick="showProfTab('competences')">
             <div class="home-card-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 11l3 3 8-8"/><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
             <div class="home-card-title">Compétences</div>
-            
           </div>
-          <div class="home-card" onclick="openBoard(true)">
-            <div class="home-card-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-            <div class="home-card-title">Partage</div>
-            
-          </div>
-          <div class="home-card" onclick="showProfTab('outils')">
+          <div class="home-card" onclick="openToolboxScreen()">
             <div class="home-card-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.77 3.77z"/></svg></div>
             <div class="home-card-title">Outils</div>
-            
-          </div>
-          <div class="home-card" onclick="showProfTab('parametres')">
-            <div class="home-card-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
-            <div class="home-card-title">Paramètres</div>
-            
           </div>
         </div>
       </div>
@@ -916,7 +909,7 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
 
     <div style="display:flex;gap:8px;margin-top:14px">
       <button class="btn" style="flex:1" onclick="closeProfileDrawer()">Fermer</button>
-      <button class="btn" id="theme-btn-profile" onclick="toggleTheme()" style="flex:0;padding:6px 10px" title="Thème clair/sombre"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
+
       <button class="btn btn-danger btn-sm" onclick="doLogout()" style="flex:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Déconnexion</button>
     </div>
   </div>
@@ -3571,6 +3564,25 @@ function _restoreSession(){
 .ag-day-event{position:absolute;left:4px;right:4px;border-radius:6px;padding:4px 6px;font-size:11px;color:#fff;overflow:hidden;cursor:pointer;z-index:2}
 .ag-day-event:hover{filter:brightness(1.12)}
 
+/* ── Bouton sélecteur d'heure ── */
+.time-picker-btn{
+  width:100%;display:flex;align-items:center;gap:6px;
+  padding:8px 10px;border-radius:var(--br-md);
+  border:0.5px solid var(--cbr-tertiary);
+  background:var(--cb-secondary);color:var(--ct-primary);
+  font-size:13px;font-family:var(--font-sans);
+  cursor:pointer;transition:all .15s;text-align:left;
+}
+.time-picker-btn:hover{border-color:var(--cbr-info);background:var(--cb-info)}
+.time-picker-btn.has-value{border-color:var(--cbr-info);color:var(--ct-info)}
+html.light .time-picker-btn{background:#fff;border-color:var(--cbr-tertiary)}
+/* Autocomplete dropdown */
+.places-item{padding:9px 12px;font-size:12px;color:var(--ct-primary);cursor:pointer;border-bottom:0.5px solid var(--cbr-tertiary);display:flex;align-items:center;gap:8px;line-height:1.3}
+.places-item:last-child{border-bottom:none}
+.places-item:hover{background:var(--cb-info);color:var(--ct-info)}
+.places-item-main{font-weight:500}
+.places-item-sec{font-size:10px;color:var(--ct-tertiary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
 /* ── LIGHTBOX ── */
 #lightbox{position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.93);display:none;flex-direction:column;align-items:center;justify-content:center}
 #lightbox.open{display:flex}
@@ -3639,6 +3651,53 @@ html.light .ag-week-wrap,.html.light .ag-month-grid{border-color:var(--cbr-terti
   </button>
 </div>
 
+<!-- ══ MODAL HORLOGE ══ -->
+<div class="modal-overlay" id="modal-clock" onclick="if(event.target===this)closeClock()">
+<div class="modal-box" style="max-width:300px;padding:20px;text-align:center">
+  <div style="font-size:12px;font-weight:600;color:var(--ct-secondary);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px" id="clock-label">Heure de début</div>
+
+  <!-- Affichage digital -->
+  <div style="display:flex;align-items:center;justify-content:center;gap:4px;margin-bottom:16px">
+    <span id="clock-h-display" style="font-size:42px;font-weight:700;font-family:var(--font-mono);color:var(--ct-info);cursor:pointer;padding:4px 8px;border-radius:8px;background:var(--cb-info)" onclick="switchClockMode('h')">12</span>
+    <span style="font-size:36px;font-weight:300;color:var(--ct-secondary)">:</span>
+    <span id="clock-m-display" style="font-size:42px;font-weight:700;font-family:var(--font-mono);color:var(--ct-secondary);cursor:pointer;padding:4px 8px;border-radius:8px" onclick="switchClockMode('m')">00</span>
+    <div style="display:flex;flex-direction:column;gap:3px;margin-left:6px">
+      <button id="clock-am" class="clock-ampm-btn active" onclick="setAmPm('AM')">AM</button>
+      <button id="clock-pm" class="clock-ampm-btn" onclick="setAmPm('PM')">PM</button>
+    </div>
+  </div>
+
+  <!-- Cadran horloge SVG -->
+  <div style="position:relative;width:220px;height:220px;margin:0 auto 16px">
+    <svg id="clock-svg" width="220" height="220" style="position:absolute;inset:0;cursor:pointer"
+      onmousedown="clockDragStart(event)" onmousemove="clockDragMove(event)" onmouseup="clockDragEnd(event)"
+      ontouchstart="clockDragStart(event)" ontouchmove="clockDragMove(event)" ontouchend="clockDragEnd(event)">
+      <!-- Fond -->
+      <circle cx="110" cy="110" r="108" fill="var(--cb-secondary)" stroke="var(--cbr-tertiary)" stroke-width="0.5"/>
+      <!-- Marqueurs heures/minutes -->
+      <g id="clock-ticks"></g>
+      <!-- Aiguille -->
+      <line id="clock-hand" x1="110" y1="110" x2="110" y2="30" stroke="var(--ct-info)" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- Disque central -->
+      <circle cx="110" cy="110" r="5" fill="var(--ct-info)"/>
+      <!-- Cercle de sélection -->
+      <circle id="clock-selector" cx="110" cy="30" r="16" fill="var(--ct-info)" opacity="0.9"/>
+      <text id="clock-selector-txt" x="110" y="35" text-anchor="middle" font-size="13" font-weight="600" fill="white">12</text>
+    </svg>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn" onclick="closeClock()">Annuler</button>
+    <button class="btn btn-info" onclick="confirmClock()">OK</button>
+  </div>
+</div>
+</div>
+
+<style>
+.clock-ampm-btn{font-size:11px;padding:3px 8px;border-radius:99px;border:0.5px solid var(--cbr-tertiary);background:none;color:var(--ct-secondary);cursor:pointer;font-family:var(--font-sans);transition:all .15s}
+.clock-ampm-btn.active{background:var(--cb-info);color:var(--ct-info);border-color:var(--cbr-info)}
+</style>
+
 <!-- ══ MODAL AJOUT ÉVÉNEMENT ══ -->
 <div class="modal-overlay" id="modal-evt">
   <div class="modal-box" style="max-width:440px;max-height:90vh;overflow-y:auto">
@@ -3667,21 +3726,45 @@ html.light .ag-week-wrap,.html.light .ag-month-grid{border-color:var(--cbr-terti
     <div class="field-label">Date</div>
     <input type="date" id="evt-date">
 
-    <div style="display:flex;gap:8px">
-      <div style="flex:1"><div class="field-label">Heure de début</div><input type="time" id="evt-time-start"></div>
-      <div style="flex:1"><div class="field-label">Heure de fin</div><input type="time" id="evt-time-end"></div>
+    <div style="display:flex;gap:8px;margin-bottom:10px">
+      <div style="flex:1">
+        <div class="field-label">Heure de début</div>
+        <button type="button" class="time-picker-btn" id="btn-time-start" onclick="openClock('start')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span id="lbl-time-start">Choisir</span>
+        </button>
+        <input type="hidden" id="evt-time-start">
+      </div>
+      <div style="flex:1">
+        <div class="field-label">Heure de fin</div>
+        <button type="button" class="time-picker-btn" id="btn-time-end" onclick="openClock('end')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span id="lbl-time-end">Choisir</span>
+        </button>
+        <input type="hidden" id="evt-time-end">
+      </div>
     </div>
 
     <div class="field-label">Lieu <span style="opacity:.5;font-weight:400">(optionnel)</span></div>
-    <input type="text" id="evt-lieu" placeholder="ex: Salle 3, Conservatoire">
+    <div style="position:relative;margin-bottom:10px">
+      <input type="text" id="evt-lieu" placeholder="ex: Conservatoire de Paris..." autocomplete="off"
+        style="margin-bottom:0" oninput="_placesSearch(this.value)" onfocus="_placesSearch(this.value)">
+      <div id="places-dropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:9999;background:var(--cb-primary);border:0.5px solid var(--cbr-info);border-radius:0 0 var(--br-md) var(--br-md);max-height:200px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,0.4)"></div>
+    </div>
 
     <div class="field-label">Note <span style="opacity:.5;font-weight:400">(optionnel)</span></div>
     <textarea id="evt-note" rows="2" placeholder="Informations complémentaires..."></textarea>
 
     <div class="err" id="evt-err">Titre et date requis</div>
-    <div class="modal-footer">
-      <button class="btn" onclick="closeModal('modal-evt')">Annuler</button>
-      <button class="btn btn-info" onclick="confirmAddEvt()">Enregistrer</button>
+    <div class="modal-footer" style="justify-content:space-between">
+      <button class="btn btn-danger btn-sm" id="evt-del-btn" onclick="_deleteEditingEvt()" style="display:none">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        Supprimer
+      </button>
+      <div style="display:flex;gap:6px;margin-left:auto">
+        <button class="btn" onclick="closeModal('modal-evt')">Annuler</button>
+        <button class="btn btn-info" onclick="confirmAddEvt()">Enregistrer</button>
+      </div>
     </div>
   </div>
 </div>
@@ -4065,24 +4148,69 @@ function _renderEvtPanel(dateISO){
   if(!evts.length){ list.innerHTML='<div style="font-size:12px;color:var(--ct-tertiary);text-align:center;padding:8px">Aucun événement</div>'; panel.style.display='block'; return; }
   evts.forEach(function(evt){
     var item=document.createElement('div'); item.className='ag-evt-item';
+    item.style.cursor='pointer';
+    item.title=profMode?'Cliquer pour modifier':'Cliquer pour voir les détails';
     var bar=document.createElement('div'); bar.className='ag-evt-bar'; bar.style.background=EVT_COLORS[evt.type||'cours']; item.appendChild(bar);
     var body2=document.createElement('div'); body2.style.flex='1';
     var hours=(evt.timeStart?evt.timeStart+(evt.timeEnd?' – '+evt.timeEnd:''):'Journée entière');
     body2.innerHTML='<div class="ag-evt-title">'+EVT_EMOJIS[evt.type||'cours']+' '+evt.title+'</div>'
       +'<div class="ag-evt-meta">'+hours+(evt.lieu?' · 📍 '+evt.lieu:'')+'</div>'
-      +(evt.note?'<div style="font-size:10px;color:var(--ct-tertiary);margin-top:2px">'+evt.note+'</div>':'')
-      +'<a class="ag-evt-gcal" href="'+_buildGCalUrl(evt)+'" target="_blank" rel="noopener">'
-      +'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>'
-      +' Ajouter à Google Agenda</a>';
+      +(evt.note?'<div style="font-size:10px;color:var(--ct-tertiary);margin-top:2px">'+evt.note+'</div>':''  );
     item.appendChild(body2);
-    if(profMode){
-      var del=document.createElement('button'); del.className='ag-evt-del'; del.innerHTML='×';
-      (function(id){ del.onclick=function(){ if(confirm('Supprimer ?')){ agendaEvents=agendaEvents.filter(function(e){ return e.id!==id; }); _saveAgendaEvents(); renderAgenda(); _renderEvtPanel(dateISO); } }; })(evt.id);
-      item.appendChild(del);
-    }
+    // Flèche indicateur
+    var arrow=document.createElement('span');
+    arrow.innerHTML=profMode
+      ?'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>'
+      :'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>';
+    arrow.style.cssText='color:var(--ct-tertiary);flex-shrink:0;display:flex;align-items:center;margin-top:2px';
+    item.appendChild(arrow);
+    (function(e){ item.onclick=function(ev){ ev.stopPropagation(); openEvtDetail(e, dateISO); }; })(evt);
     list.appendChild(item);
   });
   panel.style.display='block';
+}
+
+function openEvtDetail(evt, dateISO){
+  if(profMode){
+    // Mode prof : ouvrir le modal d'édition pré-rempli
+    _editEvtId = evt.id;
+    document.getElementById('evt-modal-title').textContent = 'Modifier l\'événement';
+    document.getElementById('evt-title').value = evt.title || '';
+    document.getElementById('evt-date').value = evt.date || '';
+    document.getElementById('evt-time-start').value = evt.timeStart || '';
+    document.getElementById('evt-time-end').value = evt.timeEnd || '';
+    document.getElementById('evt-lieu').value = evt.lieu || '';
+    document.getElementById('evt-note').value = evt.note || '';
+    document.getElementById('evt-err').style.display = 'none';
+    // Sélectionner le bon type
+    var typeBtn = document.getElementById('etyp-'+( evt.type||'cours'));
+    if(typeBtn) selectEvtType(typeBtn);
+    // Afficher le bouton Supprimer en mode édition
+    document.getElementById('evt-del-btn').style.display='inline-flex';
+    _syncTimeButtons();
+    openModal('modal-evt');
+  } else {
+    // Mode élève : modal de détail en lecture seule
+    var modal = document.getElementById('modal-evt-detail');
+    if(!modal){
+      modal = document.createElement('div');
+      modal.id = 'modal-evt-detail';
+      modal.className = 'modal-overlay';
+      modal.innerHTML = '<div class="modal-box" style="max-width:380px"><div id="evtd-color-bar" style="height:4px;border-radius:99px;margin-bottom:12px"></div><h3 id="evtd-title" style="margin-bottom:8px"></h3><div id="evtd-body" style="font-size:12px;color:var(--ct-secondary);line-height:1.7"></div><div style="margin-top:14px"><a id="evtd-gcal" class="ag-evt-gcal" href="#" target="_blank" rel="noopener"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Ajouter à Google Agenda</a></div><div class="modal-footer"><button class="btn" onclick="closeModal('modal-evt-detail')">Fermer</button></div></div>';
+      document.body.appendChild(modal);
+    }
+    var hours = evt.timeStart ? evt.timeStart+(evt.timeEnd?' – '+evt.timeEnd:'') : 'Journée entière';
+    var d = isoToDate(evt.date);
+    document.getElementById('evtd-color-bar').style.background = EVT_COLORS[evt.type||'cours'];
+    document.getElementById('evtd-title').textContent = EVT_EMOJIS[evt.type||'cours']+' '+evt.title;
+    document.getElementById('evtd-body').innerHTML =
+      '<div>📅 '+DAYS_FR_LONG[d.getDay()]+' '+d.getDate()+' '+MONTHS_FR[d.getMonth()]+' '+d.getFullYear()+'</div>'
+      +'<div>🕐 '+hours+'</div>'
+      +(evt.lieu?'<div>📍 '+evt.lieu+'</div>':''  )
+      +(evt.note?'<div style="margin-top:6px;padding:8px;background:var(--cb-secondary);border-radius:6px;color:var(--ct-primary)">'+evt.note+'</div>':''  );
+    document.getElementById('evtd-gcal').href = _buildGCalUrl(evt);
+    openModal('modal-evt-detail');
+  }
 }
 
 function _buildGCalUrl(evt){
@@ -4116,12 +4244,30 @@ function openAddEvtModal(){
   _editEvtId=null;
   document.getElementById('evt-modal-title').textContent='Ajouter un événement';
   document.getElementById('evt-title').value='';
-  if(!document.getElementById('evt-date').value) document.getElementById('evt-date').value=_agSelDate||fmtISO(_agDate);
+  document.getElementById('evt-date').value=_agSelDate||fmtISO(_agDate);
+  document.getElementById('evt-time-start').value='';
+  document.getElementById('evt-time-end').value='';
+  document.getElementById('lbl-time-start').textContent='Choisir';
+  document.getElementById('lbl-time-end').textContent='Choisir';
+  document.getElementById('btn-time-start').classList.remove('has-value');
+  document.getElementById('btn-time-end').classList.remove('has-value');
   document.getElementById('evt-lieu').value='';
   document.getElementById('evt-note').value='';
   document.getElementById('evt-err').style.display='none';
+  document.getElementById('evt-del-btn').style.display='none';
   selectEvtType(document.getElementById('etyp-cours'));
+  _syncTimeButtons();
   openModal('modal-evt');
+}
+
+function _deleteEditingEvt(){
+  if(!_editEvtId) return;
+  if(!confirm('Supprimer cet événement ?')) return;
+  agendaEvents=agendaEvents.filter(function(e){ return e.id!==_editEvtId; });
+  _editEvtId=null;
+  _saveAgendaEvents();
+  closeModal('modal-evt');
+  renderAgenda(); _renderEvtPanel(_agSelDate);
 }
 function confirmAddEvt(){
   var title=document.getElementById('evt-title').value.trim();
@@ -4132,11 +4278,262 @@ function confirmAddEvt(){
   var note=document.getElementById('evt-note').value.trim();
   var err=document.getElementById('evt-err'); err.style.display='none';
   if(!title||!date){ err.style.display='block'; return; }
-  var evt={id:'evt'+Date.now(),title:title,date:date,timeStart:ts,timeEnd:te,lieu:lieu,note:note,type:_evtType,color:EVT_COLORS[_evtType]};
-  agendaEvents.push(evt);
+  if(_editEvtId){
+    // Mode édition : mettre à jour l'événement existant
+    var idx=agendaEvents.findIndex(function(e){ return e.id===_editEvtId; });
+    if(idx!==-1){
+      agendaEvents[idx]=Object.assign(agendaEvents[idx],{title:title,date:date,timeStart:ts,timeEnd:te,lieu:lieu,note:note,type:_evtType,color:EVT_COLORS[_evtType]});
+    }
+  } else {
+    // Nouveau événement
+    agendaEvents.push({id:'evt'+Date.now(),title:title,date:date,timeStart:ts,timeEnd:te,lieu:lieu,note:note,type:_evtType,color:EVT_COLORS[_evtType]});
+  }
+  _editEvtId=null;
   _saveAgendaEvents();
   closeModal('modal-evt');
   renderAgenda(); _renderEvtPanel(date);
+}
+
+
+/* ══════════════════════════════════════════════
+   HORLOGE GOOGLE-STYLE
+══════════════════════════════════════════════ */
+var _clockTarget = 'start'; // 'start' ou 'end'
+var _clockMode   = 'h';     // 'h' heures, 'm' minutes
+var _clockH      = 12;
+var _clockM      = 0;
+var _clockAM     = true;
+var _clockDragging = false;
+
+function openClock(target){
+  _clockTarget = target;
+  _clockMode   = 'h';
+  // Lire valeur actuelle si elle existe
+  var cur = document.getElementById('evt-time-'+target).value;
+  if(cur){
+    var parts = cur.split(':');
+    var h = parseInt(parts[0]), m = parseInt(parts[1]);
+    _clockAM = h < 12;
+    _clockH  = h % 12 || 12;
+    _clockM  = m;
+  } else {
+    _clockH = 12; _clockM = 0; _clockAM = true;
+  }
+  document.getElementById('clock-label').textContent = target==='start' ? 'Heure de début' : 'Heure de fin';
+  _renderClock();
+  openModal('modal-clock');
+}
+function closeClock(){ closeModal('modal-clock'); }
+function confirmClock(){
+  var h24 = _clockAM ? (_clockH===12?0:_clockH) : (_clockH===12?12:_clockH+12);
+  var val = pad(h24)+':'+pad(_clockM);
+  document.getElementById('evt-time-'+_clockTarget).value = val;
+  var lbl = document.getElementById('lbl-time-'+_clockTarget);
+  if(lbl) lbl.textContent = val;
+  var btn = document.getElementById('btn-time-'+_clockTarget);
+  if(btn) btn.classList.add('has-value');
+  // Si début défini, auto-proposer fin = début + 1h
+  if(_clockTarget==='start'){
+    var endVal = document.getElementById('evt-time-end').value;
+    if(!endVal){
+      var eh = Math.min(h24+1, 23);
+      var autoEnd = pad(eh)+':'+pad(_clockM);
+      document.getElementById('evt-time-end').value = autoEnd;
+      var endLbl = document.getElementById('lbl-time-end');
+      if(endLbl) endLbl.textContent = autoEnd;
+      var endBtn = document.getElementById('btn-time-end');
+      if(endBtn) endBtn.classList.add('has-value');
+    }
+  }
+  closeClock();
+}
+function switchClockMode(mode){
+  _clockMode = mode;
+  // Mettre en évidence le champ actif
+  var hd=document.getElementById('clock-h-display'), md=document.getElementById('clock-m-display');
+  if(hd) hd.style.color = mode==='h'?'var(--ct-info)':'var(--ct-secondary)';
+  if(hd) hd.style.background = mode==='h'?'var(--cb-info)':'transparent';
+  if(md) md.style.color = mode==='m'?'var(--ct-info)':'var(--ct-secondary)';
+  if(md) md.style.background = mode==='m'?'var(--cb-info)':'transparent';
+  _renderClock();
+}
+function setAmPm(v){
+  _clockAM = v==='AM';
+  document.getElementById('clock-am').classList.toggle('active',_clockAM);
+  document.getElementById('clock-pm').classList.toggle('active',!_clockAM);
+  _updateClockDisplay();
+}
+
+function _renderClock(){
+  var svg = document.getElementById('clock-svg'); if(!svg) return;
+  var ticks = document.getElementById('clock-ticks');
+  ticks.innerHTML='';
+  var cx=110, cy=110, R=90, Rtext=75;
+  var count = _clockMode==='h' ? 12 : 12; // 12 positions
+  var step  = _clockMode==='h' ? 1 : 5;
+  for(var i=0;i<12;i++){
+    var val   = _clockMode==='h' ? (i===0?12:i) : i*5;
+    var angle = (i/12)*2*Math.PI - Math.PI/2;
+    var tx = cx + Rtext*Math.cos(angle);
+    var ty = cy + Rtext*Math.sin(angle);
+    var isSelected = _clockMode==='h' ? (_clockH===val) : (_clockM===val);
+    var t = document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x', tx); t.setAttribute('y', ty+5);
+    t.setAttribute('text-anchor','middle');
+    t.setAttribute('font-size','14'); t.setAttribute('font-weight','500');
+    t.setAttribute('fill', isSelected ? '#fff' : 'var(--ct-secondary)');
+    t.textContent = _clockMode==='h' ? val : pad(val);
+    ticks.appendChild(t);
+    // Marque
+    var mk = document.createElementNS('http://www.w3.org/2000/svg','line');
+    var x1=cx+(R+8)*Math.cos(angle), y1=cy+(R+8)*Math.sin(angle);
+    var x2=cx+(R+14)*Math.cos(angle), y2=cy+(R+14)*Math.sin(angle);
+    mk.setAttribute('x1',x1);mk.setAttribute('y1',y1);mk.setAttribute('x2',x2);mk.setAttribute('y2',y2);
+    mk.setAttribute('stroke','var(--cbr-secondary)');mk.setAttribute('stroke-width','1');
+    ticks.appendChild(mk);
+  }
+  // Mettre à jour aiguille et sélecteur
+  var selVal  = _clockMode==='h' ? _clockH : _clockM;
+  var selMax  = _clockMode==='h' ? 12 : 60;
+  var selAngle= (selVal/selMax)*2*Math.PI - Math.PI/2;
+  var R2=90;
+  var sx=cx+R2*Math.cos(selAngle), sy=cy+R2*Math.sin(selAngle);
+  var hand=document.getElementById('clock-hand');
+  if(hand){hand.setAttribute('x2',sx);hand.setAttribute('y2',sy);}
+  var sel=document.getElementById('clock-selector');
+  if(sel){sel.setAttribute('cx',sx);sel.setAttribute('cy',sy);}
+  var selTxt=document.getElementById('clock-selector-txt');
+  if(selTxt){
+    selTxt.setAttribute('x',sx); selTxt.setAttribute('y',sy+5);
+    selTxt.textContent=_clockMode==='h'?selVal:pad(selVal);
+  }
+  _updateClockDisplay();
+  switchClockMode(_clockMode); // refresh highlights
+}
+
+function _updateClockDisplay(){
+  var hd=document.getElementById('clock-h-display');
+  var md=document.getElementById('clock-m-display');
+  if(hd) hd.textContent=_clockH;
+  if(md) md.textContent=pad(_clockM);
+}
+
+function _clockAngleToValue(x,y){
+  var cx=110,cy=110;
+  var angle=Math.atan2(y-cy,x-cx)+Math.PI/2;
+  if(angle<0) angle+=2*Math.PI;
+  if(_clockMode==='h'){
+    var h=Math.round(angle/(2*Math.PI)*12);
+    if(h===0) h=12;
+    return h;
+  } else {
+    var m=Math.round(angle/(2*Math.PI)*60);
+    if(m===60) m=0;
+    return m;
+  }
+}
+function _clockEventXY(e){
+  var rect=document.getElementById('clock-svg').getBoundingClientRect();
+  var src=e.touches?e.touches[0]:e;
+  return{x:(src.clientX-rect.left)*(220/rect.width), y:(src.clientY-rect.top)*(220/rect.height)};
+}
+function clockDragStart(e){ _clockDragging=true; clockDragMove(e); e.preventDefault(); }
+function clockDragMove(e){
+  if(!_clockDragging) return;
+  var p=_clockEventXY(e);
+  // Seulement si dans le rayon du cadran
+  var dx=p.x-110,dy=p.y-110,dist=Math.sqrt(dx*dx+dy*dy);
+  if(dist<20||dist>108) return;
+  var val=_clockAngleToValue(p.x,p.y);
+  if(_clockMode==='h') _clockH=val; else _clockM=val;
+  _renderClock();
+  e.preventDefault();
+}
+function clockDragEnd(e){ 
+  _clockDragging=false;
+  // Passer automatiquement aux minutes après avoir choisi l'heure
+  if(_clockMode==='h') setTimeout(function(){ switchClockMode('m'); },200);
+}
+
+/* ══════════════════════════════════════════════
+   GOOGLE PLACES AUTOCOMPLETE
+══════════════════════════════════════════════ */
+var _placesTimer = null;
+var _placesSession = null;
+
+function _placesSearch(query){
+  var dd = document.getElementById('places-dropdown');
+  if(!dd) return;
+  if(!query || query.length < 2){ dd.style.display='none'; return; }
+  if(!GOOGLE_PLACES_KEY || GOOGLE_PLACES_KEY==='VOTRE_API_KEY'){
+    // Pas de clé API — désactivé silencieusement
+    dd.style.display='none'; return;
+  }
+  clearTimeout(_placesTimer);
+  _placesTimer = setTimeout(function(){
+    var url = 'https://maps.googleapis.com/maps/api/place/autocomplete/json'
+      +'?input='+encodeURIComponent(query)
+      +'&language=fr'
+      +'&key='+GOOGLE_PLACES_KEY;
+    // Utiliser un proxy CORS — Google Places bloque les appels directs depuis le navigateur
+    // On passe par une URL alternative compatible navigateur
+    var proxyUrl = 'https://maps.googleapis.com/maps/api/place/autocomplete/json?input='
+      +encodeURIComponent(query)+'&language=fr&key='+GOOGLE_PLACES_KEY+'&callback=_placesCallback';
+    // Injection via script tag (JSONP)
+    var old = document.getElementById('places-jsonp');
+    if(old) old.remove();
+    var sc = document.createElement('script');
+    sc.id = 'places-jsonp';
+    sc.src = proxyUrl;
+    document.head.appendChild(sc);
+  }, 300);
+}
+
+window._placesCallback = function(data){
+  var dd = document.getElementById('places-dropdown');
+  if(!dd) return;
+  if(!data || !data.predictions || !data.predictions.length){
+    dd.style.display='none'; return;
+  }
+  dd.innerHTML = data.predictions.slice(0,5).map(function(p){
+    var main = p.structured_formatting ? p.structured_formatting.main_text : p.description;
+    var sec  = p.structured_formatting ? p.structured_formatting.secondary_text : '';
+    return '<div class="places-item" onclick="_selectPlace('+JSON.stringify(p.description)+')">'
+      +'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ct-tertiary)" stroke-width="2" stroke-linecap="round" style="flex-shrink:0"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>'
+      +'<div style="min-width:0"><div class="places-item-main">'+main+'</div>'+(sec?'<div class="places-item-sec">'+sec+'</div>':'')+'</div>'
+      +'</div>';
+  }).join('');
+  dd.style.display='block';
+};
+
+function _selectPlace(description){
+  var input = document.getElementById('evt-lieu');
+  if(input) input.value = description;
+  var dd = document.getElementById('places-dropdown');
+  if(dd) dd.style.display='none';
+}
+
+// Fermer dropdown si clic ailleurs
+document.addEventListener('click', function(e){
+  var dd=document.getElementById('places-dropdown');
+  var inp=document.getElementById('evt-lieu');
+  if(dd && inp && !inp.contains(e.target) && !dd.contains(e.target)) dd.style.display='none';
+});
+
+/* Mettre à jour les boutons d'heure lors du chargement d'un événement existant */
+function _syncTimeButtons(){
+  ['start','end'].forEach(function(t){
+    var val = document.getElementById('evt-time-'+t).value;
+    var lbl = document.getElementById('lbl-time-'+t);
+    var btn = document.getElementById('btn-time-'+t);
+    if(val){
+      if(lbl) lbl.textContent = val;
+      if(btn) btn.classList.add('has-value');
+    } else {
+      if(lbl) lbl.textContent = 'Choisir';
+      if(btn) btn.classList.remove('has-value');
+    }
+  });
 }
 
 // Écoute temps réel Firebase
@@ -4401,6 +4798,119 @@ function _lbPrint(){
 }
 </script>
 
+
+<!-- ══ MENU FLOTTANT ÉLÈVE ══ -->
+<style>
+#student-fab{
+  position:fixed;bottom:18px;right:18px;z-index:9000;
+  display:none;flex-direction:column;align-items:flex-end;gap:8px;
+}
+#student-fab-menu{
+  display:none;flex-direction:column;align-items:flex-end;gap:6px;
+  animation:fadeInUp .15s ease;
+}
+#student-fab-menu.open{display:flex}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.sfab-btn{
+  display:flex;align-items:center;gap:8px;
+  padding:9px 16px;border-radius:99px;
+  border:0.5px solid var(--cbr-secondary);
+  background:rgba(15,20,32,0.88);
+  color:var(--ct-primary);
+  font-size:12px;font-family:var(--font-sans);
+  cursor:pointer;backdrop-filter:blur(10px);
+  transition:all .15s;white-space:nowrap;
+  box-shadow:0 2px 12px rgba(0,0,0,0.4);
+}
+.sfab-btn:hover{border-color:var(--cbr-info);background:rgba(30,42,64,0.95)}
+.sfab-btn.logout{color:var(--ct-danger);border-color:var(--cbr-danger)}
+.sfab-btn.logout:hover{background:var(--cb-danger)}
+html.light .sfab-btn{background:rgba(255,255,255,0.94);box-shadow:0 2px 12px rgba(100,120,160,0.18)}
+#student-fab-toggle{
+  width:44px;height:44px;border-radius:50%;
+  background:rgba(15,20,32,0.88);
+  border:0.5px solid var(--cbr-secondary);
+  color:var(--ct-secondary);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(10px);
+  box-shadow:0 2px 12px rgba(0,0,0,0.35);
+  transition:all .15s;
+}
+#student-fab-toggle:hover{border-color:var(--cbr-info);color:var(--ct-info)}
+#student-fab-toggle.open{background:rgba(30,42,64,0.95);border-color:var(--cbr-info)}
+html.light #student-fab-toggle{background:rgba(255,255,255,0.94)}
+</style>
+
+<div id="student-fab">
+  <div id="student-fab-menu">
+    <!-- Thème -->
+    <button class="sfab-btn" onclick="_sfabTheme()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      <span id="sfab-theme-label">Mode clair</span>
+    </button>
+    <!-- Déconnexion -->
+    <button class="sfab-btn logout" onclick="_sfabLogout()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Déconnexion
+    </button>
+  </div>
+  <!-- Bouton principal -->
+  <button id="student-fab-toggle" onclick="_sfabToggle()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+  </button>
+</div>
+
+<script>
+var _sfabOpen = false;
+
+function _sfabToggle(){
+  _sfabOpen = !_sfabOpen;
+  document.getElementById('student-fab-menu').classList.toggle('open', _sfabOpen);
+  document.getElementById('student-fab-toggle').classList.toggle('open', _sfabOpen);
+  _sfabUpdateThemeLabel();
+}
+function _sfabClose(){
+  _sfabOpen = false;
+  document.getElementById('student-fab-menu').classList.remove('open');
+  document.getElementById('student-fab-toggle').classList.remove('open');
+}
+function _sfabUpdateThemeLabel(){
+  var isLight = document.documentElement.classList.contains('light');
+  var lbl = document.getElementById('sfab-theme-label');
+  if(lbl) lbl.textContent = isLight ? 'Mode sombre' : 'Mode clair';
+}
+function _sfabTheme(){
+  toggleTheme();
+  _sfabUpdateThemeLabel();
+}
+function _sfabLogout(){
+  _sfabClose();
+  doLogout();
+}
+function _updateStudentFab(){
+  var fab = document.getElementById('student-fab');
+  if(!fab) return;
+  // Visible uniquement sur sc-tree en mode élève
+  var onTree = document.getElementById('sc-tree') && document.getElementById('sc-tree').classList.contains('active');
+  fab.style.display = (!profMode && currentStudent && onTree) ? 'flex' : 'none';
+  _sfabUpdateThemeLabel();
+}
+
+// Hooker sur show() pour mettre à jour le fab
+var _sfabOrigShow = window.show;
+window.show = function(id){
+  _sfabOrigShow(id);
+  setTimeout(_updateStudentFab, 60);
+};
+setTimeout(_updateStudentFab, 1500);
+
+// Fermer le menu si on clique ailleurs
+document.addEventListener('click', function(e){
+  var fab = document.getElementById('student-fab');
+  if(_sfabOpen && fab && !fab.contains(e.target)) _sfabClose();
+});
+</script>
+
 <!-- ══ BARRE FLOTTANTE PERSISTANTE ══ -->
 <style>
 #global-bar{
@@ -4408,11 +4918,12 @@ function _lbPrint(){
   display:flex;flex-direction:column;align-items:flex-end;gap:6px;
   pointer-events:none;
 }
-/* Masquer la barre flottante sur les écrans fullscreen */
+/* Masquer la barre flottante sur les écrans avec leur propre navigation */
 #sc-agenda.active ~ #global-bar,
 #sc-toolbox.active ~ #global-bar,
 #sc-board.active ~ #global-bar,
-#sc-tree.active ~ #global-bar { display:none !important; }
+#sc-tree.active ~ #global-bar,
+#sc-home.active ~ #global-bar { display:none !important; }
 #global-bar>*{pointer-events:auto}
 .gbar-btn{
   display:flex;align-items:center;gap:6px;
