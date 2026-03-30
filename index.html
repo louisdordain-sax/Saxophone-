@@ -592,7 +592,7 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3 8-8"/><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
       Compétences
     </button>
-    <button class="prof-tab" id="ptab-outils" onclick="openToolboxScreen()">
+    <button class="prof-tab" id="ptab-outils" onclick="showProfTab('outils')">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.77 3.77z"/></svg>
       Outils
     </button>
@@ -665,19 +665,28 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
 
     <!-- Onglet Outils -->
     <div id="ptab-content-outils" style="display:none">
-      <div style="padding:1rem 0;font-size:13px;color:var(--ct-secondary)">
-        Cliquez sur le bouton ci-dessous pour ouvrir la boîte à outils complète.
+      <div class="home-cards" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr))">
+
+        <!-- Métronome -->
+        <div class="home-card" id="card-metro" onclick="openMetroPopup()">
+          <div class="home-card-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
+          <div class="home-card-title">Métronome</div>
+        </div>
+
+        <!-- Partage -->
+        <div class="home-card" onclick="openBoard(true)">
+          <div class="home-card-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+          <div class="home-card-title">Partage</div>
+        </div>
+
+        <!-- Agenda -->
+        <div class="home-card" id="card-agenda" onclick="openAgenda()">
+          <div class="home-card-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+          <div class="home-card-title">Agenda</div>
+        </div>
+
       </div>
-      <button class="btn btn-info" onclick="openToolboxScreen()" style="display:flex;align-items:center;gap:6px;padding:10px 18px">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.77 3.77z"/></svg>
-        Ouvrir la boîte à outils
-      </button>
-      <div style="margin-top:1.5rem">
-        <button class="btn" onclick="openBoard(true)" style="display:flex;align-items:center;gap:6px;padding:10px 18px">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          Espace de partage
-        </button>
-      </div>
+
     </div>
 
     <!-- Onglet Paramètres (rendu par showProfTab) -->
@@ -935,21 +944,7 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
         <div class="home-card-title">Métronome</div>
       </div>
 
-      <!-- Carte Partage -->
-      <div class="home-card" id="card-share" onclick="openBoard(profMode);" style="min-width:140px;flex:1">
-        <div class="home-card-icon">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        </div>
-        <div class="home-card-title">Partage</div>
-      </div>
 
-      <!-- Carte Agenda -->
-      <div class="home-card" id="card-agenda" onclick="openAgenda()" style="min-width:140px;flex:1">
-        <div class="home-card-icon">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        </div>
-        <div class="home-card-title">Agenda</div>
-      </div>
 
     </div>
   </div>
@@ -2465,7 +2460,7 @@ function openBoard(isProf){
 }
 function closeBoardScreen(){
   document.getElementById('sc-board').style.display='none';
-  if(boardIsProfMode){show('sc-home');renderHome();}
+  if(boardIsProfMode){ show('sc-home'); showProfTab('outils'); }
   else if(currentStudent){ show('sc-tree'); renderTreeScreen(); }
   else { show('sc-login'); }
 }
@@ -2556,31 +2551,25 @@ function clearInteractions(){
 var _toolboxFromTree=false;
 
 function openToolboxScreen(){
-  // Fermer les volets au premier affichage
+  _toolboxFromTree=document.getElementById('sc-tree').classList.contains('active');
+  if(profMode && !_toolboxFromTree){
+    // Prof depuis la home → utiliser l'onglet Outils
+    show('sc-home'); showProfTab('outils'); return;
+  }
+  // Élève depuis l'arbre (ou prof depuis l'arbre) → garder sc-toolbox
   _metroPanelOpen=false;_sharePanelOpen=false;
   var mp=document.getElementById('metro-panel');if(mp)mp.style.transform='translateY(100%)';
   var sp=document.getElementById('share-panel');if(sp)sp.style.transform='translateY(100%)';
-
-  _toolboxFromTree=document.getElementById('sc-tree').classList.contains('active');
-  // Mettre à jour le bouton retour selon le contexte
   show('sc-toolbox');
-  // Rafraîchir les fenêtres déjà ouvertes
-  // Masquer dock interactions si pas prof
-  // Sync thème btn
 }
 function closeToolboxScreen(){
   _stopMetro();
   if(_toolboxFromTree && currentStudent){
-    // Retour à l'arbre (élève ou prof depuis l'arbre)
-    show('sc-tree');
-    renderTreeScreen();
+    show('sc-tree'); renderTreeScreen();
+  } else if(currentStudent && !profMode){
+    show('sc-tree'); renderTreeScreen();
   } else if(profMode){
-    // Prof depuis la home
-    show('sc-home'); renderHome();
-  } else if(currentStudent){
-    // Élève — retour à son arbre dans tous les cas
-    show('sc-tree');
-    renderTreeScreen();
+    show('sc-home'); showProfTab('outils');
   } else {
     doLogout();
   }
@@ -3771,7 +3760,9 @@ var DAYS_FR_LONG = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Sa
 var DAYS_FR_SHORT = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
 
 /* ── Ouverture / Fermeture ── */
+var _agendaFromProf = false;
 function openAgenda(){
+  _agendaFromProf = profMode;
   _loadAgendaEvents();
   document.getElementById('ag-fab').style.display = profMode ? 'flex' : 'none';
   document.getElementById('sc-agenda').style.display = 'flex';
@@ -3781,6 +3772,9 @@ function openAgenda(){
 function closeAgenda(){
   document.getElementById('sc-agenda').style.display='none';
   document.getElementById('sc-agenda').classList.remove('active');
+  if(_agendaFromProf){ show('sc-home'); showProfTab('outils'); }
+  else if(currentStudent){ show('sc-tree'); renderTreeScreen(); }
+  else { show('sc-login'); }
   _updateStudentFab();
 }
 
