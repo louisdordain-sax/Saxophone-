@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Arbre de compétences — Saxophone 🎷 (En ligne)</title>
+<title>Classe de Louis Dordain — Saxophone 🎷 </title>
 <!-- Firebase SDK (compat) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -1751,7 +1751,7 @@ function renderHome(){
         <button class="btn btn-sm" onclick="openTree('${s.id}')">Arbre</button>
         <button class="btn btn-warn btn-sm" onclick="openTreeEdit('${s.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Éditer</button>
         <button class="btn btn-sm" onclick="openEditStudentModal('${s.id}')">Profil</button>
-        <button class="btn btn-sm" title="Réinitialiser le mot de passe" onclick="resetStudentPassword('${s.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/><polyline points="16 16 18 18 22 14" transform="translate(-6,-3) scale(0.7)"/></svg> MDP</button>
+        <button class="btn btn-sm" title="Réinitialiser le mot de passe" onclick="resetStudentPassword('${s.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/><polyline points="16 16 18 18 22 14" transform="translate(-6,-3) scale(0.7)"/></svg> </button>
       `;
       grp.appendChild(row);
     }
