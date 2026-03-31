@@ -317,6 +317,7 @@ canvas{display:block;width:100%;height:100%;cursor:default;position:absolute;ins
 
 /* ── BOARD PARTAGE ── */
 #sc-board{position:fixed;inset:0;background:var(--cb-primary);z-index:10;display:none;overflow:hidden;flex-direction:column;padding:0}
+#sc-board.board-open{display:flex!important}
 #sc-board.active{display:flex}
 .board-inner{display:flex;flex-direction:column;height:100%;padding:20px 24px 0}
 .board-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;flex-wrap:wrap;gap:8px;flex-shrink:0}
@@ -1295,6 +1296,9 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
 
 /* ════════════════════════════════════════════════════════ */
 
+/* ═══════════════════════════════════════════════════════
+   §1 — CONSTANTES & DONNÉES PAR DÉFAUT
+   ═══════════════════════════════════════════════════════ */
 const SK='sax_v11';
 const COLORS_POOL=['#378ADD','#1D9E75','#7F77DD','#D85A30','#EF9F27'];
 var BRANCHES=[
@@ -1352,6 +1356,10 @@ const DEFAULT_SKILLS={
   ]
 };
 
+
+/* ═══════════════════════════════════════════════════════
+   §2 — ÉTAT GLOBAL (variables d'application)
+   ═══════════════════════════════════════════════════════ */
 let students=[],skillsData={1:[],2:[],3:[]},profCode=DEFAULT_PROF_CODE,schools=[];
 let profMode=false,currentStudent=null,currentCycle=1;
 let selSkill=null,hovSkill=null,editingStudentId=null,editMode=false;
@@ -1380,6 +1388,10 @@ function _initFirebase(){
   }
 }
 
+
+/* ═══════════════════════════════════════════════════════
+   §3 — STOCKAGE (Firebase + localStorage)
+   ═══════════════════════════════════════════════════════ */
 /* ── STORAGE (Firebase Realtime Database) ── */
 function saveLocal(){
   // Sauvegarde localStorage (fallback hors-ligne)
@@ -1495,6 +1507,10 @@ async function loadLocal(){
 
 /* ── UTILS ── */
 function initials(n){return n.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2)}
+
+/* ═══════════════════════════════════════════════════════
+   §5 — NAVIGATION (écrans & modals)
+   ═══════════════════════════════════════════════════════ */
 function show(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -1507,6 +1523,10 @@ function genId(c){return 'c'+c+'_'+Date.now()+'_'+Math.floor(Math.random()*1000)
 function fmtDate(d){return d?new Date(d).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'}):'—'}
 
 /* ── LOGIN ── */
+
+/* ═══════════════════════════════════════════════════════
+   §4 — AUTHENTIFICATION & SESSION
+   ═══════════════════════════════════════════════════════ */
 const SCHOOL_PREF_KEY='sax_school_pref';
 
 /* Génère le mot de passe par défaut : 1ère lettre du prénom + nom de famille, tout en minuscule sans accents ni espaces */
@@ -1617,6 +1637,10 @@ function resetStudentPassword(id){
 }
 
 /* ── SCHOOLS ── */
+
+/* ═══════════════════════════════════════════════════════
+   §13 — GESTION DES ÉCOLES
+   ═══════════════════════════════════════════════════════ */
 function addSchool(){
   const v=document.getElementById('new-school-name').value.trim();
   if(!v||schools.includes(v))return;
@@ -1685,6 +1709,10 @@ function changePassword(){
 }
 
 /* ── HOME ── */
+
+/* ═══════════════════════════════════════════════════════
+   §6 — HOME PROFESSEUR
+   ═══════════════════════════════════════════════════════ */
 function renderHome(){
   populateSchoolFilters();
   const filter=document.getElementById('home-school-filter').value;
@@ -1809,6 +1837,10 @@ function closeCongratsAndProceed(){
 /* ── TREE ── */
 const AVATAR_EMOJIS=['🎷','🎵','🎶','🎸','🎹','🎺','🎻','🥁','🎤','🌟','⭐','💫','🚀','🦋','🐬','🦊','🌙','☀️','🌈','🎯','🏆','💎','🔥','🌸'];
 
+
+/* ═══════════════════════════════════════════════════════
+   §7 — ARBRE DES COMPÉTENCES (canvas + HUD)
+   ═══════════════════════════════════════════════════════ */
 function openTree(id){
   currentStudent=students.find(s=>s.id===id);if(!currentStudent)return;
   currentCycle=currentStudent.cycle;selSkill=null;hovSkill=null;editMode=false;
@@ -2239,6 +2271,10 @@ function askDeleteSkill(cycle,id){const sk=(skillsData[cycle]||[]).find(s=>s.id=
 function confirmDelete(){skillsData[delSkillCycle]=(skillsData[delSkillCycle]||[]).filter(s=>s.id!==delSkillId);for(const s of students){if(s.skillStates)delete s.skillStates[delSkillId]}saveLocal();closeModal('modal-confirm-del');renderCEContent();if(typeof renderCEHome==='function'){var ph=document.getElementById('ptab-content-competences');if(ph&&ph.style.display!=='none')renderCEHome();}}
 
 /* ── MODALS ÉLÈVES ── */
+
+/* ═══════════════════════════════════════════════════════
+   §12 — GESTION DES ÉLÈVES
+   ═══════════════════════════════════════════════════════ */
 function openAddModal(){document.getElementById('add-err').style.display='none';document.getElementById('n-name').value='';document.getElementById('n-cycle').value='1';document.getElementById('n-startdate').value='';document.getElementById('n-prioracquis').value='';populateSchoolFilters();openModal('modal-add')}
 function confirmAdd(){
   const name=document.getElementById('n-name').value.trim();
@@ -2508,6 +2544,10 @@ function showTextTile(colIdx,tileIdx){
 }
 
 /* ── Ouverture / fermeture ── */
+
+/* ═══════════════════════════════════════════════════════
+   §8 — ESPACE DE PARTAGE (board)
+   ═══════════════════════════════════════════════════════ */
 function openBoard(isProf){
   boardIsProfMode=!!isProf;
   document.getElementById('board-subtitle').textContent=isProf?'Gérer les ressources partagées':'Ressources de votre professeur';
@@ -2515,13 +2555,18 @@ function openBoard(isProf){
   document.getElementById('btn-add-col').style.display=isProf?'block':'none';
   const ib=document.getElementById('btn-board-interactions');if(ib)ib.style.display=isProf?'inline-flex':'none';
   renderBoard();
-  // Masquer tous les écrans .screen pour éviter le chevauchement
+  // Masquer tous les écrans .screen
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById('sc-board').style.display='flex';
+  // Forcer l'affichage via classe CSS (plus fiable que style inline)
+  const scb = document.getElementById('sc-board');
+  scb.style.display = '';  // reset le style inline
+  scb.classList.add('board-open');
   _updateStudentFab();
 }
 function closeBoardScreen(){
-  document.getElementById('sc-board').style.display='none';
+  const scb2 = document.getElementById('sc-board');
+  scb2.classList.remove('board-open');
+  scb2.style.display = '';
   if(boardIsProfMode){ show('sc-home'); showProfTab('outils'); }
   else if(currentStudent){ show('sc-tree'); renderTreeScreen(); }
   else { show('sc-login'); }
@@ -2904,6 +2949,10 @@ function hidePwd(id){
 
 /* ══ NAVIGATION PROF ══ */
 var _currentProfTab='accueil';
+
+/* ═══════════════════════════════════════════════════════
+   §11 — ONGLETS & COMPÉTENCES (interface prof)
+   ═══════════════════════════════════════════════════════ */
 function showProfTab(tab){
   _currentProfTab=tab;
   // Sauvegarder l'onglet actif dans la session
@@ -3155,6 +3204,10 @@ function handleTileAudioFile(ev){handleTileAudio(ev.target);}
 function selectTileSize(size){tileModalSize=size;document.querySelectorAll(".tile-type-opt[data-size]").forEach(function(b){b.classList.toggle("selected",b.dataset.size===size);});}
 function setTileSize(size){tileModalSize=size;document.querySelectorAll('.tile-size-opt').forEach(function(b){b.classList.toggle('selected',b.dataset.size===size);});}
 
+
+/* ═══════════════════════════════════════════════════════
+   §10 — MÉTRONOME
+   ═══════════════════════════════════════════════════════ */
 function openMetroPopup(){
   var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Métronome</title>'
     +'<style>*{box-sizing:border-box;margin:0;padding:0}body{background:#0f1420;color:#e8eaf0;font-family:-apple-system,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh}'
@@ -3527,6 +3580,10 @@ function getCycleYear(s){
   return s.cycle+'C'+Math.max(1,Math.floor((now-cs2)/(365.25*24*3600*1000))+1);
 }
 
+
+/* ═══════════════════════════════════════════════════════
+   §14 — MÉTRONOME HOME (tiroir dans onglet Outils)
+   ═══════════════════════════════════════════════════════ */
 /* ══ MÉTRONOME HOME (tiroir inline) ══ */
 var _metroHomeRunning = false;
 var _metroHomeBpm = 120;
@@ -3713,7 +3770,7 @@ function _restoreSession(){
 <!-- ══ ÉCRAN AGENDA ══ -->
 <div id="sc-agenda" style="position:fixed;inset:0;z-index:16;display:none;flex-direction:column;background:var(--body-bg)">
 <style>
-#sc-agenda.active{display:flex}
+#sc-agenda.active{display:flex!important}
 /* ── Topbar ── */
 .ag-topbar{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:0.5px solid var(--cbr-tertiary);flex-shrink:0;background:var(--cb-primary)}
 /* ── Vues ── */
@@ -3959,6 +4016,10 @@ html.light .ag-week-wrap,.html.light .ag-month-grid{border-color:var(--cbr-terti
 /* ══════════════════════════════════════════════
    AGENDA — Vue Mois / Semaine / Jour
 ══════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════
+   §9 — AGENDA
+   ═══════════════════════════════════════════════════════ */
 var agendaEvents = [];
 var _agView = 'month';
 var _agDate = new Date(); _agDate.setHours(0,0,0,0);
@@ -3979,15 +4040,18 @@ function openAgenda(){
   _agendaFromProf = profMode;
   _loadAgendaEvents();
   document.getElementById('ag-fab').style.display = profMode ? 'flex' : 'none';
-  // Masquer tous les écrans .screen pour éviter le chevauchement
+  // Masquer tous les écrans .screen
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById('sc-agenda').style.display = 'flex';
-  document.getElementById('sc-agenda').classList.add('active');
+  // Forcer l'affichage via classe active (display:flex!important dans le CSS)
+  const sca = document.getElementById('sc-agenda');
+  sca.style.display = '';  // reset style inline
+  sca.classList.add('active');
   renderAgenda();
 }
 function closeAgenda(){
-  document.getElementById('sc-agenda').style.display='none';
-  document.getElementById('sc-agenda').classList.remove('active');
+  const sca2 = document.getElementById('sc-agenda');
+  sca2.classList.remove('active');
+  sca2.style.display = '';
   if(_agendaFromProf){ show('sc-home'); showProfTab('outils'); }
   else if(currentStudent){ show('sc-tree'); renderTreeScreen(); }
   else { show('sc-login'); }
@@ -4990,6 +5054,10 @@ html.light #student-fab-toggle{background:rgba(255,255,255,0.94)}
 </div>
 
 <script>
+
+/* ═══════════════════════════════════════════════════════
+   §15 — MENU FLOTTANT ÉLÈVE (⚙️)
+   ═══════════════════════════════════════════════════════ */
 var _sfabOpen = false;
 
 function _sfabToggle(){
