@@ -896,7 +896,7 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
   <!-- Vue édition (panel flottant) -->
   <div id="view-edit" style="display:none">
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
-      <button class="btn" onclick="toggleEditMode()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg> Vue arbre</button>
+      <button class="btn" onclick="goBack()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg> Retour</button>
       <button class="btn btn-info" onclick="saveAndBack()">Enregistrer</button>
     </div>
     <div class="edit-panel" id="edit-panel"></div>
@@ -2421,7 +2421,7 @@ function renderBoard(){
     container.appendChild(colEl);
     const tilesEl=document.getElementById(`col-tiles-${col.id}`);
     if(!col.tiles||!col.tiles.length){if(boardIsProfMode)tilesEl.innerHTML=`<div style="font-size:11px;color:var(--ct-tertiary);text-align:center;padding:10px">Aucune ressource</div>`;}else{
-    (col.tiles||[]).filter(t=>t&&t.id&&t.type).forEach((tile,tileIdx)=>tilesEl.appendChild(buildTileEl(tile,colIdx,tileIdx,col.id)));}
+    (col.tiles||[]).filter(function(t){return t&&t.id&&(t.type||t.title);}).forEach((tile,tileIdx)=>tilesEl.appendChild(buildTileEl(tile,colIdx,tileIdx,col.id)));}
     if(boardIsProfMode){
       tilesEl.addEventListener('dragover',e=>{if(dragTile){e.preventDefault();tilesEl.style.background='rgba(55,138,221,.04)';}});
       tilesEl.addEventListener('dragleave',()=>tilesEl.style.background='');
@@ -2539,7 +2539,8 @@ function addColumn(){
 function renameColumn(colIdx,val){if(boardColumns[colIdx])boardColumns[colIdx].title=val||'Section';saveLocal();}
 function deleteColumn(colIdx){
   const col=boardColumns[colIdx];if(!col)return;
-  if(col.tiles.length&&!confirm('Supprimer "${col.title}" et ses ${col.tiles.length} ressource(s) ?'))return;
+  const tiles=col.tiles||[];
+  if(tiles.length&&!confirm(`Supprimer "${col.title}" et ses ${tiles.length} ressource(s) ?`))return;
   boardColumns.splice(colIdx,1);saveLocal();renderBoard();
 }
 function startColDrag(e,colIdx){dragColIdx=colIdx;e.dataTransfer.effectAllowed='move';}
@@ -2625,7 +2626,7 @@ function trackInteraction(tileId){
 }
 function openInteractionsModal(){
   const allTiles=[];
-  boardColumns.forEach(function(col){col.tiles.forEach(function(t){allTiles.push(Object.assign({},t,{colTitle:col.title}));});});
+  boardColumns.forEach(function(col){(col.tiles||[]).forEach(function(t){if(t&&t.id)allTiles.push(Object.assign({},t,{colTitle:col.title}));});});
   const body=document.getElementById('modal-interactions-body');
   if(!allTiles.length){body.innerHTML='<div style="font-size:13px;color:var(--ct-tertiary);text-align:center;padding:1.5rem">Aucune ressource dans le board.</div>';openModal('modal-interactions');return;}
   let maxCount=1;
@@ -3185,6 +3186,7 @@ function confirmAddTile(){
     tile.id=tileEditingId;col.tiles[idx]=tile;
   } else {
     var col2=boardColumns.find(function(c){return c.id===tileTargetColId;});if(!col2)return;
+    if(!col2.tiles)col2.tiles=[];
     col2.tiles.push(tile);
   }
   saveLocal();closeModal('modal-tile');if(_sharePanelOpen)renderSharePanel();else renderBoard();
@@ -4019,7 +4021,7 @@ html.light .ag-week-wrap,.html.light .ag-month-grid{border-color:var(--cbr-terti
 
     <div class="err" id="evt-err">Titre et date requis</div>
     <div class="modal-footer" style="justify-content:space-between">
-      <button class="btn btn-danger btn-sm" id="evt-del-btn" onclick="_deleteEditingEvt()" style="display:none;align-items:center;gap:5px">
+      <button class="btn btn-danger btn-sm" id="evt-del-btn" onclick="_deleteEditingEvt()" style="display:none;flex-direction:row;align-items:center;justify-content:center;gap:5px">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
         Supprimer
       </button>
@@ -4463,7 +4465,7 @@ function openEvtDetail(evt, dateISO){
     var typeBtn = document.getElementById('etyp-'+( evt.type||'cours'));
     if(typeBtn) selectEvtType(typeBtn);
     // Afficher le bouton Supprimer en mode édition
-    var db=document.getElementById('evt-del-btn');db.style.display='inline-flex';db.style.alignItems='center';db.style.gap='5px';
+    var db=document.getElementById('evt-del-btn');db.style.display='inline-flex';db.style.flexDirection='row';db.style.alignItems='center';db.style.justifyContent='center';db.style.gap='5px';
     _syncTimeButtons();
     openModal('modal-evt');
   } else {
@@ -4685,7 +4687,10 @@ function _renderClock(){
     selTxt.textContent=_clockMode==='h'?selVal:pad(selVal);
   }
   _updateClockDisplay();
-  switchClockMode(_clockMode); // refresh highlights
+  // Mettre à jour les highlights sans récursion
+  var hd=document.getElementById('clock-h-display'), md=document.getElementById('clock-m-display');
+  if(hd){ hd.style.color=_clockMode==='h'?'var(--ct-info)':'var(--ct-secondary)'; hd.style.background=_clockMode==='h'?'var(--cb-info)':'transparent'; }
+  if(md){ md.style.color=_clockMode==='m'?'var(--ct-info)':'var(--ct-secondary)'; md.style.background=_clockMode==='m'?'var(--cb-info)':'transparent'; }
 }
 
 function _updateClockDisplay(){
