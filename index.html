@@ -2366,9 +2366,25 @@ function parseMediaUrl(url){
   return null;
 }
 
+
+function previewMedia(){
+  var url = document.getElementById('tile-media-url').value.trim();
+  var box = document.getElementById('tile-media-preview');
+  if(!box) return;
+  if(!url){ box.innerHTML=''; box.style.display='none'; return; }
+  var info = parseMediaUrl(url);
+  if(!info){ box.innerHTML='<div style="padding:8px;font-size:11px;color:var(--ct-danger)">URL non reconnue (YouTube ou Spotify uniquement)</div>'; box.style.display='block'; return; }
+  box.style.display='block';
+  if(info.platform==='youtube'){
+    box.innerHTML='<iframe style="width:100%;height:155px;border:none;display:block" src="'+info.embedUrl+'" allow="autoplay;fullscreen" loading="lazy"></iframe>';
+  } else {
+    box.innerHTML='<div style="padding:10px;background:linear-gradient(135deg,#1e3a2f,#0a1e15);display:flex;align-items:center;gap:8px"><svg width="20" height="20" viewBox="0 0 24 24" fill="#1db954"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.65 14.65c-.2.2-.51.2-.71 0C14.15 15 11.27 14.5 7.7 15.31c-.28.07-.56-.1-.63-.38-.07-.28.1-.56.38-.63 3.93-.9 7.13-.35 9.13 1.65.19.2.19.51 0 .7zm1.23-2.75c-.25.25-.63.25-.88 0-1.77-1.77-4.46-2.5-7.87-1.62-.35.09-.7-.12-.79-.47-.09-.35.12-.7.47-.79 3.8-.97 6.87-.16 9.07 1.88.25.25.25.63 0 .88zm.09-2.77c-2.12-1.87-5.51-2.38-8.82-1.54-.41.1-.82-.15-.92-.56-.1-.41.15-.82.56-.92 3.74-.99 7.5-.43 10.07 1.65.37.33.41.89.08 1.26-.32.37-.88.41-1.25.08l.28.03z"/></svg><span style="color:#fff;font-size:12px">Spotify — aperçu disponible après ajout</span></div>';
+  }
+}
+
 function youtubeEmbedHtml(info,sizeClass){
   const h=sizeClass==='sm'?'120px':sizeClass==='lg'?'200px':'155px';
-  return `<iframe style="width:100%;height:${h};border:none;display:block" src="${info.embedUrl}" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;fullscreen" allowfullscreen sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox" loading="lazy"></iframe>`;
+  return `<iframe style="width:100%;height:${h};border:none;display:block" src="${info.embedUrl}" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;fullscreen" sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox" loading="lazy"></iframe>`;
 }
 
 function spotifyOpenBtn(info,title,tileId){
@@ -3465,7 +3481,7 @@ function buildShareTile(tile, colIdx, tileIdx, colId){
       iframe.src=info.embedUrl;
       iframe.style.cssText='width:100%;height:120px;border:none;display:block;border-radius:6px;margin-bottom:6px';
       iframe.setAttribute('allow','autoplay;fullscreen');
-      iframe.setAttribute('allowfullscreen','');
+      // fullscreen déjà dans allow=
       iframe.setAttribute('sandbox','allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox');
       iframe.loading='lazy';
       wrap.appendChild(iframe);
