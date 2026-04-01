@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Classe de Louis Dordain — Saxophone 🎷 (En ligne)</title>
+<title>Arbre de compétences — Saxophone 🎷 (En ligne)</title>
 <!-- Firebase SDK (compat) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -534,12 +534,8 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
     <!-- En-tête -->
     <div style="text-align:center;margin-bottom:20px">
       <div style="font-size:32px;margin-bottom:8px">🎷</div>
-      <div style="font-size:18px;font-weight:700;color:var(--ct-primary);margin-bottom:4px">Arbre de compétences</div>
-      <div style="font-size:12px;color:var(--ct-secondary);margin-bottom:8px">Saxophone</div>
-      <div style="display:inline-flex;align-items:center;gap:5px;font-size:10px;padding:3px 10px;border-radius:99px;background:rgba(55,138,221,0.12);color:#60a5fa;border:0.5px solid rgba(55,138,221,0.3)">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-        Version en ligne · données partagées
-      </div>
+      <div style="font-size:18px;font-weight:700;color:var(--ct-primary);margin-bottom:2px">Classes de Louis Dordain</div>
+      <div style="font-size:12px;color:var(--ct-secondary)">Saxophone</div>
     </div>
 
     <!-- Étape 1 : choix du rôle -->
@@ -572,6 +568,13 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
       <div class="pwd-wrap"><input type="password" id="login-code-prof" placeholder="Code professeur" style="text-align:center;font-size:15px;letter-spacing:3px;width:100%" oninput="peekLastChar('login-code-prof')" onkeydown="if(event.key==='Enter')doLoginProf()"><button type="button" class="pwd-eye" onmousedown="showPwd('login-code-prof')" onmouseup="hidePwd('login-code-prof')" onmouseleave="hidePwd('login-code-prof')" ontouchstart="showPwd('login-code-prof')" ontouchend="hidePwd('login-code-prof')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
       <div class="err" id="login-err-prof">Code incorrect</div>
       <button class="btn btn-warn" style="width:100%;padding:9px;text-align:center" onclick="doLoginProf()">Entrer</button>
+    </div>
+    <!-- Badge version en ligne -->
+    <div style="text-align:center;margin-top:16px">
+      <div style="display:inline-flex;align-items:center;gap:5px;font-size:10px;padding:3px 10px;border-radius:99px;background:rgba(55,138,221,0.08);color:rgba(96,165,250,0.65);border:0.5px solid rgba(55,138,221,0.18)">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Version en ligne · données partagées
+      </div>
     </div>
   </div>
 </div>
@@ -1093,7 +1096,7 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
       </div>
       <span id="board-mode-badge" class="badge badge-prof" style="display:none">Mode prof</span>
       <button class="btn btn-sm" id="btn-board-interactions" onclick="openInteractionsModal()" style="display:none"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Interactions</button>
-      <button class="btn btn-info btn-sm" id="btn-add-col" onclick="addColumn()" style="display:none"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Section</button>
+
     </div>
     <div class="board-columns-wrap">
       <div class="board-columns" id="board-columns"></div>
@@ -1609,7 +1612,13 @@ function doLogout(){
   backToStep1();
   show('sc-login');
 }
-function goBack(){selSkill=null;hovSkill=null;editMode=false;closePopup();cancelAnim();if(profMode){show('sc-home');renderHome()}else doLogout()}
+function goBack(){
+  selSkill=null;hovSkill=null;editMode=false;
+  document.getElementById('view-edit').style.display='none';
+  closePopup();cancelAnim();
+  if(profMode){show('sc-home');showProfTab('eleves');}
+  else doLogout();
+}
 
 /* ── MOT DE PASSE ÉLÈVE ── */
 function changeStudentPassword(){
@@ -2377,11 +2386,12 @@ function renderBoard(){
   const container=document.getElementById('board-columns');
   container.innerHTML='';
   if(!boardColumns.length){
-    container.innerHTML=`<div class="board-empty">${boardIsProfMode
-      ?'<div style="font-size:15px;font-weight:500;margin-bottom:6px">Aucune section</div><div style="font-size:13px">Cliquez sur <strong>+ Section</strong> pour commencer</div>'
-      :'<div>Aucune ressource partagée pour le moment.</div>'
-    }</div>`;
-    return;
+    if(!boardIsProfMode){
+      container.innerHTML='<div class="board-empty"><div>Aucune ressource partagée pour le moment.</div></div>';
+      return;
+    }
+    // En mode prof avec liste vide : afficher uniquement la tuile fantôme + section
+    // (on continue pour que le btn fantôme soit ajouté en bas)
   }
   boardColumns.forEach((col,colIdx)=>{
     const colEl=document.createElement('div');
@@ -2411,7 +2421,7 @@ function renderBoard(){
     container.appendChild(colEl);
     const tilesEl=document.getElementById(`col-tiles-${col.id}`);
     if(!col.tiles||!col.tiles.length){if(boardIsProfMode)tilesEl.innerHTML=`<div style="font-size:11px;color:var(--ct-tertiary);text-align:center;padding:10px">Aucune ressource</div>`;}else{
-    (col.tiles||[]).forEach((tile,tileIdx)=>tilesEl.appendChild(buildTileEl(tile,colIdx,tileIdx,col.id)));}
+    (col.tiles||[]).filter(t=>t&&t.id&&t.type).forEach((tile,tileIdx)=>tilesEl.appendChild(buildTileEl(tile,colIdx,tileIdx,col.id)));}
     if(boardIsProfMode){
       tilesEl.addEventListener('dragover',e=>{if(dragTile){e.preventDefault();tilesEl.style.background='rgba(55,138,221,.04)';}});
       tilesEl.addEventListener('dragleave',()=>tilesEl.style.background='');
@@ -2427,7 +2437,9 @@ function renderBoard(){
   });
   if(boardIsProfMode){
     const btn=document.createElement('button');
-    btn.className='add-col-btn';btn.innerHTML='+ Nouvelle section';btn.onclick=addColumn;
+    btn.className='add-col-btn';
+    btn.innerHTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span style="font-size:12px">Nouvelle section</span>';
+    btn.onclick=addColumn;
     container.appendChild(btn);
   }
 }
@@ -2558,7 +2570,7 @@ function openBoard(isProf){
   boardIsProfMode=!!isProf;
   document.getElementById('board-subtitle').textContent=isProf?'Gérer les ressources partagées':'Ressources de votre professeur';
   document.getElementById('board-mode-badge').style.display=isProf?'inline-flex':'none';
-  document.getElementById('btn-add-col').style.display=isProf?'block':'none';
+  
   const ib=document.getElementById('btn-board-interactions');if(ib)ib.style.display=isProf?'inline-flex':'none';
   renderBoard();
   // Masquer tous les écrans .screen
@@ -2572,8 +2584,9 @@ function openBoard(isProf){
 function closeBoardScreen(){
   const scb2 = document.getElementById('sc-board');
   scb2.classList.remove('board-open');
-  scb2.style.display = '';
+  scb2.style.display = 'none'; // IMPORTANT: explicite
   if(boardIsProfMode){ show('sc-home'); showProfTab('outils'); }
+  else if(currentStudent && _toolboxFromTree){ show('sc-toolbox'); }
   else if(currentStudent){ show('sc-tree'); renderTreeScreen(); }
   else { show('sc-login'); }
 }
@@ -3905,7 +3918,7 @@ html.light .ag-week-wrap,.html.light .ag-month-grid{border-color:var(--cbr-terti
 </div>
 
 <!-- ══ MODAL HORLOGE ══ -->
-<div class="modal-overlay" id="modal-clock" onclick="if(event.target===this)closeClock()">
+<div class="modal-overlay" id="modal-clock" style="z-index:200" onclick="if(event.target===this)closeClock()">
 <div class="modal-box" style="max-width:300px;padding:20px;text-align:center">
   <div style="font-size:12px;font-weight:600;color:var(--ct-secondary);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px" id="clock-label">Heure de début</div>
 
@@ -4006,7 +4019,7 @@ html.light .ag-week-wrap,.html.light .ag-month-grid{border-color:var(--cbr-terti
 
     <div class="err" id="evt-err">Titre et date requis</div>
     <div class="modal-footer" style="justify-content:space-between">
-      <button class="btn btn-danger btn-sm" id="evt-del-btn" onclick="_deleteEditingEvt()" style="display:none">
+      <button class="btn btn-danger btn-sm" id="evt-del-btn" onclick="_deleteEditingEvt()" style="display:none;align-items:center;gap:5px">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
         Supprimer
       </button>
@@ -4048,17 +4061,17 @@ function openAgenda(){
   document.getElementById('ag-fab').style.display = profMode ? 'flex' : 'none';
   // Masquer tous les écrans .screen
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  // Forcer l'affichage via classe active (display:flex!important dans le CSS)
   const sca = document.getElementById('sc-agenda');
-  sca.style.display = '';  // reset style inline
+  sca.style.display = 'flex'; // explicite
   sca.classList.add('active');
   renderAgenda();
 }
 function closeAgenda(){
   const sca2 = document.getElementById('sc-agenda');
   sca2.classList.remove('active');
-  sca2.style.display = '';
+  sca2.style.display = 'none'; // IMPORTANT: explicite sinon la div reste visible
   if(_agendaFromProf){ show('sc-home'); showProfTab('outils'); }
+  else if(currentStudent && _toolboxFromTree){ show('sc-toolbox'); }
   else if(currentStudent){ show('sc-tree'); renderTreeScreen(); }
   else { show('sc-login'); }
   _updateStudentFab();
@@ -4450,7 +4463,7 @@ function openEvtDetail(evt, dateISO){
     var typeBtn = document.getElementById('etyp-'+( evt.type||'cours'));
     if(typeBtn) selectEvtType(typeBtn);
     // Afficher le bouton Supprimer en mode édition
-    document.getElementById('evt-del-btn').style.display='inline-flex';
+    var db=document.getElementById('evt-del-btn');db.style.display='inline-flex';db.style.alignItems='center';db.style.gap='5px';
     _syncTimeButtons();
     openModal('modal-evt');
   } else {
