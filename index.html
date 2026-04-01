@@ -2539,7 +2539,7 @@ function addColumn(){
 function renameColumn(colIdx,val){if(boardColumns[colIdx])boardColumns[colIdx].title=val||'Section';saveLocal();}
 function deleteColumn(colIdx){
   const col=boardColumns[colIdx];if(!col)return;
-  if(col.tiles.length&&!confirm(`Supprimer "${col.title}" et ses ${col.tiles.length} ressource(s) ?`))return;
+  if(col.tiles.length&&!confirm('Supprimer "${col.title}" et ses ${col.tiles.length} ressource(s) ?'))return;
   boardColumns.splice(colIdx,1);saveLocal();renderBoard();
 }
 function startColDrag(e,colIdx){dragColIdx=colIdx;e.dataTransfer.effectAllowed='move';}
