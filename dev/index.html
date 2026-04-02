@@ -1389,7 +1389,9 @@ let pendingCongratsStudent=null;
 let animFrame=null,t3d=0;
 let tileInteractions={};
 
-const FIREBASE_PATH = 'sax_data_dev';
+const FIREBASE_PATH_READ  = 'sax_data_v1';   // Lecture : données de prod
+const FIREBASE_PATH_WRITE = 'sax_data_dev';  // Écriture : données de test isolées
+const FIREBASE_PATH = FIREBASE_PATH_READ;    // Alias pour la lecture initiale
 let _db = null;
 let _saveTimeout = null;
 let _cloudReady = false;
@@ -1420,7 +1422,7 @@ function saveLocal(){
     if(!_db) return;
     const payload = {students,skills:skillsData,profCode,schools,boardColumns,tileInteractions,branches:BRANCHES,branchAngles:BRANCH_ANGLES};
     try{
-      await _db.ref(FIREBASE_PATH).set(payload);
+      await _db.ref(FIREBASE_PATH_WRITE).set(payload);
       _showSyncIndicator('✓ Synchronisé', '#34d399');
     }catch(e){
       console.warn('Firebase save error:', e);
@@ -1505,7 +1507,7 @@ async function loadLocal(){
 
   // Écouter les mises à jour en temps réel (sync multi-onglets / multi-appareils)
   if(fbOk && _db){
-    _db.ref(FIREBASE_PATH).on('value', snap => {
+    _db.ref(FIREBASE_PATH_READ).on('value', snap => {
       if(!_cloudReady) return;
       const d = snap.val(); if(!d) return;
       // Ne recharger que si on n'est pas en train de sauvegarder
@@ -4113,7 +4115,7 @@ function closeAgenda(){
 /* ── Storage Firebase ── */
 function _loadAgendaEvents(){
   if(typeof _db !== 'undefined' && _db){
-    _db.ref('sax_agenda_dev').once('value').then(function(snap){
+    _db.ref('sax_agenda_v1').once('value').then(function(snap){  // lecture prod
       var d = snap.val();
       agendaEvents = d ? (Array.isArray(d) ? d : Object.values(d).filter(Boolean)) : [];
       renderAgenda(); _renderEvtPanel(_agSelDate);
@@ -4787,7 +4789,7 @@ function _syncTimeButtons(){
 // Écoute temps réel Firebase
 setTimeout(function(){
   if(typeof _db === 'undefined' || !_db) return;
-  _db.ref('sax_agenda_dev').on('value', function(snap){
+  _db.ref('sax_agenda_v1').on('value', function(snap){  // lecture prod
     var d=snap.val();
     agendaEvents=d?(Array.isArray(d)?d:Object.values(d).filter(Boolean)):[];
     if(document.getElementById('sc-agenda').classList.contains('active')){ renderAgenda(); _renderEvtPanel(_agSelDate); }
