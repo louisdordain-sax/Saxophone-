@@ -1137,7 +1137,7 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
       <div class="field-label">Image (fichier ou URL)</div>
       <input type="url" id="tile-img-url" placeholder="https://... (laisser vide pour upload)">
       <label class="av-photo-label" style="margin-bottom:10px">
-        📁 Choisir un fichier image
+        📁 Choisir un fichier image ou pdf
         <input type="file" id="tile-img-file" accept="image/*,application/pdf" style="display:none" onchange="handleTileImageFile(event)">
       </label>
       <div id="tile-img-preview" style="display:none;margin-bottom:10px"><img id="tile-img-preview-img" style="max-width:100%;max-height:120px;border-radius:var(--br-md)"></div>
@@ -3911,31 +3911,87 @@ html.light .time-picker-btn{background:#fff;border-color:var(--cbr-tertiary)}
 
 
 /* ── VISIONNEUSE PDF ── */
-function openPdfViewer(title, dataUrl){
-  var modal = document.getElementById('modal-pdf-viewer');
-  if(!modal){
+window.openPdfViewer = function(title, dataUrl) {
+  let modal = document.getElementById('modal-pdf-viewer');
+
+  if (!modal) {
+    // Création du modal
     modal = document.createElement('div');
     modal.id = 'modal-pdf-viewer';
-    modal.style.cssText = 'position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.95);display:none;flex-direction:column';
-    modal.innerHTML = '<div style="display:flex;align-items:center;padding:10px 16px;gap:10px;background:rgba(0,0,0,0.5);flex-shrink:0">'
-      +'<div id="pdf-viewer-title" style="flex:1;font-size:13px;color:#fff;font-weight:500"></div>'
-      +'<a id="pdf-dl-btn" download style="color:#60a5fa;font-size:11px;padding:4px 10px;border:0.5px solid #60a5fa;border-radius:99px;text-decoration:none">Télécharger</a>'
-      +'<button onclick="closePdfViewer()" style="background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:2px 8px;opacity:.8">✕</button>'
-      +'</div>'
-      +'<iframe id="pdf-viewer-frame" style="flex:1;border:none;width:100%" src=""></iframe>';
-    document.body.appendChild(modal);
-  }
-  document.getElementById('pdf-viewer-title').textContent = title;
-  document.getElementById('pdf-viewer-frame').src = dataUrl;
-  document.getElementById('pdf-dl-btn').href = dataUrl;
-  document.getElementById('pdf-dl-btn').download = title+'.pdf';
-  modal.style.display = 'flex';
-}
-function closePdfViewer(){
-  var modal = document.getElementById('modal-pdf-viewer');
-  if(modal){ modal.style.display='none'; document.getElementById('pdf-viewer-frame').src=''; }
-}
+    modal.style.cssText = `
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(0,0,0,0.9);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    `;
 
+    modal.innerHTML = `
+      <div id="pdf-modal-content" style="
+        display: flex;
+        flex-direction: column;
+        width: 90%;
+        max-width: 900px;
+        max-height: 90%;
+        background: #111;
+        border-radius: 8px;
+        overflow: hidden;
+        transform: scale(0.9);
+        transition: transform 0.3s ease;
+      ">
+        <div style="display:flex;align-items:center;padding:10px 16px;gap:10px;background:rgba(0,0,0,0.5);flex-shrink:0">
+          <div id="pdf-viewer-title" style="flex:1;font-size:13px;color:#fff;font-weight:500"></div>
+          <a id="pdf-dl-btn" download style="color:#60a5fa;font-size:11px;padding:4px 10px;border:0.5px solid #60a5fa;border-radius:99px;text-decoration:none">Télécharger</a>
+          <button id="pdf-close-btn" style="background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:2px 8px;opacity:.8">✕</button>
+        </div>
+        <iframe id="pdf-viewer-frame" style="flex:1;border:none;width:100%;height:100%" src=""></iframe>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    const content = document.getElementById('pdf-modal-content');
+
+    // Fermeture bouton ✕
+    document.getElementById('pdf-close-btn').addEventListener('click', closeModal);
+
+    // Fermeture en cliquant en dehors du contenu
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    // Fonction interne pour fermer le modal
+    function closeModal() {
+      content.style.transform = 'scale(0.9)';
+      modal.style.opacity = 0;
+      setTimeout(() => {
+        modal.style.display = 'none';
+        document.getElementById('pdf-viewer-frame').src = '';
+      }, 300);
+    }
+  }
+
+  // Mettre à jour titre, iframe et bouton download
+  document.getElementById('pdf-viewer-title').textContent = title;
+  const iframe = document.getElementById('pdf-viewer-frame');
+  iframe.src = dataUrl;
+
+  const dlBtn = document.getElementById('pdf-dl-btn');
+  dlBtn.href = dataUrl;
+  dlBtn.download = title;
+
+  // Affichage avec animation
+  modal.style.display = 'flex';
+  requestAnimationFrame(() => {
+    modal.style.opacity = 1;
+    document.getElementById('pdf-modal-content').style.transform = 'scale(1)';
+  });
+};
 /* ── LIGHTBOX ── */
 #lightbox{position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.93);display:none;flex-direction:column;align-items:center;justify-content:center}
 #lightbox.open{display:flex}
@@ -5255,63 +5311,148 @@ function confirmSuggestTile(){
 }
 
 function openSuggestionsPanel(){
-  _loadSuggestions();
-  var modal = document.getElementById('modal-suggestions');
+  let modal = document.getElementById('modal-suggestions');
+
   if(!modal){
     modal = document.createElement('div');
     modal.id = 'modal-suggestions';
-    modal.className = 'modal-overlay';
-    modal.innerHTML = '<div class="modal-box" style="max-width:500px;max-height:85vh;overflow-y:auto">'
-      +'<h3>Suggestions des élèves</h3>'
-      +'<div id="suggestions-list" style="margin-top:12px"></div>'
-      +'<div class="modal-footer"><button class="btn" onclick="closeModal('modal-suggestions')">Fermer</button></div>'
-      +'</div>';
+    modal.className = 'modal';
+
+    modal.innerHTML = `
+      <div class="modal-box" style="max-width:500px;max-height:85vh;overflow-y:auto">
+        <h3>Suggestions des élèves</h3>
+        <div id="suggestions-list" style="margin-top:12px"></div>
+        <div class="modal-footer">
+          <button class="btn" onclick="closeModal('modal-suggestions')">Fermer</button>
+        </div>
+      </div>
+    `;
+
     document.body.appendChild(modal);
   }
+
+  if(modal) modal.style.display = "block";
+
+  _loadSuggestions();
+}
+
+function _loadSuggestions(){
+  try {
+    var data = JSON.parse(localStorage.getItem('suggestions') || '[]');
+    _suggestions = data;
+  } catch(e){
+    _suggestions = [];
+  }
+
   _renderSuggestionsList();
-  openModal('modal-suggestions');
 }
 
 function _renderSuggestionsList(){
-  var list = document.getElementById('suggestions-list'); if(!list) return;
-  var pending = _suggestions.filter(function(s){ return !s.approved; });
-  var approved = _suggestions.filter(function(s){ return s.approved; });
-  if(!_suggestions.length){ list.innerHTML='<div style="font-size:13px;color:var(--ct-tertiary);text-align:center;padding:1.5rem">Aucune suggestion</div>'; return; }
+  var list = document.getElementById('suggestions-list');
+  if(!list) return;
+
+  var pending = _suggestions.filter(s => !s.approved);
+  var approved = _suggestions.filter(s => s.approved);
+
+  if(!_suggestions.length){
+    list.innerHTML = `
+      <div style="font-size:13px;color:var(--ct-tertiary);text-align:center;padding:1.5rem">
+        Aucune suggestion
+      </div>
+    `;
+    return;
+  }
+
   var html = '';
+
   if(pending.length){
-    html += '<div style="font-size:11px;font-weight:600;color:var(--ct-secondary);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">En attente ('+pending.length+')</div>';
-    pending.forEach(function(s){
-      html += '<div style="background:var(--cb-secondary);border:0.5px solid var(--cbr-info);border-radius:var(--br-md);padding:10px 12px;margin-bottom:8px">'
-        +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'
-        +'<div style="flex:1;font-size:13px;font-weight:500;color:var(--ct-primary)">'+s.title+'</div>'
-        +'<span style="font-size:10px;padding:2px 6px;border-radius:99px;background:var(--cb-info);color:var(--ct-info)">'+s.type+'</span>'
-        +'</div>'
-        +'<div style="font-size:11px;color:var(--ct-tertiary);margin-bottom:8px">De '+s.studentName+' · '+s.date+'</div>'
-        +(s.url?'<div style="font-size:11px;color:var(--ct-secondary);margin-bottom:8px;word-break:break-all">'+s.url+'</div>':'')
-        +'<div style="display:flex;gap:6px">'
-        +'<button class="btn btn-success btn-sm" onclick="approveSuggestion(''+s.id+'')">✓ Ajouter au partage</button>'
-        +'<button class="btn btn-danger btn-sm" onclick="rejectSuggestion(''+s.id+'')">Refuser</button>'
-        +'</div></div>';
+    html += `
+      <div style="font-size:11px;font-weight:600;color:var(--ct-secondary);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">
+        En attente (${pending.length})
+      </div>
+    `;
+
+    pending.forEach(s => {
+      html += `
+        <div style="background:var(--cb-secondary);border:0.5px solid var(--cbr-info);border-radius:var(--br-md);padding:10px 12px;margin-bottom:8px">
+          
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <div style="flex:1;font-size:13px;font-weight:500;color:var(--ct-primary)">
+              ${s.title}
+            </div>
+            <span style="font-size:10px;padding:2px 6px;border-radius:99px;background:var(--cb-info);color:var(--ct-info)">
+              ${s.type}
+            </span>
+          </div>
+
+          <div style="font-size:11px;color:var(--ct-tertiary);margin-bottom:8px">
+            De ${s.studentName} · ${s.date}
+          </div>
+
+          ${s.url ? `
+            <div style="font-size:11px;color:var(--ct-secondary);margin-bottom:8px;word-break:break-all">
+              ${s.url}
+            </div>
+          ` : ''}
+
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-success btn-sm" onclick="approveSuggestion('${s.id}')">
+              ✓ Ajouter au partage
+            </button>
+            <button class="btn btn-danger btn-sm" onclick="rejectSuggestion('${s.id}')">
+              Refuser
+            </button>
+          </div>
+
+        </div>
+      `;
     });
   }
-  list.innerHTML = html || '<div style="font-size:13px;color:var(--ct-success);text-align:center;padding:1rem">✓ Toutes les suggestions ont été traitées</div>';
+
+  if(approved.length){
+    html += `
+      <div style="font-size:11px;font-weight:600;color:var(--ct-secondary);text-transform:uppercase;letter-spacing:1px;margin:12px 0 8px">
+        Validées (${approved.length})
+      </div>
+    `;
+
+    approved.forEach(s => {
+      html += `
+        <div style="background:var(--cb-secondary);border:0.5px solid var(--cbr-success);border-radius:var(--br-md);padding:10px 12px;margin-bottom:8px">
+          
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <div style="flex:1;font-size:13px;font-weight:500;color:var(--ct-primary)">
+              ${s.title}
+            </div>
+            <span style="font-size:10px;padding:2px 6px;border-radius:99px;background:var(--cb-success);color:var(--ct-success)">
+              ${s.type}
+            </span>
+          </div>
+
+          <div style="font-size:11px;color:var(--ct-tertiary)">
+            ${s.studentName} · ${s.date}
+          </div>
+
+        </div>
+      `;
+    });
+  }
+
+  list.innerHTML = html;
 }
 
 function approveSuggestion(id){
-  var sug = _suggestions.find(function(s){ return s.id===id; }); if(!sug) return;
-  // Ajouter dans la première colonne (ou créer une colonne "Suggestions")
-  var col = boardColumns[0];
-  if(!col){ col={id:'col'+Date.now(),title:'Suggestions',tiles:[]}; boardColumns.push(col); }
-  if(!col.tiles) col.tiles = [];
-  col.tiles.push({id:'t'+Date.now(), title:sug.title, type:sug.type, url:sug.url, mediaUrl:sug.mediaUrl, content:sug.content});
-  saveLocal();
-  _deleteSuggestion(id);
-  _renderSuggestionsList();
-  _updateSuggestionsBadge();
-  renderBoard();
+  var s = _suggestions.find(x => x.id == id);
+  if(s){
+    s.approved = true;
+    localStorage.setItem('suggestions', JSON.stringify(_suggestions));
+    _renderSuggestionsList();
+  }
 }
+
 function rejectSuggestion(id){
-  _deleteSuggestion(id);
+  _suggestions = _suggestions.filter(s => s.id != id);
+  localStorage.setItem('suggestions', JSON.stringify(_suggestions));
   _renderSuggestionsList();
 }
 
