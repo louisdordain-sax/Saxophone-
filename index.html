@@ -5255,34 +5255,55 @@ function confirmSuggestTile(){
 }
 
 function openSuggestionsPanel(){
-  _loadSuggestions();
-  var modal = document.getElementById('modal-suggestions');
+  let modal = document.getElementById('modal-suggestions');
+
   if(!modal){
     modal = document.createElement('div');
     modal.id = 'modal-suggestions';
-    modal.className = 'modal-overlay';
-    modal.innerHTML = '<div class="modal-box" style="max-width:500px;max-height:85vh;overflow-y:auto">'
-      +'<h3>Suggestions des élèves</h3>'
-      +'<div id="suggestions-list" style="margin-top:12px"></div>'
-      +`<div class="modal-footer"><button class="btn" onclick="closeModal('modal-suggestions')">Fermer</button></div>`
-      +'</div>';
+    modal.className = 'modal';
+
+    modal.innerHTML = `
+      <div class="modal-box" style="max-width:500px;max-height:85vh;overflow-y:auto">
+        <h3>Suggestions des élèves</h3>
+        <div id="suggestions-list" style="margin-top:12px"></div>
+        <div class="modal-footer">
+          <button class="btn" onclick="closeModal('modal-suggestions')">Fermer</button>
+        </div>
+      </div>
+    `;
+
     document.body.appendChild(modal);
   }
+
+  if(modal) modal.style.display = "block";
+
+  _loadSuggestions();
+}
+
+function _loadSuggestions(){
+  try {
+    var data = JSON.parse(localStorage.getItem('suggestions') || '[]');
+    _suggestions = data;
+  } catch(e){
+    _suggestions = [];
+  }
+
   _renderSuggestionsList();
-  openModal('modal-suggestions');
 }
 
 function _renderSuggestionsList(){
   var list = document.getElementById('suggestions-list');
   if(!list) return;
 
-  var pending = _suggestions.filter(function(s){ return !s.approved; });
-  var approved = _suggestions.filter(function(s){ return s.approved; });
+  var pending = _suggestions.filter(s => !s.approved);
+  var approved = _suggestions.filter(s => s.approved);
 
   if(!_suggestions.length){
-    list.innerHTML = `<div style="font-size:13px;color:var(--ct-tertiary);text-align:center;padding:1.5rem">
-      Aucune suggestion
-    </div>`;
+    list.innerHTML = `
+      <div style="font-size:13px;color:var(--ct-tertiary);text-align:center;padding:1.5rem">
+        Aucune suggestion
+      </div>
+    `;
     return;
   }
 
@@ -5295,7 +5316,7 @@ function _renderSuggestionsList(){
       </div>
     `;
 
-    pending.forEach(function(s){
+    pending.forEach(s => {
       html += `
         <div style="background:var(--cb-secondary);border:0.5px solid var(--cbr-info);border-radius:var(--br-md);padding:10px 12px;margin-bottom:8px">
           
@@ -5332,26 +5353,50 @@ function _renderSuggestionsList(){
     });
   }
 
+  if(approved.length){
+    html += `
+      <div style="font-size:11px;font-weight:600;color:var(--ct-secondary);text-transform:uppercase;letter-spacing:1px;margin:12px 0 8px">
+        Validées (${approved.length})
+      </div>
+    `;
+
+    approved.forEach(s => {
+      html += `
+        <div style="background:var(--cb-secondary);border:0.5px solid var(--cbr-success);border-radius:var(--br-md);padding:10px 12px;margin-bottom:8px">
+          
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <div style="flex:1;font-size:13px;font-weight:500;color:var(--ct-primary)">
+              ${s.title}
+            </div>
+            <span style="font-size:10px;padding:2px 6px;border-radius:99px;background:var(--cb-success);color:var(--ct-success)">
+              ${s.type}
+            </span>
+          </div>
+
+          <div style="font-size:11px;color:var(--ct-tertiary)">
+            ${s.studentName} · ${s.date}
+          </div>
+
+        </div>
+      `;
+    });
+  }
+
   list.innerHTML = html;
 }
-  list.innerHTML = html || '<div style="font-size:13px;color:var(--ct-success);text-align:center;padding:1rem">✓ Toutes les suggestions ont été traitées</div>';
-
 
 function approveSuggestion(id){
-  var sug = _suggestions.find(function(s){ return s.id===id; }); if(!sug) return;
-  // Ajouter dans la première colonne (ou créer une colonne "Suggestions")
-  var col = boardColumns[0];
-  if(!col){ col={id:'col'+Date.now(),title:'Suggestions',tiles:[]}; boardColumns.push(col); }
-  if(!col.tiles) col.tiles = [];
-  col.tiles.push({id:'t'+Date.now(), title:sug.title, type:sug.type, url:sug.url, mediaUrl:sug.mediaUrl, content:sug.content});
-  saveLocal();
-  _deleteSuggestion(id);
-  _renderSuggestionsList();
-  _updateSuggestionsBadge();
-  renderBoard();
+  var s = _suggestions.find(x => x.id == id);
+  if(s){
+    s.approved = true;
+    localStorage.setItem('suggestions', JSON.stringify(_suggestions));
+    _renderSuggestionsList();
+  }
 }
+
 function rejectSuggestion(id){
-  _deleteSuggestion(id);
+  _suggestions = _suggestions.filter(s => s.id != id);
+  localStorage.setItem('suggestions', JSON.stringify(_suggestions));
   _renderSuggestionsList();
 }
 
