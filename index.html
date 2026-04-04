@@ -1137,7 +1137,7 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
       <div class="field-label">Image (fichier ou URL)</div>
       <input type="url" id="tile-img-url" placeholder="https://... (laisser vide pour upload)">
       <label class="av-photo-label" style="margin-bottom:10px">
-        📁 Choisir un fichier image ou pdf
+        📁 Choisir un fichier image
         <input type="file" id="tile-img-file" accept="image/*,application/pdf" style="display:none" onchange="handleTileImageFile(event)">
       </label>
       <div id="tile-img-preview" style="display:none;margin-bottom:10px"><img id="tile-img-preview-img" style="max-width:100%;max-height:120px;border-radius:var(--br-md)"></div>
@@ -2468,7 +2468,7 @@ function renderBoard(){
     sugBtn.className='add-col-btn';
     sugBtn.style.cssText='min-width:200px;border-color:var(--cbr-info);color:var(--ct-info)';
     sugBtn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span style="font-size:12px">Suggérer une ressource</span>';
-    sugBtn.onclick = openSuggestionsPanel();
+    sugBtn.onclick = openSuggestModal;
     container.appendChild(sugBtn);
   }
 }
@@ -3911,102 +3911,31 @@ html.light .time-picker-btn{background:#fff;border-color:var(--cbr-tertiary)}
 
 
 /* ── VISIONNEUSE PDF ── */
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>PDF Viewer Pro</title>
-  <style>
-    /* Optionnel : scroll lock quand le modal est ouvert */
-    body.modal-open {
-      overflow: hidden;
-    }
-  </style>
-</head>
-<body>
-
-/* ===== PDF Viewer PRO GLOBAL ===== */
-window.openPdfViewer = function(title, imgSrc) {
-  let modal = document.getElementById('modal-pdf-viewer');
-
-  if (!modal) {
-    // Création du modal
+function openPdfViewer(title, dataUrl){
+  var modal = document.getElementById('modal-pdf-viewer');
+  if(!modal){
     modal = document.createElement('div');
     modal.id = 'modal-pdf-viewer';
-    modal.style.cssText = `
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      background: rgba(0,0,0,0.9);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    `;
-
-    modal.innerHTML = `
-      <div id="pdf-modal-content" style="
-        display: flex;
-        flex-direction: column;
-        width: 90%;
-        max-width: 900px;
-        max-height: 90%;
-        background: #111;
-        border-radius: 8px;
-        overflow: hidden;
-        transform: scale(0.9);
-        transition: transform 0.3s ease;
-      ">
-        <div style="display:flex;align-items:center;padding:10px 16px;gap:10px;background:rgba(0,0,0,0.5);flex-shrink:0">
-          <div id="pdf-viewer-title" style="flex:1;font-size:13px;color:#fff;font-weight:500"></div>
-          <a id="pdf-dl-btn" download style="color:#60a5fa;font-size:11px;padding:4px 10px;border:0.5px solid #60a5fa;border-radius:99px;text-decoration:none">Télécharger</a>
-          <button id="pdf-close-btn" style="background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:2px 8px;opacity:.8">✕</button>
-        </div>
-        <iframe id="pdf-viewer-frame" style="flex:1;border:none;width:100%;height:100%" src=""></iframe>
-      </div>
-    `;
-
+    modal.style.cssText = 'position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.95);display:none;flex-direction:column';
+    modal.innerHTML = '<div style="display:flex;align-items:center;padding:10px 16px;gap:10px;background:rgba(0,0,0,0.5);flex-shrink:0">'
+      +'<div id="pdf-viewer-title" style="flex:1;font-size:13px;color:#fff;font-weight:500"></div>'
+      +'<a id="pdf-dl-btn" download style="color:#60a5fa;font-size:11px;padding:4px 10px;border:0.5px solid #60a5fa;border-radius:99px;text-decoration:none">Télécharger</a>'
+      +'<button onclick="closePdfViewer()" style="background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:2px 8px;opacity:.8">✕</button>'
+      +'</div>'
+      +'<iframe id="pdf-viewer-frame" style="flex:1;border:none;width:100%" src=""></iframe>';
     document.body.appendChild(modal);
-
-    const content = document.getElementById('pdf-modal-content');
-
-    // Fermeture avec bouton ✕ ou clic extérieur
-    const closeModal = () => {
-      content.style.transform = 'scale(0.9)';
-      modal.style.opacity = 0;
-      document.body.classList.remove('modal-open');
-      setTimeout(() => {
-        modal.style.display = 'none';
-        document.getElementById('pdf-viewer-frame').src = '';
-      }, 300);
-    };
-
-    document.getElementById('pdf-close-btn').addEventListener('click', closeModal);
-    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
   }
-
-  // Mettre à jour titre, iframe et bouton download
   document.getElementById('pdf-viewer-title').textContent = title;
-  const iframe = document.getElementById('pdf-viewer-frame');
-  iframe.src = dataUrl;
-
-  const dlBtn = document.getElementById('pdf-dl-btn');
-  dlBtn.href = dataUrl;
-  dlBtn.download = title;
-
-  // Affichage avec animation
+  document.getElementById('pdf-viewer-frame').src = dataUrl;
+  document.getElementById('pdf-dl-btn').href = dataUrl;
+  document.getElementById('pdf-dl-btn').download = title+'.pdf';
   modal.style.display = 'flex';
-  requestAnimationFrame(() => {
-    modal.style.opacity = 1;
-    document.getElementById('pdf-modal-content').style.transform = 'scale(1)';
-    document.body.classList.add('modal-open');
-  });
-};
-</script>
+}
+function closePdfViewer(){
+  var modal = document.getElementById('modal-pdf-viewer');
+  if(modal){ modal.style.display='none'; document.getElementById('pdf-viewer-frame').src=''; }
+}
 
-</body>
-</html>
 /* ── LIGHTBOX ── */
 #lightbox{position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.93);display:none;flex-direction:column;align-items:center;justify-content:center}
 #lightbox.open{display:flex}
@@ -5257,149 +5186,132 @@ html.light #student-fab-toggle{background:rgba(255,255,255,0.94)}
 
 /* ══ SUGGESTIONS ÉLÈVES (Padlet) ══ */
 var _suggestions = [];
-function openSuggestionsPanel(){
-  let modal = document.getElementById('modal-suggestions');
 
+function _loadSuggestions(){
+  if(typeof _db !== 'undefined' && _db){
+    _db.ref('sax_suggestions').once('value').then(function(snap){
+      var d = snap.val();
+      _suggestions = d ? Object.values(d).filter(Boolean) : [];
+      _updateSuggestionsBadge();
+    }).catch(function(){ _suggestions = []; });
+  }
+}
+function _saveSuggestion(sug){
+  if(typeof _db !== 'undefined' && _db){
+    _db.ref('sax_suggestions/'+sug.id).set(sug);
+  }
+}
+function _deleteSuggestion(id){
+  if(typeof _db !== 'undefined' && _db){
+    _db.ref('sax_suggestions/'+id).remove();
+  }
+  _suggestions = _suggestions.filter(function(s){ return s.id !== id; });
+  _updateSuggestionsBadge();
+}
+function _updateSuggestionsBadge(){
+  var badge = document.getElementById('suggestions-badge');
+  if(!badge) return;
+  var pending = _suggestions.filter(function(s){ return !s.approved; });
+  if(pending.length){ badge.textContent = pending.length; badge.style.display='inline'; }
+  else { badge.style.display='none'; }
+}
+
+function openSuggestModal(){
+  // Réutiliser modal-tile en mode suggestion
+  tileTargetColId = null; tileEditingId = null; tileEditingColId = null;
+  document.getElementById('tile-modal-title').textContent = 'Suggérer une ressource au professeur';
+  document.getElementById('tile-modal-confirm-btn').textContent = 'Envoyer la suggestion';
+  // Pré-sélectionner "lien"
+  selectTileType('link');
+  // Changer le handler du bouton confirm
+  var confirmBtn = document.getElementById('tile-modal-confirm-btn');
+  var oldOnclick = confirmBtn.onclick;
+  confirmBtn.onclick = function(){ confirmSuggestTile(); };
+  openModal('modal-tile');
+}
+
+function confirmSuggestTile(){
+  var title = document.getElementById('tile-title').value.trim();
+  if(!title){ document.getElementById('tile-modal-error').style.display='block'; return; }
+  var type = document.querySelector('.tile-type-opt.selected')?.dataset.type || 'link';
+  var sug = {
+    id: 'sug'+Date.now(),
+    title: title, type: type,
+    url: document.getElementById('tile-url').value.trim(),
+    mediaUrl: document.getElementById('tile-media-url').value.trim(),
+    content: document.getElementById('tile-text-content').value.trim(),
+    studentId: currentStudent ? currentStudent.id : '',
+    studentName: currentStudent ? currentStudent.name : '',
+    date: new Date().toLocaleDateString('fr-FR'),
+    approved: false
+  };
+  _saveSuggestion(sug);
+  _suggestions.push(sug);
+  _updateSuggestionsBadge();
+  closeModal('modal-tile');
+  // Restore confirm button
+  document.getElementById('tile-modal-confirm-btn').onclick = function(){ confirmAddTile(); };
+  alert('✓ Suggestion envoyée au professeur !');
+}
+
+function openSuggestionsPanel(){
+  _loadSuggestions();
+  var modal = document.getElementById('modal-suggestions');
   if(!modal){
     modal = document.createElement('div');
     modal.id = 'modal-suggestions';
-    modal.className = 'modal';
-
-    modal.innerHTML = `
-      <div class="modal-box" style="max-width:500px;max-height:85vh;overflow-y:auto">
-        <h3>Suggestions des élèves</h3>
-        <div id="suggestions-list" style="margin-top:12px"></div>
-        <div class="modal-footer">
-          <button class="btn" onclick="closeModal('modal-suggestions')">Fermer</button>
-        </div>
-      </div>
-    `;
-
+    modal.className = 'modal-overlay';
+    modal.innerHTML = '<div class="modal-box" style="max-width:500px;max-height:85vh;overflow-y:auto">'
+      +'<h3>Suggestions des élèves</h3>'
+      +'<div id="suggestions-list" style="margin-top:12px"></div>'
+      +'<div class="modal-footer"><button class="btn" onclick="closeModal('modal-suggestions')">Fermer</button></div>'
+      +'</div>';
     document.body.appendChild(modal);
   }
-
-  if(modal) modal.style.display = "block";
-
-  _loadSuggestions();
-}
-
-function _loadSuggestions(){
-  try {
-    var data = JSON.parse(localStorage.getItem('suggestions') || '[]');
-    _suggestions = data;
-  } catch(e){
-    _suggestions = [];
-  }
-
   _renderSuggestionsList();
+  openModal('modal-suggestions');
 }
 
 function _renderSuggestionsList(){
-  var list = document.getElementById('suggestions-list');
-  if(!list) return;
-
-  var pending = _suggestions.filter(s => !s.approved);
-  var approved = _suggestions.filter(s => s.approved);
-
-  if(!_suggestions.length){
-    list.innerHTML = `
-      <div style="font-size:13px;color:var(--ct-tertiary);text-align:center;padding:1.5rem">
-        Aucune suggestion
-      </div>
-    `;
-    return;
-  }
-
+  var list = document.getElementById('suggestions-list'); if(!list) return;
+  var pending = _suggestions.filter(function(s){ return !s.approved; });
+  var approved = _suggestions.filter(function(s){ return s.approved; });
+  if(!_suggestions.length){ list.innerHTML='<div style="font-size:13px;color:var(--ct-tertiary);text-align:center;padding:1.5rem">Aucune suggestion</div>'; return; }
   var html = '';
-
   if(pending.length){
-    html += `
-      <div style="font-size:11px;font-weight:600;color:var(--ct-secondary);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">
-        En attente (${pending.length})
-      </div>
-    `;
-
-    pending.forEach(s => {
-      html += `
-        <div style="background:var(--cb-secondary);border:0.5px solid var(--cbr-info);border-radius:var(--br-md);padding:10px 12px;margin-bottom:8px">
-          
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-            <div style="flex:1;font-size:13px;font-weight:500;color:var(--ct-primary)">
-              ${s.title}
-            </div>
-            <span style="font-size:10px;padding:2px 6px;border-radius:99px;background:var(--cb-info);color:var(--ct-info)">
-              ${s.type}
-            </span>
-          </div>
-
-          <div style="font-size:11px;color:var(--ct-tertiary);margin-bottom:8px">
-            De ${s.studentName} · ${s.date}
-          </div>
-
-          ${s.url ? `
-            <div style="font-size:11px;color:var(--ct-secondary);margin-bottom:8px;word-break:break-all">
-              ${s.url}
-            </div>
-          ` : ''}
-
-          <div style="display:flex;gap:6px">
-            <button class="btn btn-success btn-sm" onclick="approveSuggestion('${s.id}')">
-              ✓ Ajouter au partage
-            </button>
-            <button class="btn btn-danger btn-sm" onclick="rejectSuggestion('${s.id}')">
-              Refuser
-            </button>
-          </div>
-
-        </div>
-      `;
+    html += '<div style="font-size:11px;font-weight:600;color:var(--ct-secondary);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">En attente ('+pending.length+')</div>';
+    pending.forEach(function(s){
+      html += '<div style="background:var(--cb-secondary);border:0.5px solid var(--cbr-info);border-radius:var(--br-md);padding:10px 12px;margin-bottom:8px">'
+        +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'
+        +'<div style="flex:1;font-size:13px;font-weight:500;color:var(--ct-primary)">'+s.title+'</div>'
+        +'<span style="font-size:10px;padding:2px 6px;border-radius:99px;background:var(--cb-info);color:var(--ct-info)">'+s.type+'</span>'
+        +'</div>'
+        +'<div style="font-size:11px;color:var(--ct-tertiary);margin-bottom:8px">De '+s.studentName+' · '+s.date+'</div>'
+        +(s.url?'<div style="font-size:11px;color:var(--ct-secondary);margin-bottom:8px;word-break:break-all">'+s.url+'</div>':'')
+        +'<div style="display:flex;gap:6px">'
+        +'<button class="btn btn-success btn-sm" onclick="approveSuggestion(''+s.id+'')">✓ Ajouter au partage</button>'
+        +'<button class="btn btn-danger btn-sm" onclick="rejectSuggestion(''+s.id+'')">Refuser</button>'
+        +'</div></div>';
     });
   }
-
-  if(approved.length){
-    html += `
-      <div style="font-size:11px;font-weight:600;color:var(--ct-secondary);text-transform:uppercase;letter-spacing:1px;margin:12px 0 8px">
-        Validées (${approved.length})
-      </div>
-    `;
-
-    approved.forEach(s => {
-      html += `
-        <div style="background:var(--cb-secondary);border:0.5px solid var(--cbr-success);border-radius:var(--br-md);padding:10px 12px;margin-bottom:8px">
-          
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-            <div style="flex:1;font-size:13px;font-weight:500;color:var(--ct-primary)">
-              ${s.title}
-            </div>
-            <span style="font-size:10px;padding:2px 6px;border-radius:99px;background:var(--cb-success);color:var(--ct-success)">
-              ${s.type}
-            </span>
-          </div>
-
-          <div style="font-size:11px;color:var(--ct-tertiary)">
-            ${s.studentName} · ${s.date}
-          </div>
-
-        </div>
-      `;
-    });
-  }
-
-  list.innerHTML = html;
+  list.innerHTML = html || '<div style="font-size:13px;color:var(--ct-success);text-align:center;padding:1rem">✓ Toutes les suggestions ont été traitées</div>';
 }
 
 function approveSuggestion(id){
-  var s = _suggestions.find(x => x.id == id);
-  if(s){
-    s.approved = true;
-    localStorage.setItem('suggestions', JSON.stringify(_suggestions));
-    _renderSuggestionsList();
-  }
+  var sug = _suggestions.find(function(s){ return s.id===id; }); if(!sug) return;
+  // Ajouter dans la première colonne (ou créer une colonne "Suggestions")
+  var col = boardColumns[0];
+  if(!col){ col={id:'col'+Date.now(),title:'Suggestions',tiles:[]}; boardColumns.push(col); }
+  if(!col.tiles) col.tiles = [];
+  col.tiles.push({id:'t'+Date.now(), title:sug.title, type:sug.type, url:sug.url, mediaUrl:sug.mediaUrl, content:sug.content});
+  saveLocal();
+  _deleteSuggestion(id);
+  _renderSuggestionsList();
+  _updateSuggestionsBadge();
+  renderBoard();
 }
-
 function rejectSuggestion(id){
-  _suggestions = _suggestions.filter(s => s.id != id);
-  localStorage.setItem('suggestions', JSON.stringify(_suggestions));
+  _deleteSuggestion(id);
   _renderSuggestionsList();
 }
 
