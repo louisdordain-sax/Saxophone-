@@ -5273,27 +5273,67 @@ function openSuggestionsPanel(){
 }
 
 function _renderSuggestionsList(){
-  var list = document.getElementById('suggestions-list'); if(!list) return;
+  var list = document.getElementById('suggestions-list');
+  if(!list) return;
+
   var pending = _suggestions.filter(function(s){ return !s.approved; });
   var approved = _suggestions.filter(function(s){ return s.approved; });
-  if(!_suggestions.length){ list.innerHTML='<div style="font-size:13px;color:var(--ct-tertiary);text-align:center;padding:1.5rem">Aucune suggestion</div>'; return; }
+
+  if(!_suggestions.length){
+    list.innerHTML = `<div style="font-size:13px;color:var(--ct-tertiary);text-align:center;padding:1.5rem">
+      Aucune suggestion
+    </div>`;
+    return;
+  }
+
   var html = '';
+
   if(pending.length){
-    html += '<div style="font-size:11px;font-weight:600;color:var(--ct-secondary);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">En attente ('+pending.length+')</div>';
+    html += `
+      <div style="font-size:11px;font-weight:600;color:var(--ct-secondary);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">
+        En attente (${pending.length})
+      </div>
+    `;
+
     pending.forEach(function(s){
-      html += '<div style="background:var(--cb-secondary);border:0.5px solid var(--cbr-info);border-radius:var(--br-md);padding:10px 12px;margin-bottom:8px">'
-        +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'
-        +'<div style="flex:1;font-size:13px;font-weight:500;color:var(--ct-primary)">'+s.title+'</div>'
-        +'<span style="font-size:10px;padding:2px 6px;border-radius:99px;background:var(--cb-info);color:var(--ct-info)">'+s.type+'</span>'
-        +'</div>'
-        +'<div style="font-size:11px;color:var(--ct-tertiary);margin-bottom:8px">De '+s.studentName+' · '+s.date+'</div>'
-        +(s.url?'<div style="font-size:11px;color:var(--ct-secondary);margin-bottom:8px;word-break:break-all">'+s.url+'</div>':'')
-        +'<div style="display:flex;gap:6px">'
-        +`<button class="btn btn-success btn-sm" onclick="approveSuggestion(''+s.id+'')">✓ Ajouter au partage</button>`
-        +'<button class="btn btn-danger btn-sm" onclick="rejectSuggestion(''+s.id+'')">Refuser</button>'
-        +'</div></div>';
+      html += `
+        <div style="background:var(--cb-secondary);border:0.5px solid var(--cbr-info);border-radius:var(--br-md);padding:10px 12px;margin-bottom:8px">
+          
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <div style="flex:1;font-size:13px;font-weight:500;color:var(--ct-primary)">
+              ${s.title}
+            </div>
+            <span style="font-size:10px;padding:2px 6px;border-radius:99px;background:var(--cb-info);color:var(--ct-info)">
+              ${s.type}
+            </span>
+          </div>
+
+          <div style="font-size:11px;color:var(--ct-tertiary);margin-bottom:8px">
+            De ${s.studentName} · ${s.date}
+          </div>
+
+          ${s.url ? `
+            <div style="font-size:11px;color:var(--ct-secondary);margin-bottom:8px;word-break:break-all">
+              ${s.url}
+            </div>
+          ` : ''}
+
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-success btn-sm" onclick="approveSuggestion('${s.id}')">
+              ✓ Ajouter au partage
+            </button>
+            <button class="btn btn-danger btn-sm" onclick="rejectSuggestion('${s.id}')">
+              Refuser
+            </button>
+          </div>
+
+        </div>
+      `;
     });
   }
+
+  list.innerHTML = html;
+}
   list.innerHTML = html || '<div style="font-size:13px;color:var(--ct-success);text-align:center;padding:1rem">✓ Toutes les suggestions ont été traitées</div>';
 }
 
