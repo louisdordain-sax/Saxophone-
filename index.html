@@ -3911,20 +3911,60 @@ html.light .time-picker-btn{background:#fff;border-color:var(--cbr-tertiary)}
 
 
 /* ── VISIONNEUSE PDF ── */
-function openPdfViewer(title, dataUrl){
-  var modal = document.getElementById('modal-pdf-viewer');
-  if(!modal){
+// Fonction pour ouvrir le viewer PDF avec animation
+function openPdfViewer(title, dataUrl) {
+  let modal = document.getElementById('modal-pdf-viewer');
+
+  if (!modal) {
     modal = document.createElement('div');
     modal.id = 'modal-pdf-viewer';
-    modal.style.cssText = 'position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.95);display:none;flex-direction:column';
-    modal.innerHTML = '<div style="display:flex;align-items:center;padding:10px 16px;gap:10px;background:rgba(0,0,0,0.5);flex-shrink:0">'
-      +'<div id="pdf-viewer-title" style="flex:1;font-size:13px;color:#fff;font-weight:500"></div>'
-      +'<a id="pdf-dl-btn" download style="color:#60a5fa;font-size:11px;padding:4px 10px;border:0.5px solid #60a5fa;border-radius:99px;text-decoration:none">Télécharger</a>'
-      +'<button onclick="closePdfViewer()" style="background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:2px 8px;opacity:.8">✕</button>'
-      +'</div>'
-      +'<iframe id="pdf-viewer-frame" style="flex:1;border:none;width:100%" src=""></iframe>';
+    modal.style.cssText = `
+      position: fixed;
+      inset: 0;
+      z-index: 9998;
+      background: rgba(0,0,0,0.95);
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    `;
+
+    modal.innerHTML = `
+      <div style="display:flex;align-items:center;padding:10px 16px;gap:10px;background:rgba(0,0,0,0.5);flex-shrink:0">
+        <div id="pdf-viewer-title" style="flex:1;font-size:13px;color:#fff;font-weight:500"></div>
+        <a id="pdf-dl-btn" download style="color:#60a5fa;font-size:11px;padding:4px 10px;border:0.5px solid #60a5fa;border-radius:99px;text-decoration:none">Télécharger</a>
+        <button id="pdf-close-btn" style="background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:2px 8px;opacity:.8">✕</button>
+      </div>
+      <iframe id="pdf-viewer-frame" style="flex:1;border:none;width:100%" src=""></iframe>
+    `;
+
     document.body.appendChild(modal);
+
+    // Fermer le modal avec animation
+    document.getElementById('pdf-close-btn').addEventListener('click', () => {
+      modal.style.opacity = 0;
+      setTimeout(() => {
+        modal.style.display = 'none';
+        document.getElementById('pdf-viewer-frame').src = ''; // Nettoyer l'iframe
+      }, 300); // correspond au temps de transition
+    });
   }
+
+  // Mettre à jour le contenu
+  document.getElementById('pdf-viewer-title').textContent = title;
+  const iframe = document.getElementById('pdf-viewer-frame');
+  iframe.src = dataUrl;
+
+  const dlBtn = document.getElementById('pdf-dl-btn');
+  dlBtn.href = dataUrl;
+  dlBtn.download = title;
+
+  // Afficher le modal avec fade-in
+  modal.style.display = 'flex';
+  requestAnimationFrame(() => { // pour forcer le rendu avant d'appliquer l'opacité
+    modal.style.opacity = 1;
+  });
+}
   document.getElementById('pdf-viewer-title').textContent = title;
   document.getElementById('pdf-viewer-frame').src = dataUrl;
   document.getElementById('pdf-dl-btn').href = dataUrl;
