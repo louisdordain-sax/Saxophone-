@@ -1137,7 +1137,7 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
       <div class="field-label">Image (fichier ou URL)</div>
       <input type="url" id="tile-img-url" placeholder="https://... (laisser vide pour upload)">
       <label class="av-photo-label" style="margin-bottom:10px">
-        📁 Choisir un fichier image
+        📁 Choisir un fichier image ou pdf
         <input type="file" id="tile-img-file" accept="image/*,application/pdf" style="display:none" onchange="handleTileImageFile(event)">
       </label>
       <div id="tile-img-preview" style="display:none;margin-bottom:10px"><img id="tile-img-preview-img" style="max-width:100%;max-height:120px;border-radius:var(--br-md)"></div>
@@ -3925,13 +3925,6 @@ html.light .time-picker-btn{background:#fff;border-color:var(--cbr-tertiary)}
 </head>
 <body>
 
-<!-- Exemple de bouton pour ouvrir un PDF -->
-<div onclick="openPdfViewer('Exemple PDF', 'monpdf.pdf')" 
-     style="cursor:pointer;padding:10px 20px;background:#60a5fa;color:#fff;display:inline-block;border-radius:4px;">
-  Ouvrir PDF
-</div>
-
-<script>
 /* ===== PDF Viewer PRO GLOBAL ===== */
 window.openPdfViewer = function(title, dataUrl) {
   let modal = document.getElementById('modal-pdf-viewer');
