@@ -5335,7 +5335,7 @@ function _renderSuggestionsList(){
   list.innerHTML = html;
 }
   list.innerHTML = html || '<div style="font-size:13px;color:var(--ct-success);text-align:center;padding:1rem">✓ Toutes les suggestions ont été traitées</div>';
-}
+
 
 function approveSuggestion(id){
   var sug = _suggestions.find(function(s){ return s.id===id; }); if(!sug) return;
