@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Arbre de compétences — Saxophone 🎷 (En ligne)</title>
+<title>Classes de Louis Dordain — Saxophone 🎷 (En ligne)</title>
 <!-- Firebase SDK (compat) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -111,10 +111,12 @@ html.light .drawer-handle{background:rgba(58,78,112,0.15)}
 .interaction-bar{height:5px;border-radius:99px;background:var(--cbr-tertiary);flex:1;overflow:hidden;min-width:60px}
 .interaction-bar-fill{height:100%;border-radius:99px;background:#378ADD;transition:width .4s}
 .toolbox-drawer{background:var(--cb-primary);border:0.5px solid var(--cbr-secondary)}
-.color-swatches{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
-.color-swatch{width:24px;height:24px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .15s;flex-shrink:0}
-.color-swatch.selected{border-color:#fff;transform:scale(1.15)}
+.color-swatches{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
+.color-swatch{width:24px;height:24px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .15s;flex-shrink:0;outline:3px solid transparent;outline-offset:2px}
+.color-swatch.selected{outline-color:#60a5fa;transform:scale(1.12)}
 .color-swatch.none{background:var(--cb-secondary);border:0.5px solid var(--cbr-secondary)}
+.color-swatch.none.selected{outline-color:#60a5fa}
+html.light .color-swatch.selected{outline-color:#1558a8}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--body-bg);color:var(--ct-primary);font-family:var(--font-sans);min-height:100vh}
 .app{padding:1rem;max-width:600px;margin:0 auto}
@@ -368,14 +370,8 @@ canvas{display:block;width:100%;height:100%;cursor:default;position:absolute;ins
 .spotify-open-btn svg{flex-shrink:0}
 .tile-body{padding:9px 12px}
 .tile-title{font-size:13px;font-weight:500;color:var(--ct-primary);margin-bottom:3px;line-height:1.35;word-break:break-word}
-.tile-meta{font-size:10px;color:var(--ct-tertiary);display:flex;align-items:center;gap:4px;flex-wrap:wrap}
-.tile-type-badge{font-size:10px;padding:1px 6px;border-radius:99px;border:0.5px solid;flex-shrink:0}
-.tile-actions{position:absolute;top:5px;right:5px;display:none;gap:3px;z-index:5}
-.tile:hover .tile-actions{display:flex}
-.tile-action-btn{background:rgba(8,12,24,.88);border:0.5px solid var(--cbr-tertiary);border-radius:var(--br-sm);padding:3px 7px;font-size:11px;cursor:pointer;color:var(--ct-secondary);transition:all .15s;backdrop-filter:blur(4px)}
-.tile-action-btn:hover{color:var(--ct-primary);border-color:var(--cbr-secondary)}
-.tile-action-btn.del:hover{background:var(--cb-danger);color:var(--ct-danger);border-color:var(--cbr-danger)}
-.add-tile-btn-small{border:0.5px dashed var(--cbr-tertiary);background:none;border-radius:var(--br-md);padding:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ct-tertiary);font-size:11px;gap:5px;transition:all .15s;width:100%;font-family:var(--font-sans)}
+.tile-meta{font-size:10px;color:var(--ct-tertiary);display:flex;align-items:center;gap:4px;flex-wrap:nowrap;overflow:hidden}
+.tile-type-badge{font-size:10px;padding:1px 6px;border-radius:99px;border:0.5px solid;flex-shrink:0}.add-tile-btn-small{border:0.5px dashed var(--cbr-tertiary);background:none;border-radius:var(--br-md);padding:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ct-tertiary);font-size:11px;gap:5px;transition:all .15s;width:100%;font-family:var(--font-sans)}
 .add-tile-btn-small:hover{border-color:var(--cbr-info);color:var(--ct-info);background:var(--cb-info)}
 .board-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 1rem;color:var(--ct-tertiary);font-size:13px;text-align:center;width:100%}
 /* Modal board */
@@ -388,11 +384,46 @@ canvas{display:block;width:100%;height:100%;cursor:default;position:absolute;ins
 .audio-player{padding:8px 10px;background:var(--cb-secondary);border-top:0.5px solid var(--cbr-tertiary)}
 .audio-player audio{width:100%;height:34px}
 /* Swatch couleur */
-.color-swatches{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
-.color-swatch{width:24px;height:24px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .15s;flex-shrink:0}
-.color-swatch.selected{border-color:#fff;transform:scale(1.15)}
-.color-swatch.none{background:var(--cb-secondary);border:0.5px solid var(--cbr-secondary)}
-/* ══ ESPACE OUTILS PLEIN ÉCRAN ══ */
+/* color-swatch rules defined above */
+
+/* ── GEAR BUTTON TUILE ── */
+.tile-gear-wrap{position:absolute;top:5px;right:5px;z-index:5}
+.tile-gear-btn{width:26px;height:26px;border-radius:50%;border:0.5px solid var(--cbr-tertiary);background:rgba(15,20,32,0.82);color:var(--ct-tertiary);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;backdrop-filter:blur(4px);opacity:0;pointer-events:none}
+.tile:hover .tile-gear-btn{opacity:1;pointer-events:auto}
+.tile-gear-btn:hover{border-color:var(--cbr-info);color:var(--ct-info);background:rgba(30,58,95,0.92)}
+html.light .tile-gear-btn{background:rgba(255,255,255,0.92)}
+html.light .tile:hover .tile-gear-btn{opacity:1}
+
+/* ── GEAR BUTTON SECTION PADLET ── */
+.board-col-gear-btn{width:26px;height:26px;border-radius:50%;border:0.5px solid var(--cbr-tertiary);background:none;color:var(--ct-tertiary);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;padding:0}
+.board-col-gear-btn:hover{border-color:var(--cbr-info);color:var(--ct-info);background:var(--cb-info)}
+
+/* ── DROPDOWN MENU CONTEXTUEL ── */
+.ctx-menu{position:fixed;z-index:9500;background:var(--cb-primary);border:0.5px solid var(--cbr-secondary);border-radius:var(--br-lg);padding:6px;min-width:180px;box-shadow:0 8px 32px rgba(0,0,0,0.45);animation:ctxFadeIn .12s ease}
+@keyframes ctxFadeIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.ctx-menu-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--br-md);font-size:12px;color:var(--ct-secondary);cursor:pointer;transition:all .12s;border:none;background:none;width:100%;text-align:left;font-family:var(--font-sans)}
+.ctx-menu-item:hover{background:var(--cb-secondary);color:var(--ct-primary)}
+.ctx-menu-item.danger{color:var(--ct-danger)}
+.ctx-menu-item.danger:hover{background:var(--cb-danger)}
+.ctx-menu-sep{height:0.5px;background:var(--cbr-tertiary);margin:4px 6px}
+
+/* ── FENÊTRE APERÇU TUILE ── */
+#tile-preview-win{font-family:var(--font-sans);animation:ctxFadeIn .15s ease}
+html.light #tile-preview-win{background:#fff;border-color:var(--cbr-tertiary);box-shadow:0 8px 32px rgba(80,100,150,0.18)}
+
+/* ── BOUTON EXPAND APERÇU ── */
+.tile-expand-btn{margin-left:auto;flex-shrink:0;background:none;border:0.5px solid var(--cbr-tertiary);border-radius:4px;padding:2px 5px;color:var(--ct-tertiary);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center}
+.tile-expand-btn:hover{border-color:var(--cbr-info);color:var(--ct-info);background:var(--cb-info)}
+
+/* ── SOUS-ONGLETS FICHIERS ── */
+.file-sub-tab{outline:none;flex:1;font-size:11px;padding:6px 4px;border-radius:6px;border:none;background:none;color:var(--ct-secondary);cursor:pointer;font-family:var(--font-sans);transition:all .15s;display:flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap}
+.file-sub-tab:hover:not(.active){background:var(--cb-primary);color:var(--ct-primary)}
+.file-sub-tab.active{background:var(--cb-info);color:var(--ct-info)}
+.ctx-color-row{display:flex;gap:5px;padding:6px 10px;flex-wrap:wrap;align-items:center}
+.ctx-color-dot{width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .15s;flex-shrink:0}
+.ctx-color-dot:hover,.ctx-color-dot.active{border-color:#fff;transform:scale(1.18)}
+.ctx-color-dot.none{background:var(--cb-secondary);border-color:var(--cbr-tertiary)}
+html.light .ctx-menu{background:#fff;border-color:var(--cbr-tertiary);box-shadow:0 4px 24px rgba(80,100,150,0.18)}
 #sc-toolbox{position:fixed;inset:0;z-index:15;display:none;overflow:hidden;
   background:radial-gradient(ellipse 80% 80% at 50% 40%,#0d1830 0%,#080d1a 60%,#050810 100%)}
 #sc-toolbox.active{display:block}
@@ -603,7 +634,7 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
 
     <div class="prof-nav-end">
       <button class="btn btn-sm" id="ptab-parametres" onclick="showProfTab('parametres')" title="Paramètres" style="padding:6px 8px;transition:all .15s"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
-      <button class="btn btn-sm" id="theme-btn-home" onclick="toggleTheme()" title="Thème">
+      <button class="btn btn-sm" id="theme-btn-home" onclick="toggleTheme()" title="Thème" style="padding:6px 8px;transition:all .15s">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       </button>
       <button class="btn btn-sm btn-logout" onclick="doLogout()" title="Déconnexion" style="padding:6px 8px;transition:all .15s">
@@ -671,8 +702,8 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
     <div id="ptab-content-outils" style="display:none">
       <div class="home-cards" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr))">
 
-        <!-- Métronome -->
-        <div class="home-card" id="card-metro-home" onclick="toggleMetroDrawer()">
+        <!-- Métronome : visible pour les élèves uniquement (pas dans la vue prof) -->
+        <div class="home-card" id="card-metro-home" onclick="toggleMetroDrawer()" style="display:none">
           <div class="home-card-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
           <div class="home-card-title">Métronome</div>
         </div>
@@ -694,7 +725,7 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
     </div>
 
 
-      <!-- Tiroir Métronome (inline dans l'onglet Outils) -->
+      <!-- Tiroir Métronome (réservé aux élèves, masqué ici) -->
       <div id="metro-drawer" style="display:none;margin-top:16px;background:var(--cb-secondary);border:0.5px solid var(--cbr-tertiary);border-radius:var(--br-lg);overflow:hidden">
         <div style="display:flex;align-items:center;padding:12px 16px;border-bottom:0.5px solid var(--cbr-tertiary)">
           <span style="font-size:14px;font-weight:600;color:var(--ct-primary);flex:1">🎵 Métronome</span>
@@ -888,9 +919,9 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
 
   <!-- HUD légende bas centre -->
   <div class="hud-botbar">
-    <div class="li"><div class="ld" style="background:#1a3a5c;border:1px solid #378ADD"></div>Maîtrisée</div>
-    <div class="li"><div class="ld" style="background:#3a2800;border:1px solid #EF9F27"></div>En cours</div>
-    <div class="li"><div class="ld" style="background:#111624;border:1px solid #252d45"></div>Verrouillée</div>
+    <div class="li"><div class="ld" style="background:#378ADD;border:1px solid #378ADD"></div>Maîtrisée</div>
+    <div class="li"><div class="ld" style="background:#EF9F27;border:1px solid #EF9F27"></div>En cours</div>
+    <div class="li"><div class="ld" style="background:var(--cbr-tertiary);border:1px solid var(--cbr-secondary)"></div>Verrouillée</div>
   </div>
 
   <!-- Vue édition (panel flottant) -->
@@ -1095,6 +1126,9 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
         <div class="board-header-sub" id="board-subtitle">Documents, liens, enregistrements</div>
       </div>
       <span id="board-mode-badge" class="badge badge-prof" style="display:none">Mode prof</span>
+      <button class="btn btn-sm" onclick="openSuggestionsPanel()" id="btn-suggestions" style="display:none">
+        <span id="suggestions-badge" style="display:none;background:#f87171;color:#fff;border-radius:99px;padding:0 5px;font-size:9px;margin-right:3px;font-weight:700"></span>
+        💡 Suggestions</button>
       <button class="btn btn-sm" id="btn-board-interactions" onclick="openInteractionsModal()" style="display:none"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Interactions</button>
 
     </div>
@@ -1110,9 +1144,8 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
     <h3 id="tile-modal-title">Ajouter une ressource</h3>
     <div class="tile-type-picker" id="tile-type-picker">
       <button class="tile-type-opt selected" data-type="link" onclick="selectTileType('link')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Lien</button>
-      <button class="tile-type-opt" data-type="media" onclick="selectTileType('media')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Média</button>
-      <button class="tile-type-opt" data-type="image" onclick="selectTileType('image')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Image</button>
-      <button class="tile-type-opt" data-type="audio" onclick="selectTileType('audio')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>Audio</button>
+      <button class="tile-type-opt" data-type="media" onclick="selectTileType('media')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Médias en ligne</button>
+      <button class="tile-type-opt" data-type="file" onclick="selectTileType('file')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>Fichiers</button>
       <button class="tile-type-opt" data-type="text" onclick="selectTileType('text')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Note</button>
     </div>
     <div class="field-label">Titre</div>
@@ -1135,7 +1168,7 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
       <input type="url" id="tile-img-url" placeholder="https://... (laisser vide pour upload)">
       <label class="av-photo-label" style="margin-bottom:10px">
         📁 Choisir un fichier image
-        <input type="file" id="tile-img-file" accept="image/*" style="display:none" onchange="handleTileImageFile(event)">
+        <input type="file" id="tile-img-file" accept="image/*,application/pdf" style="display:none" onchange="handleTileImageFile(event)">
       </label>
       <div id="tile-img-preview" style="display:none;margin-bottom:10px"><img id="tile-img-preview-img" style="max-width:100%;max-height:120px;border-radius:var(--br-md)"></div>
     </div>
@@ -1147,6 +1180,50 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
         <input type="file" id="tile-audio-file" accept="audio/*" onchange="handleTileAudioFile(event)">
       </label>
       <div id="tile-audio-name" style="font-size:11px;color:var(--ct-success);display:none;margin-bottom:6px"></div>
+    </div>
+    <!-- Fichiers locaux (image, pdf, audio, téléchargeable) -->
+    <div id="tile-field-file" style="display:none">
+      <!-- Sous-onglets de type de fichier -->
+      <div style="display:flex;gap:4px;margin-bottom:10px;background:var(--cb-secondary);border-radius:var(--br-md);padding:4px;border:0.5px solid var(--cbr-tertiary)">
+        <button class="file-sub-tab active" data-sub="image" onclick="selectFileSubtype('image')">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Image/PDF
+        </button>
+        <button class="file-sub-tab" data-sub="audio" onclick="selectFileSubtype('audio')">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg> Audio
+        </button>
+        <button class="file-sub-tab" data-sub="download" onclick="selectFileSubtype('download')">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Téléchargeable
+        </button>
+      </div>
+      <!-- Sous-section Image/PDF -->
+      <div id="file-sub-image">
+        <div class="field-label">Image (fichier ou URL)</div>
+        <input type="url" id="tile-img-url" placeholder="https://... (laisser vide pour upload)">
+        <label class="av-photo-label" style="margin-bottom:10px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:middle;margin-right:4px"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Choisir une image ou un PDF
+          <input type="file" id="tile-img-file" accept="image/*,application/pdf" style="display:none" onchange="handleTileImageFile(event)">
+        </label>
+        <div id="tile-img-preview" style="display:none;margin-bottom:10px"><img id="tile-img-preview-img" style="max-width:100%;max-height:120px;border-radius:var(--br-md)"></div>
+      </div>
+      <!-- Sous-section Audio -->
+      <div id="file-sub-audio" style="display:none">
+        <div class="field-label">Fichier audio</div>
+        <label class="av-photo-label" style="margin-bottom:8px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:middle;margin-right:4px"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg> Choisir un fichier audio
+          <input type="file" id="tile-audio-file" accept="audio/*" onchange="handleTileAudioFile(event)">
+        </label>
+        <div id="tile-audio-name" style="font-size:11px;color:var(--ct-success);display:none;margin-bottom:6px"></div>
+      </div>
+      <!-- Sous-section Téléchargeable -->
+      <div id="file-sub-download" style="display:none">
+        <div class="field-label">Fichier à télécharger</div>
+        <div style="font-size:10px;color:var(--ct-tertiary);margin-bottom:8px">Tout type de fichier : partition, tableur, présentation, archive…</div>
+        <label class="av-photo-label" style="margin-bottom:8px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:middle;margin-right:4px"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg> Choisir un fichier
+          <input type="file" id="tile-dl-file" style="display:none" onchange="handleTileDownloadFile(event)">
+        </label>
+        <div id="tile-dl-name" style="font-size:11px;color:var(--ct-success);display:none;margin-bottom:6px"></div>
+      </div>
     </div>
     <!-- Note -->
     <div id="tile-field-text" style="display:none">
@@ -1747,9 +1824,6 @@ function renderHome(){
       const examBadge=cs==='awaiting_exam'?`<span style="font-size:10px;padding:2px 8px;border-radius:99px;background:#3a2800;color:#EF9F27;border:0.5px solid rgba(239,159,39,.4)">⏳ Examen</span>`:'';
       const row=document.createElement('div');row.className='std-row';
       var _validerBtn = cs==='awaiting_exam'
-        ? '<button class="btn btn-success btn-sm" onclick="openExamModal(\'' + s.id + '\')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> Valider</button>'
-        : '';
-      var _validerBtn = cs==='awaiting_exam'
         ? '<button class="btn btn-success btn-sm" style="white-space:nowrap" onclick="openExamModal(\'' + s.id + '\')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> Valider</button>'
         : '';
       var _cycleYear = getCycleYear(s);
@@ -2275,7 +2349,7 @@ function showCompetencesEditor(){ceCycle=1;if(profMode){show('sc-home');showProf
 function renderCEScreen(){const tabs=document.getElementById('ce-ctabs');tabs.innerHTML='';for(let c=1;c<=3;c++){const t=document.createElement('div');t.className='ctab'+(c===ceCycle?' active':'');t.textContent='Cycle '+c;const cc=c;t.onclick=()=>{ceCycle=cc;renderCEContent()};tabs.appendChild(t)}renderCEContent()}
 function renderCEContent(){
   document.querySelectorAll('#ce-ctabs .ctab').forEach((t,i)=>t.classList.toggle('active',i+1===ceCycle));
-  let html='';
+  let html='<div style="margin-bottom:12px"><button class="btn btn-sm" onclick="openFamilyModal()" style="display:flex;align-items:center;gap:5px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Gérer les familles</button></div>';
   for(const br of BRANCHES){const bs=(skillsData[ceCycle]||[]).filter(s=>s.b===br.id);html+=`<div class="ce-section"><div class="ce-section-header"><div class="branch-dot" style="background:${br.color}"></div><div style="font-size:13px;font-weight:500;color:${br.color};flex:1">${br.label}</div><span style="font-size:11px;color:var(--ct-secondary);margin-right:8px">${bs.length} compétence${bs.length!==1?'s':''}</span><button class="btn btn-info btn-sm" onclick="openAddSkModal(${ceCycle},'${br.id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Ajouter</button></div>`;if(!bs.length)html+=`<div style="padding:14px 16px;font-size:12px;color:var(--ct-tertiary);font-style:italic">Aucune compétence</div>`;for(const sk of bs){html+=`<div class="ce-skill-row"><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500;color:${br.color}">${sk.l}</div><div style="font-size:11px;color:var(--ct-secondary)">${sk.d}</div>${sk.todo?`<div style="font-size:11px;color:var(--ct-tertiary);margin-top:2px;font-style:italic">💡 ${sk.todo}</div>`:''}</div><button class="icon-btn" onclick="openEditSkModal(${ceCycle},'${sk.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="icon-btn del" onclick="askDeleteSkill(${ceCycle},'${sk.id}')">🗑️</button></div>`}html+='</div>'}
   document.getElementById('ce-content').innerHTML=html;
 }
@@ -2412,10 +2486,16 @@ function renderBoard(){
   boardColumns.forEach((col,colIdx)=>{
     const colEl=document.createElement('div');
     colEl.className='board-col';colEl.dataset.colidx=colIdx;
+    // Couleur de section : bordure épaisse bien visible
+    if(col.color){
+      colEl.style.border=`3px solid ${col.color}`;
+      colEl.style.setProperty('--col-accent',col.color);
+    }
+    const colColor = col.color||'';
     const titleHtml=boardIsProfMode
       ?`<input class="board-col-title" value="${col.title.replace(/"/g,'&quot;')}" placeholder="Titre" onblur="renameColumn(${colIdx},this.value)" onkeydown="if(event.key==='Enter')this.blur()">`
       :`<div class="board-col-title" style="cursor:default;user-select:none">${col.title}</div>`;
-    const menuHtml=boardIsProfMode?`<button class="board-col-menu" title="Supprimer" onclick="deleteColumn(${colIdx})">×</button>`:'';
+    const menuHtml=boardIsProfMode?`<button class="board-col-gear-btn" title="Réglages de la section" onclick="event.stopPropagation();openColMenu(${colIdx},this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>`:'';
     colEl.innerHTML=`
       <div class="board-col-header">
         ${boardIsProfMode?`<span style="cursor:grab;color:var(--ct-tertiary);font-size:15px;padding:0 3px;line-height:1" draggable="true" ondragstart="startColDrag(event,${colIdx})" ondragend="endColDrag()"><svg width="10" height="14" viewBox="0 0 10 14" fill="currentColor" opacity=".35"><circle cx="3" cy="3" r=".9"/><circle cx="7" cy="3" r=".9"/><circle cx="3" cy="7" r=".9"/><circle cx="7" cy="7" r=".9"/><circle cx="3" cy="11" r=".9"/><circle cx="7" cy="11" r=".9"/></svg></span>`:''}
@@ -2457,6 +2537,14 @@ function renderBoard(){
     btn.innerHTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span style="font-size:12px">Nouvelle section</span>';
     btn.onclick=addColumn;
     container.appendChild(btn);
+  } else if(currentStudent) {
+    // Bouton suggestion pour les élèves
+    const sugBtn = document.createElement('button');
+    sugBtn.className='add-col-btn';
+    sugBtn.style.cssText='min-width:200px;border-color:var(--cbr-info);color:var(--ct-info)';
+    sugBtn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span style="font-size:12px">Suggérer une ressource</span>';
+    sugBtn.onclick = openSuggestModal;
+    container.appendChild(sugBtn);
   }
 }
 
@@ -2464,19 +2552,34 @@ function buildTileEl(tile,colIdx,tileIdx,colId){
   const el=document.createElement('div');
   const sizeClass=tile.size||'md';
   el.className=`tile tile-size-${sizeClass}`;
-  if(tile.color){el.setAttribute('data-color',tile.color);el.style.setProperty('--tile-color',tile.color);el.style.background=tile.color+'22';el.style.borderColor=tile.color+'66';}
+  // Couleur : bordure épaisse uniquement (pas de fond coloré)
+  if(tile.color){
+    el.setAttribute('data-color',tile.color);
+    el.style.setProperty('--tile-color',tile.color);
+    el.style.border=`3px solid ${tile.color}`;
+  }
   if(boardIsProfMode)el.draggable=true;
 
-  const typeLabels={link:'Lien',media:'Média',image:'Image',audio:'Audio',text:'Note'};
-  const typeCols={link:'var(--cbr-info)',media:'#7c3aed',image:'var(--cbr-success)',audio:'var(--cbr-warning)',text:'var(--cbr-secondary)'};
-  const typeTxtCols={link:'var(--ct-info)',media:'#c4b5fd',image:'var(--ct-success)',audio:'var(--ct-warning)',text:'var(--ct-secondary)'};
+  const typeLabels={link:'Lien',media:'Média',image:'Image',audio:'Audio',text:'Note',download:'Fichier'};
+  const typeCols={link:'var(--cbr-info)',media:'#7c3aed',image:'var(--cbr-success)',audio:'var(--cbr-warning)',text:'var(--cbr-secondary)',download:'var(--cbr-warning)'};
+  const typeTxtCols={link:'var(--ct-info)',media:'#c4b5fd',image:'var(--ct-success)',audio:'var(--ct-warning)',text:'var(--ct-secondary)',download:'var(--ct-warning)'};
   const showPreview=tile.showPreview!==false;
+
+  // Détection PDF (doit être avant previewHtml)
+  const _imgSrcForBadge = tile.type==='image' ? (tile.imgData||tile.url||'') : '';
+  const _isPdfTile = tile.type==='image' && _imgSrcForBadge.startsWith('data:application/pdf');
 
   let previewHtml='';
   if(showPreview){
     if(tile.type==='image'&&(tile.imgData||tile.url)){
       const imgSrc=tile.imgData||tile.url;
-      previewHtml=`<img class="tile-preview" src="${imgSrc}" draggable="false" style="cursor:zoom-in" onclick="event.stopPropagation();openLightbox('${imgSrc.replace(/'/g,"\\'")}','${(tile.title||'image').replace(/'/g,"\\'")}');trackInteraction('${tile.id}')" onerror="this.style.display='none'">`;
+      if(_isPdfTile){
+        previewHtml=`<div class="tile-preview-placeholder" style="cursor:pointer;flex-direction:column;gap:4px" onclick="event.stopPropagation();openPdfViewerById('${tile.id}','${(tile.title||'Document').replace(/'/g,"\\'")}');trackInteraction('${tile.id}')">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--ct-info)" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <span style="font-size:10px;color:var(--ct-info)">PDF</span></div>`;
+      } else {
+        previewHtml=`<img class="tile-preview" src="${imgSrc}" draggable="false" style="cursor:zoom-in" onclick="event.stopPropagation();openTilePreview(this.src,'${(tile.title||'image').replace(/'/g,"\\'")}','image');trackInteraction('${tile.id}')" onerror="this.style.display='none'">`;
+      }
     } else if(tile.type==='link'){
       let domain='';try{domain=new URL(tile.url).hostname}catch(e){}
       const favicon=domain?`<img src="https://www.google.com/s2/favicons?domain=${domain}&sz=64" style="width:32px;height:32px;border-radius:6px" onerror="this.style.display='none'">`:'';
@@ -2488,25 +2591,55 @@ function buildTileEl(tile,colIdx,tileIdx,colId){
         else previewHtml=spotifyOpenBtn(info,tile.title,tile.id);
       }
     } else if(tile.type==='audio'){
-      previewHtml=`<div class="tile-preview-placeholder" style="height:50px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>`;
+      previewHtml=`<div class="tile-preview-placeholder" style="height:50px;cursor:pointer" onclick="event.stopPropagation();openTilePreview('${tile.id}','${(tile.title||'').replace(/'/g,"\\'")}','audio');trackInteraction('${tile.id}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><span style="font-size:10px;color:var(--ct-secondary);margin-top:4px">Cliquer pour écouter</span></div>`;
+    } else if(tile.type==='download'){
+      const ext=(tile.fileName||'').split('.').pop().toLowerCase();
+      const icons={pdf:'📄',mp3:'🎵',wav:'🎵',ogg:'🎵',zip:'📦',rar:'📦',doc:'📝',docx:'📝',xls:'📊',xlsx:'📊',ppt:'📑',pptx:'📑',txt:'📃',mxl:'🎼',xml:'🎼',mscz:'🎼'};
+      const icon=icons[ext]||'📁';
+      previewHtml=`<div class="tile-preview-placeholder" style="height:56px;cursor:pointer;flex-direction:column;gap:3px" onclick="event.stopPropagation();downloadTileFile('${tile.id}');trackInteraction('${tile.id}')">
+        <span style="font-size:22px">${icon}</span>
+        <span style="font-size:10px;color:var(--ct-secondary)">${tile.fileName||'Fichier'}</span>
+      </div>`;
     } else if(tile.type==='text'){
       const exc=(tile.content||'').slice(0,120).replace(/</g,'&lt;');
-      previewHtml=`<div class="tile-preview-placeholder" style="height:70px;font-size:11px;padding:10px;align-items:flex-start;text-align:left;line-height:1.6;color:var(--ct-secondary)">${exc}${exc.length<(tile.content||'').length?'…':''}</div>`;
+      previewHtml=`<div class="tile-preview-placeholder" style="height:70px;font-size:11px;padding:10px;align-items:flex-start;text-align:left;line-height:1.6;color:var(--ct-secondary);cursor:pointer" onclick="event.stopPropagation();openTilePreview('${tile.id}','${(tile.title||'').replace(/'/g,"\\'")}','text')">${exc}${exc.length<(tile.content||'').length?'…':''}</div>`;
     }
   }
 
   let bodyClick='';
   if(tile.type==='link')bodyClick=`onclick="trackInteraction('${tile.id}');window.open(${JSON.stringify(tile.url)},'_blank')" style="cursor:pointer"`;
-  else if(tile.type==='text')bodyClick=`onclick="showTextTile('${colIdx}','${tileIdx}')" style="cursor:pointer"`;
+  else if(tile.type==='text')bodyClick=`onclick="event.stopPropagation();openTilePreview('${tile.id}','${(tile.title||'').replace(/'/g,"\\'")}','text')" style="cursor:pointer"`;
+  else if(tile.type==='download')bodyClick=`onclick="event.stopPropagation();downloadTileFile('${tile.id}');trackInteraction('${tile.id}')" style="cursor:pointer"`;
 
   let metaExtra='';
   if(tile.type==='link'){try{metaExtra=`<span style="opacity:.45;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100px">${new URL(tile.url).hostname}</span>`}catch(e){}}
   if(tile.type==='media'){const info=parseMediaUrl(tile.mediaUrl);if(info)metaExtra=`<span style="opacity:.45">${info.platform==='youtube'?'YouTube':'Spotify'}</span>`;}
+  if(tile.type==='download'&&tile.fileName){
+    const ext=tile.fileName.split('.').pop().toUpperCase();
+    metaExtra=`<span style="opacity:.55;font-family:var(--font-mono);font-size:9px">${ext}</span>`;
+  }
+  // Détection PDF stocké comme image
+  const _imgSrcForType = tile.type==='image' ? (tile.imgData||tile.url||'') : '';
+  const isPdf = _isPdfTile; // alias
 
-  // Boutons edit/delete en utilisant l'index dans le tableau pour éviter tout problème d'id
-  const colIdxStr=String(colIdx),tileIdxStr=String(tileIdx);
-  const editBtn=boardIsProfMode?`<button class="tile-action-btn" onclick="event.stopPropagation();openEditTileModal('${colId}','${tile.id}')" title="Modifier"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>`:'';
-  const delBtn=boardIsProfMode?`<button class="tile-action-btn del" onclick="event.stopPropagation();deleteTileById('${colId}','${tile.id}')" title="Supprimer"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`:'';
+  // Bouton aperçu grand format (loupe) — image, audio, text, lien. PDF → visionneuse. Téléchargeable → icône téléchargement.
+  const canPreview = tile.type==='image'||tile.type==='audio'||tile.type==='text'||tile.type==='link';
+  let previewBtnHtml = '';
+  if(isPdf){
+    previewBtnHtml = `<button class="tile-expand-btn" onclick="event.stopPropagation();openPdfViewerById('${tile.id}','${(tile.title||'Document').replace(/'/g,"\\'")}');trackInteraction('${tile.id}')" title="Ouvrir le PDF"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></button>`;
+  } else if(tile.type==='download'){
+    previewBtnHtml = `<button class="tile-expand-btn" onclick="event.stopPropagation();downloadTileFile('${tile.id}');trackInteraction('${tile.id}')" title="Télécharger"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>`;
+  } else if(canPreview){
+    previewBtnHtml = `<button class="tile-expand-btn" onclick="event.stopPropagation();openTilePreview('${tile.type==='image'?_imgSrcForType.replace(/'/g,"\\'"):tile.id}','${(tile.title||'').replace(/'/g,"\\'")}','${tile.type}')" title="Aperçu agrandi"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button>`;
+  }
+
+  // Badge : label et couleur (PDF détecté dynamiquement)
+  const _badgeLabel = isPdf ? 'PDF' : (typeLabels[tile.type]||tile.type);
+  const _badgeColor = isPdf ? 'var(--cbr-danger)' : (typeCols[tile.type]||typeCols.text);
+  const _badgeTxtColor = isPdf ? 'var(--ct-danger)' : (typeTxtCols[tile.type]||typeTxtCols.text);
+
+  // Bouton unique ⚙️ (settings) en mode prof
+  const gearBtn=boardIsProfMode?`<button class="tile-gear-btn" onclick="event.stopPropagation();openTileMenu('${colId}','${tile.id}',this)" title="Réglages"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>`:'';
 
   el.innerHTML=`
     ${boardIsProfMode?'<div class="tile-grab"><svg width="10" height="14" viewBox="0 0 10 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".4"><circle cx="3" cy="3" r=".8" fill="currentColor" stroke="none"/><circle cx="7" cy="3" r=".8" fill="currentColor" stroke="none"/><circle cx="3" cy="7" r=".8" fill="currentColor" stroke="none"/><circle cx="7" cy="7" r=".8" fill="currentColor" stroke="none"/><circle cx="3" cy="11" r=".8" fill="currentColor" stroke="none"/><circle cx="7" cy="11" r=".8" fill="currentColor" stroke="none"/></svg></div>':''}
@@ -2515,11 +2648,12 @@ function buildTileEl(tile,colIdx,tileIdx,colId){
     <div class="tile-body" ${bodyClick}>
       <div class="tile-title">${tile.title}</div>
       <div class="tile-meta">
-        <span class="tile-type-badge" style="border-color:${typeCols[tile.type]};color:${typeTxtCols[tile.type]}">${typeLabels[tile.type]||tile.type}</span>
+        <span class="tile-type-badge" style="border-color:${_badgeColor};color:${_badgeTxtColor}">${_badgeLabel}</span>
         ${metaExtra}
+        ${previewBtnHtml}
       </div>
     </div>
-    ${boardIsProfMode?`<div class="tile-actions">${editBtn}${delBtn}</div>`:''}
+    ${boardIsProfMode?`<div class="tile-gear-wrap">${gearBtn}</div>`:''}
   `;
 
   if(tile.type==='audio'&&tile.audioData){
@@ -2553,6 +2687,10 @@ function addColumn(){
   setTimeout(()=>{const i=document.querySelectorAll('.board-col-title');if(i.length)i[i.length-1].focus();},80);
 }
 function renameColumn(colIdx,val){if(boardColumns[colIdx])boardColumns[colIdx].title=val||'Section';saveLocal();}
+function setColColor(colIdx,color){
+  if(boardColumns[colIdx])boardColumns[colIdx].color=color||null;
+  saveLocal();renderBoard();
+}
 function deleteColumn(colIdx){
   const col=boardColumns[colIdx];if(!col)return;
   const tiles=col.tiles||[];
@@ -2570,13 +2708,143 @@ function deleteTileById(colId,tileId){
   col.tiles=col.tiles.filter(t=>t.id!==tileId);
   saveLocal();renderBoard();
 }
-function _doDeleteTile(colId,tileId){deleteTileById(colId,tileId);}
-function deleteTile(colId,tileId){deleteTileById(colId,tileId);}
 
 function showTextTile(colIdx,tileIdx){
   const tile=boardColumns[colIdx]?.tiles[tileIdx];if(!tile)return;
-  alert(`${tile.title}\n\n${tile.content}`);
+  openTilePreview(tile.id,tile.title,'text');
 }
+
+/* ─── Téléchargement fichier ─── */
+function downloadTileFile(tileId){
+  var tile=null;
+  boardColumns.forEach(function(col){col.tiles.forEach(function(t){if(t.id===tileId)tile=t;});});
+  if(!tile||!tile.fileData)return;
+  var a=document.createElement('a');a.href=tile.fileData;a.download=tile.fileName||'fichier';a.click();
+}
+
+/* ─── Fenêtre flottante d'aperçu grand écran ─── */
+var _tilePreviewWin=null;
+
+function openTilePreview(tileIdOrSrc, title, kind){
+  // Fermer toute fenêtre précédente
+  if(_tilePreviewWin){_tilePreviewWin.remove();_tilePreviewWin=null;}
+
+  var tile=null;
+  if(kind!=='image'){
+    boardColumns.forEach(function(col){col.tiles.forEach(function(t){if(t.id===tileIdOrSrc)tile=t;});});
+  }
+
+  var win=document.createElement('div');
+  win.id='tile-preview-win';
+  win.style.cssText='position:fixed;z-index:9600;background:var(--cb-primary);border:0.5px solid var(--cbr-secondary);border-radius:14px;box-shadow:0 12px 48px rgba(0,0,0,0.55);display:flex;flex-direction:column;overflow:hidden;resize:both;min-width:320px;min-height:200px;max-width:90vw;max-height:88vh;width:480px;height:auto';
+  // Position initiale : centré
+  win.style.left=Math.max(20,window.innerWidth/2-240)+'px';
+  win.style.top=Math.max(60,window.innerHeight/2-200)+'px';
+
+  // Header drag
+  var header=document.createElement('div');
+  header.style.cssText='display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:0.5px solid var(--cbr-tertiary);cursor:grab;flex-shrink:0;background:var(--cb-secondary);user-select:none';
+  header.innerHTML='<div style="flex:1;font-size:13px;font-weight:500;color:var(--ct-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+escHtml(title||'Aperçu')+'</div>'
+    +'<button onclick="closeTilePreview()" style="background:none;border:none;cursor:pointer;color:var(--ct-tertiary);font-size:18px;padding:2px 6px;line-height:1;flex-shrink:0">✕</button>';
+  win.appendChild(header);
+
+  // Contenu
+  var body=document.createElement('div');
+  body.style.cssText='flex:1;overflow:auto;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start';
+
+  if(kind==='image'){
+    // tileIdOrSrc est directement le src de l'image
+    var img=document.createElement('img');
+    img.src=tileIdOrSrc;
+    img.style.cssText='max-width:100%;height:auto;display:block;padding:12px;object-fit:contain';
+    img.onerror=function(){body.innerHTML='<div style="padding:20px;color:var(--ct-tertiary);font-size:13px">Impossible d\'afficher l\'image.</div>';};
+    body.appendChild(img);
+  } else if(kind==='audio'&&tile&&tile.audioData){
+    body.style.justifyContent='center';
+    body.style.padding='24px';
+    var aWrap=document.createElement('div');
+    aWrap.style.cssText='display:flex;flex-direction:column;align-items:center;gap:16px;width:100%';
+    aWrap.innerHTML='<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--ct-info)" stroke-width="1.2" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>'
+      +'<div style="font-size:13px;color:var(--ct-secondary);text-align:center">'+escHtml(title||'Audio')+'</div>';
+    var aud=document.createElement('audio');
+    aud.controls=true;aud.autoplay=false;aud.src=tile.audioData;
+    aud.style.cssText='width:100%;max-width:340px';
+    aWrap.appendChild(aud);
+    body.appendChild(aWrap);
+  } else if(kind==='text'&&tile){
+    // Plein écran pour les notes : on ferme la floating window et on ouvre un modal overlay
+    if(_tilePreviewWin){_tilePreviewWin.remove();_tilePreviewWin=null;}
+    var noteModal = document.getElementById('tile-note-fullscreen');
+    if(!noteModal){
+      noteModal = document.createElement('div');
+      noteModal.id = 'tile-note-fullscreen';
+      noteModal.style.cssText = 'position:fixed;inset:0;z-index:9600;background:var(--cb-primary);display:flex;flex-direction:column;animation:ctxFadeIn .15s ease';
+      document.body.appendChild(noteModal);
+    }
+    noteModal.innerHTML = '<div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:0.5px solid var(--cbr-tertiary);flex-shrink:0;background:var(--cb-secondary)">'
+      +'<div style="flex:1;font-size:14px;font-weight:600;color:var(--ct-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+escHtml(title||'Note')+'</div>'
+      +'<button onclick="document.getElementById(\'tile-note-fullscreen\').style.display=\'none\'" style="background:none;border:none;cursor:pointer;color:var(--ct-tertiary);font-size:22px;padding:2px 8px;line-height:1;flex-shrink:0">✕</button>'
+      +'</div>'
+      +'<div style="flex:1;overflow-y:auto;padding:24px;max-width:720px;margin:0 auto;width:100%">'
+      +'<div style="font-size:15px;line-height:1.8;color:var(--ct-primary);white-space:pre-wrap;word-break:break-word">'+escHtml(tile.content||'')+'</div>'
+      +'</div>';
+    noteModal.style.display = 'flex';
+    return;
+  } else if(kind==='link'&&tile){
+    body.style.justifyContent='center';body.style.padding='24px';
+    body.innerHTML='<div style="text-align:center"><div style="font-size:32px;margin-bottom:12px">🔗</div>'
+      +'<div style="font-size:13px;color:var(--ct-primary);margin-bottom:16px">'+escHtml(tile.title)+'</div>'
+      +'<a href="'+escHtml(tile.url||'')+'" target="_blank" rel="noopener noreferrer" style="padding:10px 24px;background:var(--cb-info);color:var(--ct-info);border:0.5px solid var(--cbr-info);border-radius:99px;text-decoration:none;font-size:13px;display:inline-block">Ouvrir le lien →</a>'
+      +'<div style="font-size:11px;color:var(--ct-tertiary);margin-top:10px;word-break:break-all">'+escHtml(tile.url||'')+'</div></div>';
+  } else {
+    body.innerHTML='<div style="padding:20px;color:var(--ct-tertiary);font-size:13px">Aperçu non disponible.</div>';
+  }
+
+  win.appendChild(body);
+  document.body.appendChild(win);
+  _tilePreviewWin=win;
+
+  // Drag
+  var dragging=false,ox=0,oy=0,startL=0,startT=0;
+  header.addEventListener('mousedown',function(e){
+    dragging=true;ox=e.clientX;oy=e.clientY;
+    startL=parseInt(win.style.left)||0;startT=parseInt(win.style.top)||0;
+    header.style.cursor='grabbing';e.preventDefault();
+  });
+  document.addEventListener('mousemove',function(e){
+    if(!dragging)return;
+    var nl=startL+(e.clientX-ox),nt=startT+(e.clientY-oy);
+    nl=Math.max(0,Math.min(window.innerWidth-100,nl));
+    nt=Math.max(0,Math.min(window.innerHeight-60,nt));
+    win.style.left=nl+'px';win.style.top=nt+'px';
+  });
+  document.addEventListener('mouseup',function(){dragging=false;header.style.cursor='grab';});
+
+  // Touch drag
+  var tx=0,ty=0,tsl=0,tst=0;
+  header.addEventListener('touchstart',function(e){
+    var t=e.touches[0];tx=t.clientX;ty=t.clientY;
+    tsl=parseInt(win.style.left)||0;tst=parseInt(win.style.top)||0;
+    e.preventDefault();
+  },{passive:false});
+  header.addEventListener('touchmove',function(e){
+    var t=e.touches[0];
+    var nl=tsl+(t.clientX-tx),nt=tst+(t.clientY-ty);
+    nl=Math.max(0,Math.min(window.innerWidth-100,nl));
+    nt=Math.max(0,Math.min(window.innerHeight-60,nt));
+    win.style.left=nl+'px';win.style.top=nt+'px';
+    e.preventDefault();
+  },{passive:false});
+}
+
+function closeTilePreview(){
+  if(_tilePreviewWin){_tilePreviewWin.remove();_tilePreviewWin=null;}
+}
+
+function escHtml(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 
 /* ── Ouverture / fermeture ── */
 
@@ -2589,6 +2857,8 @@ function openBoard(isProf){
   document.getElementById('board-mode-badge').style.display=isProf?'inline-flex':'none';
   
   const ib=document.getElementById('btn-board-interactions');if(ib)ib.style.display=isProf?'inline-flex':'none';
+  const sb=document.getElementById('btn-suggestions');if(sb)sb.style.display=isProf?'inline-flex':'none';
+  if(isProf) setTimeout(_loadSuggestions, 500);
   renderBoard();
   // Masquer tous les écrans .screen
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -2675,19 +2945,96 @@ function openInteractionsModal(){
   });
   body.innerHTML=html;openModal('modal-interactions');
 }
-function deleteTileFromModal(){
-  if(!tileEditingId||!tileEditingColId)return;
-  var col=boardColumns.find(function(c){return c.id===tileEditingColId;});
-  if(!col)return;
-  var tile=col.tiles.find(function(t){return t.id===tileEditingId;});
-  if(!tile)return;
-  if(!window.confirm('Supprimer "'+tile.title+'" ?'))return;
-  col.tiles=col.tiles.filter(function(t){return t.id!==tileEditingId;});
-  saveLocal();closeModal('modal-tile');if(_sharePanelOpen)renderSharePanel();else renderBoard();
-}
 function clearInteractions(){
   if(!confirm('Réinitialiser toutes les interactions ?'))return;
   tileInteractions={};saveLocal();openInteractionsModal();
+}
+
+/* ═══════════════════════════════════════════════════════
+   MENUS CONTEXTUELS — TUILE & SECTION
+   ═══════════════════════════════════════════════════════ */
+var _ctxMenu = null;
+var _CTX_COLORS = [null,'#378ADD','#1D9E75','#7F77DD','#D85A30','#EF9F27','#f87171','#94a3b8'];
+
+function _closeCtxMenu(){
+  if(_ctxMenu){_ctxMenu.remove();_ctxMenu=null;}
+  document.removeEventListener('click',_closeCtxMenu,true);
+}
+
+function _buildCtxMenu(x,y,items){
+  _closeCtxMenu();
+  var m=document.createElement('div');
+  m.className='ctx-menu';
+  items.forEach(function(item){
+    if(item==='-'){
+      var sep=document.createElement('div');sep.className='ctx-menu-sep';m.appendChild(sep);return;
+    }
+    if(item.type==='colors'){
+      var row=document.createElement('div');row.className='ctx-color-row';
+      _CTX_COLORS.forEach(function(hex){
+        var d=document.createElement('div');
+        d.className='ctx-color-dot'+(item.current===hex?' active':'')+(hex===null?' none':'');
+        if(hex)d.style.background=hex;
+        if(hex===null)d.innerHTML='<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="19" x2="19" y2="5"/></svg>';
+        d.title=hex||'Aucune';
+        d.onclick=function(e){e.stopPropagation();item.onselect(hex);_closeCtxMenu();};
+        row.appendChild(d);
+      });
+      m.appendChild(row);
+      return;
+    }
+    var btn=document.createElement('button');
+    btn.className='ctx-menu-item'+(item.danger?' danger':'');
+    btn.innerHTML=(item.icon?'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">'+item.icon+'</svg> ':'')+item.label;
+    btn.onclick=function(e){e.stopPropagation();_closeCtxMenu();item.action();};
+    m.appendChild(btn);
+  });
+  document.body.appendChild(m);
+  _ctxMenu=m;
+  // Positionnement
+  var W=window.innerWidth,H=window.innerHeight;
+  var mW=m.offsetWidth||200,mH=m.offsetHeight||160;
+  var left=Math.min(x,W-mW-8);
+  var top=y+6;
+  if(top+mH>H-8) top=y-mH-6;
+  m.style.left=left+'px';m.style.top=top+'px';
+  setTimeout(function(){document.addEventListener('click',_closeCtxMenu,true);},0);
+}
+
+/* Menu contextuel d'une tuile */
+function openTileMenu(colId,tileId,btn){
+  var col=boardColumns.find(function(c){return c.id===colId;});
+  if(!col)return;
+  var tile=col.tiles.find(function(t){return t.id===tileId;});
+  if(!tile)return;
+  var r=btn.getBoundingClientRect();
+  _buildCtxMenu(r.left, r.bottom, [
+    {label:'Modifier', icon:'<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>', action:function(){openEditTileModal(colId,tileId);}},
+    '-',
+    {label:'Couleur de la tuile', type:'dummy'},
+    {type:'colors', current:tile.color||null, onselect:function(hex){
+      tile.color=hex;saveLocal();renderBoard();
+    }},
+    '-',
+    {label:'Supprimer', danger:true, icon:'<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>', action:function(){deleteTileById(colId,tileId);}},
+  ].filter(function(i){return !(i.type==='dummy');}));
+}
+
+/* Menu contextuel d'une section (colonne) */
+function openColMenu(colIdx,btn){
+  var col=boardColumns[colIdx];if(!col)return;
+  var r=btn.getBoundingClientRect();
+  _buildCtxMenu(r.left, r.bottom, [
+    {label:'Renommer…', icon:'<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>', action:function(){
+      var v=window.prompt('Renommer "'+col.title+'"',col.title);
+      if(v&&v.trim()){renameColumn(colIdx,v.trim());renderBoard();}
+    }},
+    '-',
+    {label:'Couleur du contour', type:'dummy'},
+    {type:'colors', current:col.color||null, onselect:function(hex){setColColor(colIdx,hex);}},
+    '-',
+    {label:'Supprimer la section', danger:true, icon:'<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>', action:function(){deleteColumn(colIdx);}},
+  ].filter(function(i){return !(i.type==='dummy');}));
 }
 
 /* ══ ESPACE OUTILS PLEIN ÉCRAN ══ */
@@ -3030,7 +3377,12 @@ function renderFamilyList(){
   }).join('');
 }
 function openFamilyModal(){
+  _editingBranchId=null;
   renderFamilyList();
+  document.getElementById('family-modal-title').textContent='Nouvelle famille';
+  document.getElementById('family-label-inp').value='';
+  document.getElementById('family-color-inp').value='#60a5fa';
+  document.getElementById('family-edit-panel').style.display='none';
   openModal('modal-families');
 }
 
@@ -3040,7 +3392,7 @@ function openEditFamilyModal(id){
   if(!br)return;
   document.getElementById('family-label-inp').value=br.label;
   document.getElementById('family-color-inp').value=br.color;
-  document.getElementById('family-modal-title').textContent='Modifier la famille';
+  document.getElementById('family-modal-title').textContent='Modifier : '+br.label;
   document.getElementById('family-edit-panel').style.display='block';
 }
 function openAddFamilyPanel(){
@@ -3049,6 +3401,10 @@ function openAddFamilyPanel(){
   document.getElementById('family-color-inp').value='#60a5fa';
   document.getElementById('family-modal-title').textContent='Nouvelle famille';
   document.getElementById('family-edit-panel').style.display='block';
+}
+function cancelFamilyEdit(){
+  document.getElementById('family-edit-panel').style.display='none';
+  _editingBranchId=null;
 }
 function saveFamilyEdit(){
   var lbl=document.getElementById('family-label-inp').value.trim();
@@ -3094,11 +3450,6 @@ renderHome=function(){
   var sc=document.getElementById('hw-student-count');
   if(sc) sc.textContent=students.length+' élève'+(students.length!==1?'s':'');
 };
-
-
-/* ══ NAVIGATION PROF ══ */
-var _currentProfTab='accueil';
-
 
 
 
@@ -3155,14 +3506,15 @@ function openAddTileModal(colId){
   tileTargetColId=colId;tileEditingId=null;tileEditingColId=null;
   document.getElementById('tile-modal-title').textContent='Ajouter une ressource';
   document.getElementById('tile-modal-confirm-btn').textContent='Ajouter';
-  // delete btn removed
   var _t=function(id,v){var e=document.getElementById(id);if(e)e.value=v||'';};
   _t('tile-title','');_t('tile-url','');_t('tile-media-url','');
   _t('tile-img-url','');_t('tile-text-content','');
   var an=document.getElementById('tile-audio-name');if(an)an.style.display='none';
+  var dn=document.getElementById('tile-dl-name');if(dn)dn.style.display='none';
   var prev=document.getElementById('tile-img-preview');if(prev)prev.style.display='none';
   var mprev=document.getElementById('tile-media-preview');if(mprev)mprev.style.display='none';
-  tileImgData=null;tileAudioData=null;tileModalColor=null;tileModalSize='md';
+  tileImgData=null;tileAudioData=null;tileDownloadData=null;tileDownloadName='';
+  tileModalColor=null;tileModalSize='md';tileFileSubtype='image';
   initColorSwatches();selectTileType('link');openModal('modal-tile');
 }
 function openEditTileModal(colId,tileId){
@@ -3173,29 +3525,50 @@ function openEditTileModal(colId,tileId){
   tileTargetColId=colId;tileEditingId=tileId;tileEditingColId=colId;
   document.getElementById('tile-modal-title').textContent='Modifier la ressource';
   document.getElementById('tile-modal-confirm-btn').textContent='Enregistrer';
-  // delete btn removed
   var _t=function(id,v){var e=document.getElementById(id);if(e)e.value=v||'';};
   _t('tile-title',tile.title);_t('tile-url',tile.url);
   _t('tile-media-url',tile.mediaUrl);_t('tile-img-url',tile.url);
   _t('tile-text-content',tile.content);
   var an=document.getElementById('tile-audio-name');
   if(an){an.textContent=tile.audioData?'Audio conservé':'';an.style.display=tile.audioData?'block':'none';}
+  var dn=document.getElementById('tile-dl-name');
+  if(dn){dn.textContent=tile.fileName?tile.fileName:'';dn.style.display=tile.fileName?'block':'none';}
   tileImgData=tile.imgData||null;tileAudioData=tile.audioData||null;
+  tileDownloadData=tile.fileData||null;tileDownloadName=tile.fileName||'';
   tileModalColor=tile.color||null;tileModalSize=tile.size||'md';
-  initColorSwatches();selectTileType(tile.type||'link');openModal('modal-tile');
+  // Déterminer le sous-onglet fichier si nécessaire
+  if(tile.type==='audio'){tileFileSubtype='audio';}
+  else if(tile.type==='download'){tileFileSubtype='download';}
+  else{tileFileSubtype='image';}
+  initColorSwatches();
+  // Mapper les anciens types image/audio vers le nouveau type 'file'
+  var modalType=tile.type;
+  if(tile.type==='audio'||tile.type==='image'||tile.type==='download') modalType='file';
+  selectTileType(modalType||'link');
+  openModal('modal-tile');
 }
 function confirmAddTile(){
   var title=document.getElementById('tile-title').value.trim();if(!title)return;
   var type=tileModalType;
   var _gv=function(id){var e=document.getElementById(id);return e?e.value.trim():'';};
-  var tile={id:'tile'+Date.now(),title:title,type:type,
+
+  // Déterminer le type stocké selon le sous-type fichier
+  var storedType=type;
+  if(type==='file'){
+    if(tileFileSubtype==='audio') storedType='audio';
+    else if(tileFileSubtype==='download') storedType='download';
+    else storedType='image';
+  }
+
+  var tile={id:'tile'+Date.now(),title:title,type:storedType,
     url:_gv('tile-url'),
     description:'',
     mediaUrl:_gv('tile-media-url'),
     content:_gv('tile-text-content'),
     size:tileModalSize||'md',color:tileModalColor,showPreview:true};
-  if(type==='image')tile.imgData=tileImgData;
-  if(type==='audio')tile.audioData=tileAudioData;
+  if(storedType==='image') tile.imgData=tileImgData;
+  if(storedType==='audio') tile.audioData=tileAudioData;
+  if(storedType==='download'){tile.fileData=tileDownloadData;tile.fileName=tileDownloadName;}
   if(tileEditingId){
     var col=boardColumns.find(function(c){return c.id===tileEditingColId;});if(!col)return;
     var idx=col.tiles.findIndex(function(t){return t.id===tileEditingId;});if(idx<0)return;
@@ -3227,14 +3600,62 @@ function initColorSwatches(){
     wrap.appendChild(btn);
   });
 }
+var tileFileSubtype='image'; // 'image' | 'audio' | 'download'
+var tileDownloadData=null, tileDownloadName='';
+
+function selectFileSubtype(sub){
+  tileFileSubtype=sub;
+  ['image','audio','download'].forEach(function(s){
+    var el=document.getElementById('file-sub-'+s);
+    if(el) el.style.display=s===sub?'block':'none';
+  });
+  document.querySelectorAll('.file-sub-tab').forEach(function(btn){
+    btn.classList.toggle('active', btn.dataset.sub===sub);
+  });
+}
+
+function handleTileDownloadFile(ev){
+  var f=ev.target.files[0];if(!f)return;
+  var r=new FileReader();
+  r.onload=function(e){
+    tileDownloadData=e.target.result;
+    tileDownloadName=f.name;
+    var n=document.getElementById('tile-dl-name');
+    if(n){n.textContent=f.name+' ('+Math.round(f.size/1024)+' Ko)';n.style.display='block';}
+  };
+  r.readAsDataURL(f);
+}
+
 function selectTileType(type){
   tileModalType=type;
   document.querySelectorAll('.tile-type-opt').forEach(function(b){b.classList.toggle('selected',b.dataset.type===type);});
-  ['link','media','image','audio','text'].forEach(function(t){
+  // Tous les champs visibles
+  ['link','media','file','image','audio','text'].forEach(function(t){
     var el=document.getElementById('tile-field-'+t);if(el)el.style.display=t===type?'block':'none';
   });
+  // Si type=file, initialiser le sous-onglet par défaut
+  if(type==='file') selectFileSubtype(tileFileSubtype||'image');
 }
-function handleTileImage(input){var f=input.files[0];if(!f)return;var r=new FileReader();r.onload=function(e){tileImgData=e.target.result;var pv=document.getElementById("tile-img-preview");var pi=document.getElementById("tile-img-preview-img");if(pv&&pi){pi.src=e.target.result;pv.style.display="block";}};r.readAsDataURL(f);}
+function handleTileImage(input){
+  var f=input.files[0];if(!f)return;
+  var r=new FileReader();
+  r.onload=function(e){
+    tileImgData=e.target.result;
+    var pv=document.getElementById("tile-img-preview");
+    var pi=document.getElementById("tile-img-preview-img");
+    if(f.type==='application/pdf'){
+      // Afficher icône PDF
+      if(pv){pv.style.display="block";}
+      if(pi){pi.style.display='none';}
+      var pdfLabel=document.getElementById('tile-pdf-label');
+      if(!pdfLabel){pdfLabel=document.createElement('div');pdfLabel.id='tile-pdf-label';pdfLabel.style.cssText='padding:10px;font-size:12px;color:var(--ct-info);display:flex;align-items:center;gap:6px';if(pv)pv.appendChild(pdfLabel);}
+      pdfLabel.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> '+f.name;
+    } else {
+      if(pv&&pi){pi.src=e.target.result;pi.style.display='';pv.style.display="block";var pl=document.getElementById('tile-pdf-label');if(pl)pl.remove();}
+    }
+  };
+  r.readAsDataURL(f);
+}
 function handleTileImageFile(ev){handleTileImage(ev.target);}
 function handleTileAudio(input){var f=input.files[0];if(!f)return;var r=new FileReader();r.onload=function(e){tileAudioData=e.target.result;var n=document.getElementById('tile-audio-name');if(n){n.textContent=f.name;n.style.display='block';}};r.readAsDataURL(f);}
 function handleTileAudioFile(ev){handleTileAudio(ev.target);}
@@ -3772,22 +4193,29 @@ function _restoreSession(){
 <!-- Modal Familles de compétences -->
 <div class="modal-overlay" id="modal-families">
   <div class="modal-box" style="max-width:440px">
-    <h3 id="family-modal-title">Gérer les familles</h3>
+    <h3>Gérer les familles de compétences</h3>
     <div id="family-list" style="margin-bottom:14px"></div>
     <hr style="border:none;border-top:0.5px solid var(--cbr-tertiary);margin:10px 0">
-    <h4 style="font-size:13px;margin-bottom:8px">Ajouter une famille</h4>
-    <div style="display:flex;gap:8px;align-items:flex-end">
-      <div style="flex:1">
-        <div class="field-label">Nom</div>
-        <input type="text" id="family-label-inp" placeholder="ex: Rythme" style="margin-bottom:0">
+    <!-- Panneau édition / ajout d'une famille -->
+    <div id="family-edit-panel">
+      <h4 id="family-modal-title" style="font-size:13px;margin-bottom:10px;color:var(--ct-primary)">Nouvelle famille</h4>
+      <div style="display:flex;gap:8px;align-items:flex-end">
+        <div style="flex:1">
+          <div class="field-label">Nom</div>
+          <input type="text" id="family-label-inp" placeholder="ex: Rythme" style="margin-bottom:0">
+        </div>
+        <div>
+          <div class="field-label">Couleur</div>
+          <input type="color" id="family-color-inp" value="#60a5fa" style="width:44px;height:38px;padding:2px;margin-bottom:0;cursor:pointer">
+        </div>
+        <button class="btn btn-info" onclick="saveFamilyEdit()" style="margin-bottom:0;white-space:nowrap">Enregistrer</button>
       </div>
-      <div>
-        <div class="field-label">Couleur</div>
-        <input type="color" id="family-color-inp" value="#60a5fa" style="width:44px;height:38px;padding:2px;margin-bottom:0;cursor:pointer">
+      <div style="display:flex;gap:6px;margin-top:8px">
+        <button class="btn btn-sm" onclick="cancelFamilyEdit()">Annuler</button>
       </div>
-      <button class="btn btn-info" onclick="confirmFamily()" style="margin-bottom:0;white-space:nowrap">Ajouter</button>
     </div>
     <div class="modal-footer" style="margin-top:14px">
+      <button class="btn btn-info btn-sm" onclick="openAddFamilyPanel()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Ajouter une famille</button>
       <button class="btn" onclick="closeModal('modal-families')">Fermer</button>
     </div>
   </div>
@@ -3865,8 +4293,40 @@ function _restoreSession(){
 .time-picker-btn:hover{border-color:var(--cbr-info);background:var(--cb-info)}
 .time-picker-btn.has-value{border-color:var(--cbr-info);color:var(--ct-info)}
 html.light .time-picker-btn{background:#fff;border-color:var(--cbr-tertiary)}
-
-
+</style>
+<script>
+/* ── VISIONNEUSE PDF ── */
+function openPdfViewer(title, dataUrl){
+  var modal = document.getElementById('modal-pdf-viewer');
+  if(!modal){
+    modal = document.createElement('div');
+    modal.id = 'modal-pdf-viewer';
+    modal.style.cssText = 'position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.95);display:none;flex-direction:column';
+    modal.innerHTML = '<div style="display:flex;align-items:center;padding:10px 16px;gap:10px;background:rgba(0,0,0,0.5);flex-shrink:0">'
+      +'<div id="pdf-viewer-title" style="flex:1;font-size:13px;color:#fff;font-weight:500"></div>'
+      +'<a id="pdf-dl-btn" download style="color:#60a5fa;font-size:11px;padding:4px 10px;border:0.5px solid #60a5fa;border-radius:99px;text-decoration:none">Télécharger</a>'
+      +'<button onclick="closePdfViewer()" style="background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:2px 8px;opacity:.8">✕</button>'
+      +'</div>'
+      +'<iframe id="pdf-viewer-frame" style="flex:1;border:none;width:100%" src=""></iframe>';
+    document.body.appendChild(modal);
+  }
+  document.getElementById('pdf-viewer-title').textContent = title;
+  document.getElementById('pdf-viewer-frame').src = dataUrl;
+  document.getElementById('pdf-dl-btn').href = dataUrl;
+  document.getElementById('pdf-dl-btn').download = title+'.pdf';
+  modal.style.display = 'flex';
+}
+function closePdfViewer(){
+  var modal = document.getElementById('modal-pdf-viewer');
+  if(modal){ modal.style.display='none'; document.getElementById('pdf-viewer-frame').src=''; }
+}
+function openPdfViewerById(tileId, title){
+  var src = '';
+  boardColumns.forEach(function(col){ (col.tiles||[]).forEach(function(t){ if(t.id===tileId) src=(t.imgData||t.url||''); }); });
+  if(src) openPdfViewer(title||'Document', src);
+}
+</script>
+<style>
 /* ── LIGHTBOX ── */
 #lightbox{position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.93);display:none;flex-direction:column;align-items:center;justify-content:center}
 #lightbox.open{display:flex}
@@ -3935,38 +4395,35 @@ html.light .ag-week-wrap,.html.light .ag-month-grid{border-color:var(--cbr-terti
   </button>
 </div>
 
-<!-- ══ MODAL HORLOGE ══ -->
+<!-- ══ MODAL HORLOGE 24H (style Google Agenda) ══ -->
 <div class="modal-overlay" id="modal-clock" style="z-index:200" onclick="if(event.target===this)closeClock()">
-<div class="modal-box" style="max-width:300px;padding:20px;text-align:center">
+<div class="modal-box" style="max-width:320px;padding:20px;text-align:center">
   <div style="font-size:12px;font-weight:600;color:var(--ct-secondary);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px" id="clock-label">Heure de début</div>
 
   <!-- Affichage digital -->
-  <div style="display:flex;align-items:center;justify-content:center;gap:4px;margin-bottom:16px">
-    <span id="clock-h-display" style="font-size:42px;font-weight:700;font-family:var(--font-mono);color:var(--ct-info);cursor:pointer;padding:4px 8px;border-radius:8px;background:var(--cb-info)" onclick="switchClockMode('h')">12</span>
+  <div style="display:flex;align-items:center;justify-content:center;gap:4px;margin-bottom:14px">
+    <span id="clock-h-display" style="font-size:44px;font-weight:700;font-family:var(--font-mono);color:var(--ct-info);cursor:pointer;padding:4px 10px;border-radius:10px;background:var(--cb-info)" onclick="switchClockMode('h')">0</span>
     <span style="font-size:36px;font-weight:300;color:var(--ct-secondary)">:</span>
-    <span id="clock-m-display" style="font-size:42px;font-weight:700;font-family:var(--font-mono);color:var(--ct-secondary);cursor:pointer;padding:4px 8px;border-radius:8px" onclick="switchClockMode('m')">00</span>
-    <div style="display:flex;flex-direction:column;gap:3px;margin-left:6px">
-      <button id="clock-am" class="clock-ampm-btn active" onclick="setAmPm('AM')">AM</button>
-      <button id="clock-pm" class="clock-ampm-btn" onclick="setAmPm('PM')">PM</button>
-    </div>
+    <span id="clock-m-display" style="font-size:44px;font-weight:700;font-family:var(--font-mono);color:var(--ct-secondary);cursor:pointer;padding:4px 10px;border-radius:10px" onclick="switchClockMode('m')">00</span>
   </div>
 
-  <!-- Cadran horloge SVG -->
-  <div style="position:relative;width:220px;height:220px;margin:0 auto 16px">
-    <svg id="clock-svg" width="220" height="220" style="position:absolute;inset:0;cursor:pointer"
+  <!-- Sélecteur de cercle heures/minutes -->
+  <div style="display:flex;gap:6px;justify-content:center;margin-bottom:12px">
+    <button id="clock-btn-h" class="clock-ampm-btn active" onclick="switchClockMode('h')">Heures</button>
+    <button id="clock-btn-m" class="clock-ampm-btn" onclick="switchClockMode('m')">Minutes</button>
+  </div>
+
+  <!-- Cadran 24h (double cercle) -->
+  <div style="position:relative;width:240px;height:240px;margin:0 auto 14px">
+    <svg id="clock-svg" width="240" height="240" style="cursor:pointer;display:block"
       onmousedown="clockDragStart(event)" onmousemove="clockDragMove(event)" onmouseup="clockDragEnd(event)"
       ontouchstart="clockDragStart(event)" ontouchmove="clockDragMove(event)" ontouchend="clockDragEnd(event)">
-      <!-- Fond -->
-      <circle cx="110" cy="110" r="108" fill="var(--cb-secondary)" stroke="var(--cbr-tertiary)" stroke-width="0.5"/>
-      <!-- Marqueurs heures/minutes -->
+      <circle cx="120" cy="120" r="118" fill="var(--cb-secondary)" stroke="var(--cbr-tertiary)" stroke-width="0.5"/>
       <g id="clock-ticks"></g>
-      <!-- Aiguille -->
-      <line id="clock-hand" x1="110" y1="110" x2="110" y2="30" stroke="var(--ct-info)" stroke-width="2.5" stroke-linecap="round"/>
-      <!-- Disque central -->
-      <circle cx="110" cy="110" r="5" fill="var(--ct-info)"/>
-      <!-- Cercle de sélection -->
-      <circle id="clock-selector" cx="110" cy="30" r="16" fill="var(--ct-info)" opacity="0.9"/>
-      <text id="clock-selector-txt" x="110" y="35" text-anchor="middle" font-size="13" font-weight="600" fill="white">12</text>
+      <line id="clock-hand" x1="120" y1="120" x2="120" y2="30" stroke="var(--ct-info)" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="120" cy="120" r="4" fill="var(--ct-info)"/>
+      <circle id="clock-selector" cx="120" cy="30" r="14" fill="var(--ct-info)" opacity="0.9"/>
+      <text id="clock-selector-txt" x="120" y="35" text-anchor="middle" font-size="12" font-weight="600" fill="white">0</text>
     </svg>
   </div>
 
@@ -3978,7 +4435,7 @@ html.light .ag-week-wrap,.html.light .ag-month-grid{border-color:var(--cbr-terti
 </div>
 
 <style>
-.clock-ampm-btn{font-size:11px;padding:3px 8px;border-radius:99px;border:0.5px solid var(--cbr-tertiary);background:none;color:var(--ct-secondary);cursor:pointer;font-family:var(--font-sans);transition:all .15s}
+.clock-ampm-btn{font-size:11px;padding:4px 12px;border-radius:99px;border:0.5px solid var(--cbr-tertiary);background:none;color:var(--ct-secondary);cursor:pointer;font-family:var(--font-sans);transition:all .15s}
 .clock-ampm-btn.active{background:var(--cb-info);color:var(--ct-info);border-color:var(--cbr-info)}
 </style>
 
@@ -4038,7 +4495,7 @@ html.light .ag-week-wrap,.html.light .ag-month-grid{border-color:var(--cbr-terti
     <div class="err" id="evt-err">Titre et date requis</div>
     <div class="modal-footer" style="justify-content:space-between">
       <button class="btn btn-danger btn-sm" id="evt-del-btn" onclick="_deleteEditingEvt()" style="display:none;flex-direction:row;align-items:center;justify-content:center;gap:5px">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
         Supprimer
       </button>
       <div style="display:flex;gap:6px;margin-left:auto">
@@ -4386,7 +4843,7 @@ function renderDayView(body){
     var ev=document.createElement('div'); ev.className='ag-day-event';
     ev.style.cssText='top:2px;left:4px;right:4px;height:22px;background:'+EVT_COLORS[e.type||'cours']+';pointer-events:auto';
     ev.textContent='🗓 '+e.title+(e.lieu?' – '+e.lieu:'');
-    (function(evt){ ev.onclick=function(ev2){ ev2.stopPropagation(); _agSelDate=iso; _renderEvtPanel(iso); }; })(e);
+    (function(evt){ ev.onclick=function(ev2){ ev2.stopPropagation(); openEvtDetail(evt, evt.date); }; })(e);
     overlay.appendChild(ev);
   });
 
@@ -4417,7 +4874,7 @@ function renderDayView(body){
     ev.innerHTML='<div style="font-weight:600;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+e.title+'</div>'
       +(e.lieu && heightPx>36?'<div style="opacity:.8;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">📍 '+e.lieu+'</div>':'')
       +(e.timeStart && heightPx>24?'<div style="opacity:.7;font-size:9px">'+e.timeStart+(e.timeEnd?' – '+e.timeEnd:'')+'</div>':'');
-    (function(evt){ ev.onclick=function(ev2){ ev2.stopPropagation(); _agSelDate=iso; _renderEvtPanel(iso); }; })(e);
+    (function(evt){ ev.onclick=function(ev2){ ev2.stopPropagation(); openEvtDetail(evt, evt.date); }; })(e);
     overlay.appendChild(ev);
   });
 
@@ -4586,52 +5043,43 @@ function confirmAddEvt(){
   _editEvtId=null;
   _saveAgendaEvents();
   closeModal('modal-evt');
-  renderAgenda(); _renderEvtPanel(date);
+  renderAgenda();
 }
 
 
 /* ══════════════════════════════════════════════
-   HORLOGE GOOGLE-STYLE
+   HORLOGE 24H (style Google Agenda)
+   Deux cercles : heures 0-23 (interne/externe) + minutes
 ══════════════════════════════════════════════ */
-var _clockTarget = 'start'; // 'start' ou 'end'
-var _clockMode   = 'h';     // 'h' heures, 'm' minutes
-var _clockH      = 12;
+var _clockTarget = 'start';
+var _clockMode   = 'h';
+var _clockH      = 0;
 var _clockM      = 0;
-var _clockAM     = true;
 var _clockDragging = false;
 
 function openClock(target){
   _clockTarget = target;
-  _clockMode   = 'h';
-  // Lire valeur actuelle si elle existe
+  _clockMode = 'h';
   var cur = document.getElementById('evt-time-'+target).value;
-  if(cur){
-    var parts = cur.split(':');
-    var h = parseInt(parts[0]), m = parseInt(parts[1]);
-    _clockAM = h < 12;
-    _clockH  = h % 12 || 12;
-    _clockM  = m;
-  } else {
-    _clockH = 12; _clockM = 0; _clockAM = true;
-  }
-  document.getElementById('clock-label').textContent = target==='start' ? 'Heure de début' : 'Heure de fin';
+  if(cur){ var p=cur.split(':'); _clockH=parseInt(p[0]); _clockM=parseInt(p[1]||0); }
+  else { _clockH=9; _clockM=0; }
+  document.getElementById('clock-label').textContent = target==='start'?'Heure de début':'Heure de fin';
   _renderClock();
   openModal('modal-clock');
 }
 function closeClock(){ closeModal('modal-clock'); }
+
 function confirmClock(){
-  var h24 = _clockAM ? (_clockH===12?0:_clockH) : (_clockH===12?12:_clockH+12);
-  var val = pad(h24)+':'+pad(_clockM);
+  var val = pad(_clockH)+':'+pad(_clockM);
   document.getElementById('evt-time-'+_clockTarget).value = val;
   var lbl = document.getElementById('lbl-time-'+_clockTarget);
   if(lbl) lbl.textContent = val;
   var btn = document.getElementById('btn-time-'+_clockTarget);
   if(btn) btn.classList.add('has-value');
-  // Si début défini, auto-proposer fin = début + 1h
   if(_clockTarget==='start'){
     var endVal = document.getElementById('evt-time-end').value;
     if(!endVal){
-      var eh = Math.min(h24+1, 23);
+      var eh = Math.min(_clockH+1, 23);
       var autoEnd = pad(eh)+':'+pad(_clockM);
       document.getElementById('evt-time-end').value = autoEnd;
       var endLbl = document.getElementById('lbl-time-end');
@@ -4642,116 +5090,148 @@ function confirmClock(){
   }
   closeClock();
 }
+
 function switchClockMode(mode){
   _clockMode = mode;
-  // Mettre en évidence le champ actif
+  var bh=document.getElementById('clock-btn-h'), bm=document.getElementById('clock-btn-m');
+  if(bh){ bh.classList.toggle('active', mode==='h'); }
+  if(bm){ bm.classList.toggle('active', mode==='m'); }
   var hd=document.getElementById('clock-h-display'), md=document.getElementById('clock-m-display');
-  if(hd) hd.style.color = mode==='h'?'var(--ct-info)':'var(--ct-secondary)';
-  if(hd) hd.style.background = mode==='h'?'var(--cb-info)':'transparent';
-  if(md) md.style.color = mode==='m'?'var(--ct-info)':'var(--ct-secondary)';
-  if(md) md.style.background = mode==='m'?'var(--cb-info)':'transparent';
+  if(hd){ hd.style.color=mode==='h'?'var(--ct-info)':'var(--ct-secondary)'; hd.style.background=mode==='h'?'var(--cb-info)':'transparent'; }
+  if(md){ md.style.color=mode==='m'?'var(--ct-info)':'var(--ct-secondary)'; md.style.background=mode==='m'?'var(--cb-info)':'transparent'; }
   _renderClock();
-}
-function setAmPm(v){
-  _clockAM = v==='AM';
-  document.getElementById('clock-am').classList.toggle('active',_clockAM);
-  document.getElementById('clock-pm').classList.toggle('active',!_clockAM);
-  _updateClockDisplay();
 }
 
 function _renderClock(){
   var svg = document.getElementById('clock-svg'); if(!svg) return;
-  var ticks = document.getElementById('clock-ticks');
-  ticks.innerHTML='';
-  var cx=110, cy=110, R=90, Rtext=75;
-  var count = _clockMode==='h' ? 12 : 12; // 12 positions
-  var step  = _clockMode==='h' ? 1 : 5;
-  for(var i=0;i<12;i++){
-    var val   = _clockMode==='h' ? (i===0?12:i) : i*5;
-    var angle = (i/12)*2*Math.PI - Math.PI/2;
-    var tx = cx + Rtext*Math.cos(angle);
-    var ty = cy + Rtext*Math.sin(angle);
-    var isSelected = _clockMode==='h' ? (_clockH===val) : (_clockM===val);
-    var t = document.createElementNS('http://www.w3.org/2000/svg','text');
-    t.setAttribute('x', tx); t.setAttribute('y', ty+5);
-    t.setAttribute('text-anchor','middle');
-    t.setAttribute('font-size','14'); t.setAttribute('font-weight','500');
-    t.setAttribute('fill', isSelected ? '#fff' : 'var(--ct-secondary)');
-    t.textContent = _clockMode==='h' ? val : pad(val);
-    ticks.appendChild(t);
-    // Marque
-    var mk = document.createElementNS('http://www.w3.org/2000/svg','line');
-    var x1=cx+(R+8)*Math.cos(angle), y1=cy+(R+8)*Math.sin(angle);
-    var x2=cx+(R+14)*Math.cos(angle), y2=cy+(R+14)*Math.sin(angle);
-    mk.setAttribute('x1',x1);mk.setAttribute('y1',y1);mk.setAttribute('x2',x2);mk.setAttribute('y2',y2);
-    mk.setAttribute('stroke','var(--cbr-secondary)');mk.setAttribute('stroke-width','1');
-    ticks.appendChild(mk);
+  var ticks = document.getElementById('clock-ticks'); if(!ticks) return;
+  ticks.innerHTML = '';
+  var cx=120, cy=120;
+
+  if(_clockMode === 'h'){
+    // Heures 0-23 : cercle externe (13-23, 0) + cercle interne (1-12)
+    for(var i=0;i<24;i++){
+      var isOuter = i===0 || i>=13; // 13-23 et 0 sur cercle externe
+      var displayVal = i;
+      var R_text = isOuter ? 98 : 65;
+      var angle = (i/12)*2*Math.PI - Math.PI/2; // 12 positions par cercle
+      if(!isOuter) angle = ((i)/12)*2*Math.PI - Math.PI/2; // 1-12 interne
+      var tx = cx + R_text*Math.cos(angle);
+      var ty = cy + R_text*Math.sin(angle);
+      var isSelected = _clockH === i;
+      var t = document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('x', tx); t.setAttribute('y', ty+5);
+      t.setAttribute('text-anchor','middle');
+      t.setAttribute('font-size', isOuter?'13':'12');
+      t.setAttribute('font-weight','500');
+      t.setAttribute('fill', isSelected ? '#fff' : isOuter ? 'var(--ct-primary)' : 'var(--ct-tertiary)');
+      t.textContent = i;
+      ticks.appendChild(t);
+    }
+    // Aiguille : cercle externe pour 0,13-23; interne pour 1-12
+    var isOuterSel = _clockH === 0 || _clockH >= 13;
+    var R_hand = isOuterSel ? 98 : 65;
+    var selAngle = (_clockH % 12 === 0 && _clockH !== 12 ? 0 : _clockH % 12) / 12 * 2*Math.PI - Math.PI/2;
+    if(_clockH === 0) selAngle = -Math.PI/2;
+    var sx = cx + R_hand*Math.cos(selAngle), sy = cy + R_hand*Math.sin(selAngle);
+    var hand=document.getElementById('clock-hand');
+    if(hand){hand.setAttribute('x2',sx);hand.setAttribute('y2',sy);}
+    var sel=document.getElementById('clock-selector');
+    if(sel){sel.setAttribute('cx',sx);sel.setAttribute('cy',sy);}
+    var selTxt=document.getElementById('clock-selector-txt');
+    if(selTxt){selTxt.setAttribute('x',sx);selTxt.setAttribute('y',sy+5);selTxt.textContent=_clockH;}
+  } else {
+    // Minutes 0-59 : 12 positions avec labels tous les 5
+    for(var i=0;i<12;i++){
+      var val = i*5;
+      var angle = (i/12)*2*Math.PI - Math.PI/2;
+      var R_text = 98;
+      var tx = cx + R_text*Math.cos(angle);
+      var ty = cy + R_text*Math.sin(angle);
+      var isSelected = _clockM === val;
+      var t = document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('x', tx); t.setAttribute('y', ty+5);
+      t.setAttribute('text-anchor','middle');
+      t.setAttribute('font-size','13'); t.setAttribute('font-weight','500');
+      t.setAttribute('fill', isSelected ? '#fff' : 'var(--ct-primary)');
+      t.textContent = pad(val);
+      ticks.appendChild(t);
+    }
+    // Petits points pour les minutes intermédiaires
+    for(var i=0;i<60;i++){
+      if(i%5===0) continue;
+      var angle = (i/60)*2*Math.PI - Math.PI/2;
+      var dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      dot.setAttribute('cx', cx + 108*Math.cos(angle));
+      dot.setAttribute('cy', cy + 108*Math.sin(angle));
+      dot.setAttribute('r','2');
+      dot.setAttribute('fill','var(--cbr-secondary)');
+      ticks.appendChild(dot);
+    }
+    var selAngle = (_clockM/60)*2*Math.PI - Math.PI/2;
+    var sx = cx + 98*Math.cos(selAngle), sy = cy + 98*Math.sin(selAngle);
+    var hand=document.getElementById('clock-hand');
+    if(hand){hand.setAttribute('x2',sx);hand.setAttribute('y2',sy);}
+    var sel=document.getElementById('clock-selector');
+    if(sel){sel.setAttribute('cx',sx);sel.setAttribute('cy',sy);}
+    var selTxt=document.getElementById('clock-selector-txt');
+    if(selTxt){selTxt.setAttribute('x',sx);selTxt.setAttribute('y',sy+5);selTxt.textContent=pad(_clockM);}
   }
-  // Mettre à jour aiguille et sélecteur
-  var selVal  = _clockMode==='h' ? _clockH : _clockM;
-  var selMax  = _clockMode==='h' ? 12 : 60;
-  var selAngle= (selVal/selMax)*2*Math.PI - Math.PI/2;
-  var R2=90;
-  var sx=cx+R2*Math.cos(selAngle), sy=cy+R2*Math.sin(selAngle);
-  var hand=document.getElementById('clock-hand');
-  if(hand){hand.setAttribute('x2',sx);hand.setAttribute('y2',sy);}
-  var sel=document.getElementById('clock-selector');
-  if(sel){sel.setAttribute('cx',sx);sel.setAttribute('cy',sy);}
-  var selTxt=document.getElementById('clock-selector-txt');
-  if(selTxt){
-    selTxt.setAttribute('x',sx); selTxt.setAttribute('y',sy+5);
-    selTxt.textContent=_clockMode==='h'?selVal:pad(selVal);
-  }
-  _updateClockDisplay();
-  // Mettre à jour les highlights sans récursion
-  var hd=document.getElementById('clock-h-display'), md=document.getElementById('clock-m-display');
+
+  // Affichage digital
+  var hd=document.getElementById('clock-h-display');
+  var md=document.getElementById('clock-m-display');
+  if(hd) hd.textContent = pad(_clockH);
+  if(md) md.textContent = pad(_clockM);
+  // Highlights
   if(hd){ hd.style.color=_clockMode==='h'?'var(--ct-info)':'var(--ct-secondary)'; hd.style.background=_clockMode==='h'?'var(--cb-info)':'transparent'; }
   if(md){ md.style.color=_clockMode==='m'?'var(--ct-info)':'var(--ct-secondary)'; md.style.background=_clockMode==='m'?'var(--cb-info)':'transparent'; }
 }
 
-function _updateClockDisplay(){
-  var hd=document.getElementById('clock-h-display');
-  var md=document.getElementById('clock-m-display');
-  if(hd) hd.textContent=_clockH;
-  if(md) md.textContent=pad(_clockM);
-}
-
 function _clockAngleToValue(x,y){
-  var cx=110,cy=110;
-  var angle=Math.atan2(y-cy,x-cx)+Math.PI/2;
-  if(angle<0) angle+=2*Math.PI;
-  if(_clockMode==='h'){
-    var h=Math.round(angle/(2*Math.PI)*12);
-    if(h===0) h=12;
-    return h;
+  var cx=120, cy=120;
+  var angle = Math.atan2(y-cy, x-cx) + Math.PI/2;
+  if(angle < 0) angle += 2*Math.PI;
+  if(_clockMode === 'h'){
+    // Déterminer si clic cercle interne ou externe
+    var dist = Math.sqrt((x-cx)*(x-cx)+(y-cy)*(y-cy));
+    var isOuter = dist > 82;
+    var h12 = Math.round(angle/(2*Math.PI)*12) % 12;
+    if(isOuter){
+      // Cercle externe : 13-23 + 0
+      return h12 === 0 ? 0 : h12 + 12;
+    } else {
+      // Cercle interne : 1-12
+      return h12 === 0 ? 12 : h12;
+    }
   } else {
-    var m=Math.round(angle/(2*Math.PI)*60);
-    if(m===60) m=0;
-    return m;
+    var m = Math.round(angle/(2*Math.PI)*60);
+    return m >= 60 ? 0 : m;
   }
 }
+
 function _clockEventXY(e){
-  var rect=document.getElementById('clock-svg').getBoundingClientRect();
-  var src=e.touches?e.touches[0]:e;
-  return{x:(src.clientX-rect.left)*(220/rect.width), y:(src.clientY-rect.top)*(220/rect.height)};
+  var rect = document.getElementById('clock-svg').getBoundingClientRect();
+  var src = e.touches ? e.touches[0] : e;
+  return { x:(src.clientX-rect.left)*(240/rect.width), y:(src.clientY-rect.top)*(240/rect.height) };
 }
 function clockDragStart(e){ _clockDragging=true; clockDragMove(e); e.preventDefault(); }
 function clockDragMove(e){
   if(!_clockDragging) return;
-  var p=_clockEventXY(e);
-  // Seulement si dans le rayon du cadran
-  var dx=p.x-110,dy=p.y-110,dist=Math.sqrt(dx*dx+dy*dy);
-  if(dist<20||dist>108) return;
-  var val=_clockAngleToValue(p.x,p.y);
-  if(_clockMode==='h') _clockH=val; else _clockM=val;
+  var p = _clockEventXY(e);
+  var dx=p.x-120, dy=p.y-120, dist=Math.sqrt(dx*dx+dy*dy);
+  if(dist < 15 || dist > 118) return;
+  var val = _clockAngleToValue(p.x, p.y);
+  if(_clockMode==='h') _clockH = val; else _clockM = val;
   _renderClock();
   e.preventDefault();
 }
-function clockDragEnd(e){ 
-  _clockDragging=false;
-  // Passer automatiquement aux minutes après avoir choisi l'heure
-  if(_clockMode==='h') setTimeout(function(){ switchClockMode('m'); },200);
+function clockDragEnd(e){
+  _clockDragging = false;
+  // Auto-passer aux minutes après avoir choisi l'heure
+  if(_clockMode==='h') setTimeout(function(){ switchClockMode('m'); }, 200);
 }
+
 
 /* Mettre à jour les boutons d'heure lors du chargement d'un événement existant */
 function _syncTimeButtons(){
@@ -5076,6 +5556,11 @@ html.light #student-fab-toggle{background:rgba(255,255,255,0.94)}
 
 <div id="student-fab">
   <div id="student-fab-menu">
+    <!-- Suggérer une ressource (board ouvert uniquement) -->
+    <button class="sfab-btn" id="sfab-suggest-btn" onclick="_sfabSuggest()" style="display:none">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Suggérer une ressource
+    </button>
     <!-- Thème -->
     <button class="sfab-btn" onclick="_sfabTheme()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
@@ -5094,6 +5579,142 @@ html.light #student-fab-toggle{background:rgba(255,255,255,0.94)}
 </div>
 
 <script>
+
+/* ══ SUGGESTIONS ÉLÈVES (Padlet) ══ */
+var _suggestions = [];
+
+function _loadSuggestions(){
+  if(typeof _db !== 'undefined' && _db){
+    _db.ref('sax_suggestions').once('value').then(function(snap){
+      var d = snap.val();
+      _suggestions = d ? Object.values(d).filter(Boolean) : [];
+      _updateSuggestionsBadge();
+    }).catch(function(){ _suggestions = []; });
+  }
+}
+function _saveSuggestion(sug){
+  if(typeof _db !== 'undefined' && _db){
+    _db.ref('sax_suggestions/'+sug.id).set(sug);
+  }
+}
+function _deleteSuggestion(id){
+  if(typeof _db !== 'undefined' && _db){
+    _db.ref('sax_suggestions/'+id).remove();
+  }
+  _suggestions = _suggestions.filter(function(s){ return s.id !== id; });
+  _updateSuggestionsBadge();
+}
+function _updateSuggestionsBadge(){
+  var badge = document.getElementById('suggestions-badge');
+  if(!badge) return;
+  var pending = _suggestions.filter(function(s){ return !s.approved; });
+  if(pending.length){ badge.textContent = pending.length; badge.style.display='inline'; }
+  else { badge.style.display='none'; }
+}
+
+function openSuggestModal(){
+  // Réutiliser modal-tile en mode suggestion
+  tileTargetColId = null; tileEditingId = null; tileEditingColId = null;
+  document.getElementById('tile-modal-title').textContent = 'Suggérer une ressource au professeur';
+  document.getElementById('tile-modal-confirm-btn').textContent = 'Envoyer la suggestion';
+  // Pré-sélectionner "lien"
+  selectTileType('link');
+  // Changer le handler du bouton confirm
+  var confirmBtn = document.getElementById('tile-modal-confirm-btn');
+  var oldOnclick = confirmBtn.onclick;
+  confirmBtn.onclick = function(){ confirmSuggestTile(); };
+  openModal('modal-tile');
+}
+
+function confirmSuggestTile(){
+  var title = document.getElementById('tile-title').value.trim();
+  if(!title){ document.getElementById('tile-err').style.display='block'; return; }
+  var type = document.querySelector('.tile-type-opt.selected')?.dataset.type || 'link';
+  var sug = {
+    id: 'sug'+Date.now(),
+    title: title, type: type,
+    url: document.getElementById('tile-url').value.trim(),
+    mediaUrl: document.getElementById('tile-media-url').value.trim(),
+    content: document.getElementById('tile-text-content').value.trim(),
+    studentId: currentStudent ? currentStudent.id : '',
+    studentName: currentStudent ? currentStudent.name : '',
+    date: new Date().toLocaleDateString('fr-FR'),
+    approved: false
+  };
+  _saveSuggestion(sug);
+  _suggestions.push(sug);
+  _updateSuggestionsBadge();
+  closeModal('modal-tile');
+  // Restore confirm button
+  document.getElementById('tile-modal-confirm-btn').onclick = function(){ confirmAddTile(); };
+  alert('✓ Suggestion envoyée au professeur !');
+}
+
+function openSuggestionsPanel(){
+  _loadSuggestions();
+  var modal = document.getElementById('modal-suggestions');
+  if(!modal){
+    modal = document.createElement('div');
+    modal.id = 'modal-suggestions';
+    modal.className = 'modal-overlay';
+    modal.innerHTML = '<div class="modal-box" style="max-width:500px;max-height:85vh;overflow-y:auto">'
+      +'<h3>Suggestions des élèves</h3>'
+      +'<div id="suggestions-list" style="margin-top:12px"></div>'
+      +'<div class="modal-footer"><button class="btn" onclick="closeModal(\'modal-suggestions\')">Fermer</button></div>'
+      +'</div>';
+    document.body.appendChild(modal);
+  }
+  _renderSuggestionsList();
+  openModal('modal-suggestions');
+}
+
+function _renderSuggestionsList(){
+  var list = document.getElementById('suggestions-list'); if(!list) return;
+  var pending = _suggestions.filter(function(s){ return !s.approved; });
+  var approved = _suggestions.filter(function(s){ return s.approved; });
+  if(!_suggestions.length){ list.innerHTML='<div style="font-size:13px;color:var(--ct-tertiary);text-align:center;padding:1.5rem">Aucune suggestion</div>'; return; }
+  var html = '';
+  if(pending.length){
+    html += '<div style="font-size:11px;font-weight:600;color:var(--ct-secondary);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">En attente ('+pending.length+')</div>';
+    pending.forEach(function(s){
+      html += '<div style="background:var(--cb-secondary);border:0.5px solid var(--cbr-info);border-radius:var(--br-md);padding:10px 12px;margin-bottom:8px">'
+        +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'
+        +'<div style="flex:1;font-size:13px;font-weight:500;color:var(--ct-primary)">'+s.title+'</div>'
+        +'<span style="font-size:10px;padding:2px 6px;border-radius:99px;background:var(--cb-info);color:var(--ct-info)">'+s.type+'</span>'
+        +'</div>'
+        +'<div style="font-size:11px;color:var(--ct-tertiary);margin-bottom:8px">De '+s.studentName+' · '+s.date+'</div>'
+        +(s.url?'<div style="font-size:11px;color:var(--ct-secondary);margin-bottom:8px;word-break:break-all">'+s.url+'</div>':'')
+        +'<div style="display:flex;gap:6px">'
+        +'<button class="btn btn-success btn-sm" onclick="approveSuggestion(\''+s.id+'\')">✓ Ajouter au partage</button>'
+        +'<button class="btn btn-danger btn-sm" onclick="rejectSuggestion(\''+s.id+'\')">Refuser</button>'
+        +'</div></div>';
+    });
+  }
+  list.innerHTML = html || '<div style="font-size:13px;color:var(--ct-success);text-align:center;padding:1rem">✓ Toutes les suggestions ont été traitées</div>';
+}
+
+function approveSuggestion(id){
+  var sug = _suggestions.find(function(s){ return s.id===id; }); if(!sug) return;
+  // Ajouter dans la première colonne (ou créer une colonne "Suggestions")
+  var col = boardColumns[0];
+  if(!col){ col={id:'col'+Date.now(),title:'Suggestions',tiles:[]}; boardColumns.push(col); }
+  if(!col.tiles) col.tiles = [];
+  col.tiles.push({id:'t'+Date.now(), title:sug.title, type:sug.type, url:sug.url, mediaUrl:sug.mediaUrl, content:sug.content});
+  saveLocal();
+  _deleteSuggestion(id);
+  _renderSuggestionsList();
+  _updateSuggestionsBadge();
+  renderBoard();
+}
+function rejectSuggestion(id){
+  _deleteSuggestion(id);
+  _renderSuggestionsList();
+}
+
+// Charger les suggestions au démarrage (mode prof)
+setTimeout(function(){
+  if(profMode) _loadSuggestions();
+}, 3000);
 
 /* ═══════════════════════════════════════════════════════
    §15 — MENU FLOTTANT ÉLÈVE (⚙️)
@@ -5124,12 +5745,19 @@ function _sfabLogout(){
   _sfabClose();
   doLogout();
 }
+function _sfabSuggest(){
+  _sfabClose();
+  openSuggestModal();
+}
 function _updateStudentFab(){
   var fab = document.getElementById('student-fab');
   if(!fab) return;
-  // Visible uniquement sur sc-tree en mode élève
   var onTree = document.getElementById('sc-tree') && document.getElementById('sc-tree').classList.contains('active');
-  fab.style.display = (!profMode && currentStudent && onTree) ? 'flex' : 'none';
+  var onBoard = document.getElementById('sc-board') && document.getElementById('sc-board').classList.contains('board-open');
+  fab.style.display = (!profMode && currentStudent && (onTree||onBoard)) ? 'flex' : 'none';
+  // Bouton suggestion : visible uniquement sur le board en mode élève
+  var sugBtn = document.getElementById('sfab-suggest-btn');
+  if(sugBtn) sugBtn.style.display = (onBoard && !profMode) ? 'flex' : 'none';
   _sfabUpdateThemeLabel();
 }
 
@@ -5149,11 +5777,6 @@ document.addEventListener('click', function(e){
   if(_sfabOpen && fab && !fab.contains(e.target)) _sfabClose();
 });
 </script>
-
-<!-- ══ BARRE FLOTTANTE PERSISTANTE ══ -->
-<style>
-
-
 
 </body>
 </html>
