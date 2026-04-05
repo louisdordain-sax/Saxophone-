@@ -1309,7 +1309,7 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
     <h3 id="sk-modal-title">Ajouter une compétence</h3>
     <p id="sk-modal-sub"></p>
     <div class="field-label">Famille</div>
-    <select id="sk-branch"><option value="tech">Technique</option><option value="lect">Lecture</option><option value="rep">Répertoire</option><option value="impro">Improvisation</option><option value="cult">Culture</option></select>
+    <select id="sk-branch"><option value="identite">Identité du musicien</option><option value="percevoir">Percevoir & produire</option><option value="autonomie">Autonomie</option><option value="corps">Corps & musique</option></select>
     <div class="field-label">Nom court (arbre)</div><input type="text" id="sk-label" placeholder="ex: Legato" maxlength="16">
     <div class="field-label">Description courte</div><textarea id="sk-desc" rows="2" placeholder="ex: Liaison souple entre les notes."></textarea>
     <div class="field-label">Conseil pour progresser</div><textarea id="sk-todo" rows="3" placeholder="ex: Travaille des liaisons sans coup de langue chaque jour."></textarea>
@@ -1369,7 +1369,13 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
 
 <script>
 /* ════════════════════════════════════════════════════════
-   ██████  CONFIGURATION FIREBASE - Base de données par défaut  ██████
+   ██████  CONFIGURATION FIREBASE  ██████
+   → Remplacez les valeurs ci-dessous par les vôtres
+     après avoir créé votre projet sur console.firebase.google.com
+   ════════════════════════════════════════════════════════ */
+
+/* ════════════════════════════════════════════════════════ */
+
 /* ═══════════════════════════════════════════════════════
    §1 — CONSTANTES & DONNÉES PAR DÉFAUT
    ═══════════════════════════════════════════════════════ */
@@ -1381,7 +1387,7 @@ var BRANCHES=[
   {id:'autonomie',label:'Autonomie',color:'#1D9E75'},
   {id:'corps',label:'Corps & musique',color:'#EF9F27'},
 ];
-var BRANCH_ANGLES={tech:-90,lect:-18,rep:54,impro:126,cult:198};
+var BRANCH_ANGLES={identite:-90,percevoir:0,autonomie:90,corps:180};
 var _branchAnglesComputed=false;
 const DEFAULT_PROF_CODE='PROF2026';
 const DEFAULT_SKILLS={
@@ -1465,8 +1471,8 @@ const DEFAULT_SKILLS={
     {id:'s2_28',b:'percevoir',l:'Vibrato évolué',d:"Être capable de vibrer sur les notes longues dans un morceau et d'être conscient des paramètres du vibrato.",todo:'Travaille le vibrato de façon mesurée en variant le nombre de battements et le tempo.'},
     {id:'s2_29',b:'percevoir',l:'Tech. étendues',d:"Découvrir et expérimenter les bases des techniques étendues : bisbigliando, growl, quarts de tons, flatterzunge et multiphoniques.",todo:'Consulte les tablatures de quarts de tons et multiphoniques, puis cherche l\'équilibre entre son et effet.'},
     {id:'s2_30',b:'percevoir',l:'Avec accomp.',d:"Être capable de jouer en place et de travailler en autonomie avec un accompagnateur.",todo:'Travaille régulièrement avec un accompagnateur piano et prépare tes séances pour les optimiser.'},
-    /* ── Autonomie ── */ 
-   {id:'s2_31',b:'autonomie',l:'Séance de travail',d:"Être capable de construire sa séance de travail seul.",todo:'Prépare tes séances avec ton professeur : des séquences variées de durées définies pour chaque objectif.'},
+    /* ── Autonomie ── */
+    {id:'s2_31',b:'autonomie',l:'Séance de travail',d:"Être capable de construire sa séance de travail seul.",todo:'Prépare tes séances avec ton professeur : des séquences variées de durées définies pour chaque objectif.'},
     {id:'s2_32',b:'autonomie',l:'Exercices ciblés',d:"Être capable de trouver des exercices simples pour régler des difficultés techniques.",todo:'Varie les exercices pour créer des réflexes et des liens logiques, applique une méthodologie technique.'},
     {id:'s2_33',b:'autonomie',l:'Objectifs enreg.',d:"Être capable de formuler des objectifs de travail précis à partir d'un enregistrement.",todo:'Enregistre-toi, écoute et remplis la fiche d\'auto-évaluation avec des objectifs clairement définis.'},
     {id:'s2_34',b:'autonomie',l:'Cibler son travail',d:"Être capable de cibler son travail en fonction de l'analyse de son enregistrement.",todo:'Utilise la boîte à outils d\'exercices variés adaptés à chaque problématique identifiée.'},
@@ -1483,7 +1489,7 @@ const DEFAULT_SKILLS={
     {id:'s2_44',b:'corps',l:'Gestion du trac',d:"Être capable de sentir arriver le stress et de mettre en place des rituels de gestion du trac.",todo:'Travaille des exercices de respiration, de visualisation et de valorisation avant de te produire.'},
   ],
   3:[
-   /* ── Identité du musicien ── */
+    /* ── Identité du musicien ── */
     {id:'s3_01',b:'identite',l:'Co-direction',d:"Être capable de co-diriger une répétition d'ensemble.",todo:'Laisse-toi la place d\'expérimenter la direction en creusant dans les bonnes directions avec l\'aide de ton professeur.'},
     {id:'s3_02',b:'identite',l:'Feedback pairs',d:"Être capable d'accepter et d'appliquer les conseils de ses partenaires de jeu.",todo:'Pratique la remise en question en observant comment ton professeur lui-même accepte les retours des autres.'},
     {id:'s3_03',b:'identite',l:'Projet de groupe',d:"Être capable de mener un projet de groupe, de la conception à la réalisation.",todo:'Implique-toi dans tous les aspects de conception des projets de classe : programmation, logistique, scénographie.'},
@@ -1509,7 +1515,7 @@ const DEFAULT_SKILLS={
     {id:'s3_22',b:'percevoir',l:'Vibrato affiné',d:"Être capable de varier et d'adapter son vibrato pour renforcer son interprétation.",todo:'Essaie différentes formes de vibratos, varie l\'amplitude et la fréquence des battements.'},
     {id:'s3_23',b:'percevoir',l:'Tech. étendues',d:"Être capable d'utiliser les techniques étendues : bisbigliando, growl, quarts de tons, flatterzunge et multiphoniques.",todo:'Travaille du répertoire contemporain utilisant ces effets et entraîne-toi sur des gammes en quarts de tons.'},
     /* ── Autonomie ── */
-        {id:'s3_24',b:'autonomie',l:'Objectifs LT',d:"Être capable de se fixer des objectifs clairs et réalisables mais stimulants à plus ou moins long terme.",todo:'Renseigne-toi sur les concours, les poursuites d\'études possibles et fixe-toi des jalons stimulants.'},
+    {id:'s3_24',b:'autonomie',l:'Objectifs LT',d:"Être capable de se fixer des objectifs clairs et réalisables mais stimulants à plus ou moins long terme.",todo:'Renseigne-toi sur les concours, les poursuites d\'études possibles et fixe-toi des jalons stimulants.'},
     {id:'s3_25',b:'autonomie',l:'Travail sur durée',d:"Être capable de construire et d'organiser son travail dans une logique à long terme, jusqu'à une échéance.",todo:'Fais des bilans méthodologiques réguliers avec ton professeur et structure ton travail sur le long terme.'},
     {id:'s3_26',b:'autonomie',l:'Niveau de maîtrise',d:"Être capable de juger de son niveau de maîtrise d'une pièce.",todo:'Enregistre-toi et pratique l\'auto-critique pour situer ton niveau de maîtrise avec précision.'},
     {id:'s3_27',b:'autonomie',l:'Décisions travail',d:"Être capable de pousser le travail, d'entretenir les acquis ou de laisser une pièce de côté selon les échéances.",todo:'Organise des mises en situation devant la classe pour savoir où tu en es avant les échéances importantes.'},
@@ -1566,12 +1572,12 @@ function _initFirebase(){
 /* ── STORAGE (Firebase Realtime Database) ── */
 function saveLocal(){
   // Sauvegarde localStorage (fallback hors-ligne)
-  try{localStorage.setItem(SK,JSON.stringify({students,skills:skillsData,profCode,schools,boardColumns,tileInteractions,branches:BRANCHES,branchAngles:BRANCH_ANGLES}))}catch(e){}
+  try{localStorage.setItem(SK,JSON.stringify({students,profCode,schools,boardColumns,tileInteractions,skillsData,branches:BRANCHES}))}catch(e){}
   // Sauvegarde Firebase (debouncée 800ms pour éviter les écritures en rafale)
   if(_saveTimeout) clearTimeout(_saveTimeout);
   _saveTimeout = setTimeout(async ()=>{
     if(!_db) return;
-    const payload = {students,skills:skillsData,profCode,schools,boardColumns,tileInteractions,branches:BRANCHES,branchAngles:BRANCH_ANGLES};
+    const payload = {students,profCode,schools,boardColumns,tileInteractions,skillsData,branches:BRANCHES};
     try{
       await _db.ref(FIREBASE_PATH).set(payload);
       _showSyncIndicator('✓ Synchronisé', '#34d399');
@@ -1632,24 +1638,47 @@ async function loadLocal(){
   }
 
   if(cloudData){
-    students       = cloudData.students     || [];
-    skillsData     = cloudData.skills       || {1:[],2:[],3:[]};
-    profCode       = cloudData.profCode === 'PROF2025' ? DEFAULT_PROF_CODE : (cloudData.profCode || DEFAULT_PROF_CODE);
-    schools        = cloudData.schools      || [];
-    boardColumns   = cloudData.boardColumns || [];
+    students         = cloudData.students       || [];
+    profCode         = cloudData.profCode === 'PROF2025' ? DEFAULT_PROF_CODE : (cloudData.profCode || DEFAULT_PROF_CODE);
+    schools          = cloudData.schools        || [];
+    boardColumns     = cloudData.boardColumns   || [];
     tileInteractions = cloudData.tileInteractions || {};
-    if(cloudData.branches && cloudData.branches.length) BRANCHES = cloudData.branches;
-    if(cloudData.branchAngles) Object.assign(BRANCH_ANGLES, cloudData.branchAngles);
+    // Charger les compétences depuis Firebase si elles ont déjà été sauvegardées
+    if(cloudData.skillsData && typeof cloudData.skillsData === 'object'){
+      for(let c=1;c<=3;c++){
+        if(Array.isArray(cloudData.skillsData[c]) && cloudData.skillsData[c].length > 0){
+          skillsData[c] = cloudData.skillsData[c];
+        } else {
+          skillsData[c] = JSON.parse(JSON.stringify(DEFAULT_SKILLS[c]));
+        }
+      }
+    } else {
+      // Premier démarrage : utiliser DEFAULT_SKILLS comme base initiale
+      for(let c=1;c<=3;c++) skillsData[c] = JSON.parse(JSON.stringify(DEFAULT_SKILLS[c]));
+    }
+    // Charger les familles (branches) depuis Firebase si disponibles
+    if(Array.isArray(cloudData.branches) && cloudData.branches.length > 0){
+      BRANCHES = cloudData.branches;
+    }
+  } else {
+    // Aucune donnée en base : initialiser avec les valeurs par défaut
+    for(let c=1;c<=3;c++) skillsData[c] = JSON.parse(JSON.stringify(DEFAULT_SKILLS[c]));
   }
 
   if(!students.length){
     if(!schools.length) schools = ['École de musique Exemple'];
     students = [
-      {id:'std1',name:'Lucas Durand',cycle:1,color:'#378ADD',school:schools[0]||'',skillStates:{s1_01:'done',s1_02:'done',s1_03:'progress',s1_05:'done',s1_06:'progress',s1_08:'done'},examPassed:{},examData:{},password:'ldurand'},
-      {id:'std2',name:'Emma Martin',cycle:2,color:'#7F77DD',school:schools[0]||'',skillStates:{s2_01:'done',s2_05:'done',s2_10:'progress',s2_08:'done',s2_02:'done',s2_09:'progress'},examPassed:{1:true},examData:{1:{note:14,date:'15/06/2024'}},password:'emartin'},
+      {id:'std1',name:'Lucas Durand',cycle:1,color:'#378ADD',school:schools[0]||'',skillStates:{s1_01:'done',s1_02:'done',s1_03:'progress',s1_09:'done',s1_11:'progress',s1_29:'done'},examPassed:{},examData:{},password:'ldurand'},
+      {id:'std2',name:'Emma Martin',cycle:2,color:'#7F77DD',school:schools[0]||'',skillStates:{s2_01:'done',s2_11:'done',s2_31:'progress',s2_02:'done',s2_12:'done',s2_38:'progress'},examPassed:{1:true},examData:{1:{note:14,date:'15/06/2024'}},password:'emartin'},
     ];
   }
-  for(let c=1;c<=3;c++) if(!skillsData[c]?.length) skillsData[c] = JSON.parse(JSON.stringify(DEFAULT_SKILLS[c]));
+
+  // Filet de sécurité final : garantit que chaque cycle a bien ses compétences
+  for(let c=1;c<=3;c++){
+    if(!Array.isArray(skillsData[c]) || !skillsData[c].length){
+      skillsData[c] = JSON.parse(JSON.stringify(DEFAULT_SKILLS[c]));
+    }
+  }
 
   saveLocal();
   _cloudReady = true;
@@ -1664,12 +1693,21 @@ async function loadLocal(){
       // Ne recharger que si on n'est pas en train de sauvegarder
       if(_saveTimeout) return;
       students       = d.students     || students;
-      skillsData     = d.skills       || skillsData;
       schools        = d.schools      || schools;
       boardColumns   = (d.boardColumns||[]).map(function(c){if(!c)return null;return{id:c.id||('col'+Date.now()),title:c.title||'Section',tiles:Array.isArray(c.tiles)?c.tiles:[]};}).filter(Boolean) || boardColumns;
       tileInteractions = d.tileInteractions || tileInteractions;
       if(d.branches && d.branches.length) BRANCHES = d.branches;
       if(d.branchAngles) Object.assign(BRANCH_ANGLES, d.branchAngles);
+      // Sync des compétences en temps réel (multi-onglets / multi-appareils)
+      if(d.skillsData && typeof d.skillsData === 'object'){
+        for(let c=1;c<=3;c++){
+          var sc = d.skillsData[c] || d.skillsData[String(c)];
+          if(sc){
+            // Firebase peut renvoyer un objet {0:{...},1:{...}} à la place d'un tableau
+            skillsData[c] = Array.isArray(sc) ? sc : Object.values(sc);
+          }
+        }
+      }
       // Rafraîchir la home si ouverte
       if(profMode && document.getElementById('sc-home')?.classList.contains('active')) renderHome();
     });
@@ -3548,6 +3586,28 @@ renderHome=function(){
 
 
 
+function initDefaultSkillsToFirebase(){
+  if(!confirm('Initialiser Firebase avec les compétences par défaut ?\nCela remplacera les compétences actuelles des 3 cycles.')) return;
+  for(let c=1;c<=3;c++) skillsData[c] = JSON.parse(JSON.stringify(DEFAULT_SKILLS[c]));
+  BRANCHES = [
+    {id:'identite',label:'Identité du musicien',color:'#7F77DD'},
+    {id:'percevoir',label:'Percevoir & produire',color:'#378ADD'},
+    {id:'autonomie',label:'Autonomie',color:'#1D9E75'},
+    {id:'corps',label:'Corps & musique',color:'#EF9F27'},
+  ];
+  saveLocal();
+  renderCEHome();
+  _showSyncIndicator('✓ Compétences initialisées', '#34d399');
+}
+
+function resetSkillsCycleToDefault(cycle){
+  if(!confirm('Réinitialiser le Cycle '+cycle+' avec les compétences par défaut ?\nLes modifications seront perdues.')) return;
+  skillsData[cycle] = JSON.parse(JSON.stringify(DEFAULT_SKILLS[cycle]));
+  saveLocal();
+  renderCEHome();
+  _showSyncIndicator('✓ Cycle '+cycle+' réinitialisé', '#34d399');
+}
+
 function renderCEHome(){
   var ctabsEl=document.getElementById('ce-ctabs-home');
   var contentEl=document.getElementById('ce-content-home');
@@ -3562,11 +3622,17 @@ function renderCEHome(){
     t.onclick=function(){ceCycle=cc;renderCEHome();};
     ctabsEl.appendChild(t);
   });
-  // Bouton familles
-  var html='<div style="margin-bottom:12px">'
+  // Barre d'outils : familles + init Firebase
+  var total1=(skillsData[1]||[]).length,total2=(skillsData[2]||[]).length,total3=(skillsData[3]||[]).length;
+  var noSkills = !total1 && !total2 && !total3;
+  var html='<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">'
     +'<button class="btn btn-sm" onclick="openFamilyModal()" style="display:flex;align-items:center;gap:5px">'
-    +'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33A1.65 1.65 0 0 0 15 19.4V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15A1.65 1.65 0 0 0 3 14.09V13a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68A1.65 1.65 0 0 0 10 3.09V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>'
-    +' Gérer les familles</button></div>';
+    +'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33A1.65 1.65 0 0 0 15 19.4V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l-.06-.06A1.65 1.65 0 0 0 4.68 15A1.65 1.65 0 0 0 3 14.09V13a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68A1.65 1.65 0 0 0 10 3.09V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>'
+    +' Gérer les familles</button>'
+    +(noSkills
+      ? '<button class="btn btn-success btn-sm" onclick="initDefaultSkillsToFirebase()" style="display:flex;align-items:center;gap:5px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="3" x2="12" y2="21"/></svg> Initialiser Firebase</button>'
+      : '<button class="btn btn-sm" onclick="initDefaultSkillsToFirebase()" style="display:flex;align-items:center;gap:5px;opacity:.6"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.69"/></svg> Réinitialiser</button>')
+    +'</div>';
   BRANCHES.forEach(function(br){
     var bs=(skillsData[ceCycle]||[]).filter(function(s){return s.b===br.id;});
     html+='<div class="ce-section"><div class="ce-section-header">';
