@@ -135,7 +135,7 @@ input,select,textarea{width:100%;font-size:13px;padding:8px 10px;border:0.5px so
 textarea{resize:vertical;min-height:64px;line-height:1.5}
 .err{font-size:11px;color:var(--ct-danger);margin-bottom:8px;display:none}
 .badge{font-size:11px;padding:3px 10px;border-radius:99px;border:0.5px solid}
-.badge-prof{background:var(--cb-warning);color:var(--ct-warning);border-color:var(--cbr-warning)}
+.badge-prof{background:var(--cb-secondary);color:var(--ct-secondary);border-color:var(--cbr-tertiary)}
 .badge-eleve{background:var(--cb-secondary);color:var(--ct-secondary);border-color:var(--cbr-tertiary)}
 .top-bar{display:flex;align-items:center;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
 .p-row{display:flex;align-items:center;gap:12px;padding:12px;background:var(--cb-secondary);border-radius:var(--br-lg);margin-bottom:1rem}
@@ -554,6 +554,114 @@ html.light .sp-tile{background:#fff}
 html.light .btn-back-tree,html.light .hud-top .btn{background:rgba(255,255,255,0.88)!important;color:var(--ct-primary)!important;border-color:var(--cbr-secondary)!important}
 html.light .congrats-overlay .btn-info{background:#1e3a6e!important;color:#fff!important;border-color:#1e3a6e!important;}
 html.light .congrats-overlay .btn-info:hover{background:#163060!important;border-color:#163060!important;}
+
+/* ── Fixs largeur mobile supplémentaires ── */
+@media (max-width: 600px) {
+  /* Éviter les dépassements horizontaux */
+  .app, .prof-content, .modal-box, .ce-section, .ep-header {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  /* Boîte à outils : iframe Spotify responsive */
+  #toolbox-scroll iframe { width: 100% !important; }
+  /* Barre de métronome : boutons qui s'adaptent */
+  #metro-panel .btn-sm { flex: 1; min-width: 0; font-size: 10px; }
+  /* Partage : colonnes min-width plus petites */
+  .board-col { min-width: 240px !important; max-width: 92vw !important; }
+  /* Skill rows : wrap les boutons */
+  .skill-edit-row { flex-wrap: wrap; gap: 6px; }
+  .seg { flex-shrink: 0; }
+  /* Formulaires prof */
+  .prof-content input, .prof-content select, .prof-content textarea { box-sizing: border-box; }
+  /* Home cards sur mobile : 2 colonnes */
+  .home-cards { grid-template-columns: repeat(2, 1fr) !important; }
+  /* Grille toolbox : toujours 3 colonnes */
+  #toolbox-scroll .home-card { padding: 12px 6px !important; }
+
+  /* ── NAV PROF MOBILE : barre basse fixe ── */
+  .prof-shell { padding-bottom: 56px; }
+  .prof-nav {
+    position: fixed !important;
+    top: auto !important;
+    bottom: 0; left: 0; right: 0;
+    padding: 0 !important;
+    gap: 0 !important;
+    z-index: 50;
+    border-top: 0.5px solid var(--cbr-tertiary);
+    border-bottom: none !important;
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.18);
+    height: 56px;
+  }
+  .prof-tab {
+    flex: 1;
+    flex-direction: column;
+    gap: 2px !important;
+    padding: 6px 4px !important;
+    font-size: 9px !important;
+    min-height: unset !important;
+    border-bottom: none !important;
+    border-top: 2px solid transparent;
+    justify-content: center;
+  }
+  .prof-tab.active { border-top-color: var(--ct-info); border-bottom: none !important; }
+  .prof-tab svg { opacity: 1 !important; }
+  .prof-nav-end {
+    flex-direction: column;
+    gap: 2px !important;
+    padding: 4px 6px !important;
+    margin-left: 0 !important;
+    justify-content: center;
+    border-left: 0.5px solid var(--cbr-tertiary);
+  }
+  .prof-nav-end .btn { padding: 4px 6px !important; }
+  .prof-content { padding: 0.8rem 0.75rem !important; }
+
+  /* ── CARTES ÉLÈVES compactes mobile ── */
+  .std-row {
+    padding: 8px 10px !important;
+    gap: 8px !important;
+    position: relative;
+  }
+  .std-row .avatar { width: 32px !important; height: 32px !important; font-size: 11px !important; flex-shrink: 0; }
+  /* Masquer les boutons secondaires, garder seulement Arbre + Éditer dans un menu compact */
+  .std-row-actions { display: flex; gap: 4px; flex-wrap: wrap; }
+
+  /* Masquer les labels textuels des boutons d'action élève sur mobile */
+  .btn-label-hide { display: none; }
+  /* Boutons actions élèves : icônes seulement */
+  .std-row-actions .btn { padding: 5px 7px !important; }
+
+  /* ── ARBRE mobile : nœuds plus petits, HUD fixe ── */
+  /* Le canvas reste en position absolute inset:0, le HUD est déjà fixed */
+  /* On réduit les rayons via CSS custom property */
+  #sc-tree { overflow: hidden; }
+  /* La topbar HUD reste sticky en haut */
+  .hud-topbar { position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; }
+  .hud-tabs { position: fixed !important; top: 48px !important; right: 8px !important; }
+  .hud-profile { position: fixed !important; bottom: 30px !important; left: 8px !important; }
+  .hud-botbar { position: fixed !important; }
+
+  /* ── AGENDA : colonnes à largeur fixe (ne bougent pas avec le contenu) ── */
+  .ag-month-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+    table-layout: fixed;
+    width: 100%;
+  }
+  .ag-month-cell {
+    min-height: 54px !important;
+    overflow: hidden;
+    word-break: break-all;
+  }
+  .ag-month-chip { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+  .ag-week-wrap {
+    grid-template-columns: 32px repeat(7, minmax(0, 1fr)) !important;
+    width: 100%;
+  }
+  .ag-week-daylabel { font-size: 9px !important; padding: 4px 1px !important; }
+  .ag-week-daylabel .ag-week-daynum { font-size: 13px !important; }
+}
+
 </style>
 </head>
 <body>
@@ -615,11 +723,7 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
 <div class="prof-shell">
   <!-- Navigation permanente -->
   <nav class="prof-nav">
-    <button class="prof-tab active" id="ptab-accueil" onclick="showProfTab('accueil')">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      Accueil
-    </button>
-    <button class="prof-tab" id="ptab-eleves" onclick="showProfTab('eleves')">
+    <button class="prof-tab active" id="ptab-eleves" onclick="showProfTab('eleves')">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       Élèves
     </button>
@@ -627,9 +731,13 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3 8-8"/><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
       Compétences
     </button>
-    <button class="prof-tab" id="ptab-outils" onclick="showProfTab('outils')">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.77 3.77z"/></svg>
-      Outils
+    <button class="prof-tab" id="ptab-partage" onclick="openBoard(true)">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Partage
+    </button>
+    <button class="prof-tab" id="ptab-agenda" onclick="openAgenda()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Agenda
     </button>
 
     <div class="prof-nav-end">
@@ -656,27 +764,8 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
       <button class="btn btn-sm" style="border-color:rgba(239,159,39,.45);color:#EF9F27;flex-shrink:0" onclick="exitPreviewMode()">Quitter</button>
     </div>
 
-    <!-- Onglet Accueil -->
-    <div id="ptab-content-accueil">
-      <div class="home-welcome">
-        <div class="home-welcome-title">Bonjour !</div>
-        <div class="home-welcome-sub">Que souhaitez-vous faire ?</div>
-        <div class="home-cards" style="grid-template-columns:repeat(3,1fr);max-width:480px">
-          <div class="home-card" onclick="showProfTab('eleves')">
-            <div class="home-card-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-            <div class="home-card-title">Élèves</div>
-          </div>
-          <div class="home-card" onclick="showProfTab('competences')">
-            <div class="home-card-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 11l3 3 8-8"/><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
-            <div class="home-card-title">Compétences</div>
-          </div>
-          <div class="home-card" onclick="openToolboxScreen()">
-            <div class="home-card-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.77 3.77z"/></svg></div>
-            <div class="home-card-title">Outils</div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- Onglet Accueil (vide, non affiché) -->
+    <div id="ptab-content-accueil" style="display:none"></div>
 
     <!-- Onglet Élèves -->
     <div id="ptab-content-eleves" style="display:none">
@@ -698,31 +787,8 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
       <div id="ce-content-home"></div>
     </div>
 
-    <!-- Onglet Outils -->
-    <div id="ptab-content-outils" style="display:none">
-      <div class="home-cards" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr))">
-
-        <!-- Métronome : visible pour les élèves uniquement (pas dans la vue prof) -->
-        <div class="home-card" id="card-metro-home" onclick="toggleMetroDrawer()" style="display:none">
-          <div class="home-card-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
-          <div class="home-card-title">Métronome</div>
-        </div>
-
-        <!-- Partage -->
-        <div class="home-card" onclick="openBoard(true)">
-          <div class="home-card-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-          <div class="home-card-title">Partage</div>
-        </div>
-
-        <!-- Agenda -->
-        <div class="home-card" id="card-agenda" onclick="openAgenda()">
-          <div class="home-card-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-          <div class="home-card-title">Agenda</div>
-        </div>
-
-      </div>
-
-    </div>
+    <!-- Onglet Outils (vide - Partage et Agenda sont dans la nav) -->
+    <div id="ptab-content-outils" style="display:none"></div>
 
 
       <!-- Tiroir Métronome (réservé aux élèves, masqué ici) -->
@@ -917,11 +983,17 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
     </div>
   </div>
 
-  <!-- HUD légende bas centre -->
-  <div class="hud-botbar">
-    <div class="li"><div class="ld" style="background:#378ADD;border:1px solid #378ADD"></div>Maîtrisée</div>
-    <div class="li"><div class="ld" style="background:#EF9F27;border:1px solid #EF9F27"></div>En cours</div>
-    <div class="li"><div class="ld" style="background:var(--cbr-tertiary);border:1px solid var(--cbr-secondary)"></div>Verrouillée</div>
+  <!-- HUD bas : bouton recentrer + légende -->
+  <div class="hud-botbar" style="flex-direction:column;gap:8px;padding-bottom:14px">
+    <button id="btn-recenter-tree" onclick="_treeResetView()" style="pointer-events:auto;display:flex;align-items:center;gap:7px;padding:7px 20px;border-radius:99px;border:0.5px solid rgba(55,138,221,0.55);background:rgba(6,9,20,0.82);color:rgba(138,154,184,0.9);font-size:12px;font-family:var(--font-sans);cursor:pointer;backdrop-filter:blur(6px);transition:all .15s;letter-spacing:.3px">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+      Recentrer
+    </button>
+    <div class="leg">
+      <div class="li"><div class="ld" style="background:#378ADD;border:1px solid #378ADD"></div>Maîtrisée</div>
+      <div class="li"><div class="ld" style="background:#EF9F27;border:1px solid #EF9F27"></div>En cours</div>
+      <div class="li"><div class="ld" style="background:var(--cbr-tertiary);border:1px solid var(--cbr-secondary)"></div>Verrouillée</div>
+    </div>
   </div>
 
   <!-- Vue édition (panel flottant) -->
@@ -1014,101 +1086,94 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
     <span style="font-size:14px;font-weight:600;color:var(--ct-primary)">Boîte à outils</span>
   </div>
 
-  <!-- Grille de cartes centrée -->
-  <div style="position:absolute;top:56px;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:center;overflow:auto;padding:60px 20px 20px">
-    <div style="display:flex;flex-wrap:wrap;gap:16px;justify-content:center;max-width:560px">
+  <!-- Contenu scrollable de la boîte à outils -->
+  <div id="toolbox-scroll" style="position:absolute;top:56px;bottom:0;left:0;right:0;overflow-y:auto;-webkit-overflow-scrolling:touch;">
+    <div style="max-width:560px;margin:0 auto;padding:16px 16px 32px;">
 
-      <!-- Carte Métronome -->
-      <div class="home-card" id="card-metro" onclick="toggleMetroPanel()" style="min-width:140px;flex:1">
-        <div class="home-card-icon">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+      <!-- Grille de cartes -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px">
+        <div class="home-card" id="card-metro" onclick="toggleMetroPanel()" style="padding:16px 8px">
+          <div class="home-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
+          <div class="home-card-title" style="font-size:12px">Métronome</div>
         </div>
-        <div class="home-card-title">Métronome</div>
+        <div class="home-card" onclick="openBoard(false)" style="padding:16px 8px">
+          <div class="home-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+          <div class="home-card-title" style="font-size:12px">Partage</div>
+        </div>
+        <div class="home-card" onclick="openAgenda()" style="padding:16px 8px">
+          <div class="home-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+          <div class="home-card-title" style="font-size:12px">Agenda</div>
+        </div>
       </div>
 
-      <!-- Carte Partage (lecture seule pour élève) -->
-      <div class="home-card" onclick="openBoard(false)" style="min-width:140px;flex:1">
-        <div class="home-card-icon">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <!-- Métronome inline (masqué par défaut) -->
+      <div id="metro-panel" style="display:none;background:var(--cb-secondary);border:0.5px solid var(--cbr-tertiary);border-radius:14px;padding:18px;margin-bottom:20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <span style="font-size:14px;font-weight:600;color:var(--ct-primary)">🎵 Métronome</span>
+          <button onclick="closeMetroPanel()" style="background:none;border:none;cursor:pointer;color:var(--ct-tertiary);font-size:18px;padding:2px 6px;line-height:1">✕</button>
         </div>
-        <div class="home-card-title">Partage</div>
+        <div style="text-align:center;margin-bottom:12px">
+          <div id="metro-bpm-display" style="font-size:48px;font-weight:700;font-family:var(--font-mono);color:var(--ct-primary);line-height:1">120</div>
+          <div style="font-size:11px;color:var(--ct-tertiary);margin-top:2px">BPM</div>
+        </div>
+        <input type="range" id="metro-bpm-slider" min="40" max="240" value="120"
+          style="width:100%;height:4px;accent-color:#378ADD;margin-bottom:0;border:none;cursor:pointer"
+          oninput="setMetroBpm(this.value)">
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--ct-tertiary);margin-top:3px;margin-bottom:12px"><span>40</span><span>BPM</span><span>240</span></div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px">
+          <button class="btn btn-sm" onclick="setMetroBpm(52)" style="flex:1">Lento<br><span style="font-size:9px;opacity:.5">52</span></button>
+          <button class="btn btn-sm" onclick="setMetroBpm(76)" style="flex:1">Andante<br><span style="font-size:9px;opacity:.5">76</span></button>
+          <button class="btn btn-sm" onclick="setMetroBpm(108)" style="flex:1">Moderato<br><span style="font-size:9px;opacity:.5">108</span></button>
+          <button class="btn btn-sm" onclick="setMetroBpm(132)" style="flex:1">Allegro<br><span style="font-size:9px;opacity:.5">132</span></button>
+          <button class="btn btn-sm" onclick="setMetroBpm(176)" style="flex:1">Presto<br><span style="font-size:9px;opacity:.5">176</span></button>
+        </div>
+        <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+          <div style="flex:1;min-width:100px">
+            <div style="font-size:11px;color:var(--ct-secondary);margin-bottom:5px">Carrure</div>
+            <select id="metro-beats-select" onchange="setMetroBeatsPerBar(this.value)" style="margin-bottom:0;font-size:13px;padding:6px 8px;width:100%">
+              <option value="2">2 temps</option><option value="3">3 temps</option>
+              <option value="4" selected>4 temps</option><option value="5">5 temps</option>
+              <option value="6">6 temps</option><option value="7">7 temps</option><option value="8">8 temps</option>
+            </select>
+          </div>
+          <div style="flex:1;min-width:100px">
+            <div style="font-size:11px;color:var(--ct-secondary);margin-bottom:5px">Son</div>
+            <select id="metro-sound-select" onchange="setMetroSound(this.value)" style="margin-bottom:0;font-size:13px;padding:6px 8px;width:100%">
+              <option value="wood" selected>Woodblock</option>
+              <option value="rim">Rimshot</option>
+              <option value="beep">Bip électro</option>
+              <option value="bell">Cloche</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:center;margin-bottom:14px;flex-wrap:wrap" id="metro-beats-display"></div>
+        <button id="metro-play-btn" onclick="startStopMetro()" style="width:100%;padding:13px;font-size:14px;border-radius:var(--br-lg);border:0.5px solid var(--cbr-info);background:var(--cb-info);color:var(--ct-info);cursor:pointer;font-family:var(--font-sans);font-weight:500">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;margin-right:4px"><polygon points="5 3 19 12 5 21 5 3"/></svg> Démarrer
+        </button>
       </div>
 
-      <!-- Carte Agenda -->
-      <div class="home-card" onclick="openAgenda()" style="min-width:140px;flex:1">
-        <div class="home-card-icon">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <!-- Playlist Spotify (toujours visible) -->
+      <div style="background:var(--cb-secondary);border:0.5px solid var(--cbr-tertiary);border-radius:14px;padding:14px 14px 10px;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#1DB954"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+          <span style="font-size:13px;font-weight:600;color:var(--ct-primary)">Playlist du cours</span>
         </div>
-        <div class="home-card-title">Agenda</div>
+        <iframe style="border-radius:10px;display:block" src="https://open.spotify.com/embed/playlist/5xBFp4hSf9Nc3NkbmASlRe?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
       </div>
 
     </div>
   </div>
 
-  <!-- Volet Métronome (slide depuis le bas) -->
-  <div id="metro-panel" style="position:absolute;bottom:0;left:0;right:0;z-index:30;transform:translateY(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);background:var(--cb-primary);border-top:0.5px solid var(--cbr-secondary);border-radius:18px 18px 0 0;box-shadow:0 -8px 40px rgba(0,0,0,0.45);max-height:85vh;overflow-y:auto">
-    <div style="padding:12px 20px 0;text-align:center">
-      <div style="width:36px;height:4px;background:var(--cbr-tertiary);border-radius:99px;margin:0 auto 14px"></div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-        <span style="font-size:15px;font-weight:600;color:var(--ct-primary)">Métronome</span>
-        <button onclick="closeMetroPanel()" style="background:none;border:none;cursor:pointer;color:var(--ct-tertiary);font-size:18px;padding:4px 6px;line-height:1">✕</button>
-      </div>
-    </div>
-    <div style="padding:0 20px 28px">
-      <div style="text-align:center;margin-bottom:14px">
-        <div id="metro-bpm-display" style="font-size:52px;font-weight:700;font-family:var(--font-mono);color:var(--ct-primary);line-height:1">120</div>
-        <div style="font-size:11px;color:var(--ct-tertiary);margin-top:2px">BPM</div>
-      </div>
-      <input type="range" id="metro-bpm-slider" min="40" max="240" value="120"
-        style="width:100%;height:4px;accent-color:#378ADD;margin-bottom:0;border:none;cursor:pointer"
-        oninput="setMetroBpm(this.value)">
-      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--ct-tertiary);margin-top:3px;margin-bottom:12px"><span>40</span><span>BPM</span><span>240</span></div>
-      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px">
-        <button class="btn btn-sm" onclick="setMetroBpm(52)">Lento<br><span style="font-size:9px;opacity:.5">52</span></button>
-        <button class="btn btn-sm" onclick="setMetroBpm(76)">Andante<br><span style="font-size:9px;opacity:.5">76</span></button>
-        <button class="btn btn-sm" onclick="setMetroBpm(108)">Moderato<br><span style="font-size:9px;opacity:.5">108</span></button>
-        <button class="btn btn-sm" onclick="setMetroBpm(132)">Allegro<br><span style="font-size:9px;opacity:.5">132</span></button>
-        <button class="btn btn-sm" onclick="setMetroBpm(176)">Presto<br><span style="font-size:9px;opacity:.5">176</span></button>
-      </div>
-      <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">
-        <div style="flex:1;min-width:100px">
-          <div style="font-size:11px;color:var(--ct-secondary);margin-bottom:5px">Carrure</div>
-          <select id="metro-beats-select" onchange="setMetroBeatsPerBar(this.value)" style="margin-bottom:0;font-size:13px;padding:6px 8px;width:100%">
-            <option value="2">2 temps</option><option value="3">3 temps</option>
-            <option value="4" selected>4 temps</option><option value="5">5 temps</option>
-            <option value="6">6 temps</option><option value="7">7 temps</option><option value="8">8 temps</option>
-          </select>
-        </div>
-        <div style="flex:1;min-width:100px">
-          <div style="font-size:11px;color:var(--ct-secondary);margin-bottom:5px">Son</div>
-          <select id="metro-sound-select" onchange="setMetroSound(this.value)" style="margin-bottom:0;font-size:13px;padding:6px 8px;width:100%">
-            <option value="wood" selected>Woodblock</option>
-            <option value="rim">Rimshot</option>
-            <option value="beep">Bip électro</option>
-            <option value="bell">Cloche</option>
-          </select>
-        </div>
-      </div>
-      <div style="display:flex;gap:8px;justify-content:center;margin-bottom:14px;flex-wrap:wrap" id="metro-beats-display"></div>
-      <button id="metro-play-btn" onclick="startStopMetro()" style="width:100%;padding:13px;font-size:14px;border-radius:var(--br-lg);border:0.5px solid var(--cbr-info);background:var(--cb-info);color:var(--ct-info);cursor:pointer;font-family:var(--font-sans);font-weight:500">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;margin-right:4px"><polygon points="5 3 19 12 5 21 5 3"/></svg> Démarrer
-      </button>
-    </div>
-  </div>
-
-  <!-- Volet Partage (sc-board intégré en slide-up) -->
+  <!-- Volet Partage (sc-board intégré en slide-up — inchangé) -->
   <div id="share-panel" style="position:absolute;bottom:0;left:0;right:0;top:56px;z-index:28;transform:translateY(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);background:var(--cb-primary);border-top:0.5px solid var(--cbr-secondary);display:flex;flex-direction:column;overflow:hidden">
-    <!-- Header partage -->
     <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:0.5px solid var(--cbr-tertiary);flex-shrink:0;background:var(--cb-secondary)">
       <button onclick="closeSharePanel()" style="background:none;border:none;cursor:pointer;color:var(--ct-tertiary);font-size:18px;padding:2px 6px;line-height:1">✕</button>
       <span style="font-size:14px;font-weight:600;color:var(--ct-primary);flex:1">Espace de partage</span>
       <span id="share-panel-badge" style="display:none;font-size:10px;padding:2px 8px;border-radius:99px;background:var(--cb-info);color:var(--ct-info);border:0.5px solid var(--cbr-info)">Prof</span>
-
       <button id="share-panel-interactions" onclick="openInteractionsModal()" style="display:none" class="btn btn-sm">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Interactions
       </button>
     </div>
-    <!-- Colonnes -->
     <div style="flex:1;overflow-x:auto;overflow-y:hidden;padding:16px">
       <div id="share-panel-cols" style="display:flex;gap:16px;align-items:flex-start;height:100%;min-width:max-content;padding-bottom:8px"></div>
     </div>
@@ -1125,7 +1190,7 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
         <div class="board-header-title" id="board-main-title">Espace de partage</div>
         <div class="board-header-sub" id="board-subtitle">Documents, liens, enregistrements</div>
       </div>
-      <span id="board-mode-badge" class="badge badge-prof" style="display:none">Mode prof</span>
+      <span id="board-mode-badge" class="badge" style="display:none;background:var(--cb-secondary);color:var(--ct-secondary);border-color:var(--cbr-tertiary)">Mode édition</span>
       <button class="btn btn-sm" onclick="openSuggestionsPanel()" id="btn-suggestions" style="display:none">
         <span id="suggestions-badge" style="display:none;background:#f87171;color:#fff;border-radius:99px;padding:0 5px;font-size:9px;margin-right:3px;font-weight:700"></span>
         💡 Suggestions</button>
@@ -1139,7 +1204,7 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
 </div>
 
 <!-- Modal ajout / édition de tuile -->
-<div class="modal-overlay" id="modal-tile">
+<div class="modal-overlay" id="modal-tile" onclick="if(event.target===this)closeModal('modal-tile')">
   <div class="modal-box">
     <h3 id="tile-modal-title">Ajouter une ressource</h3>
     <div class="tile-type-picker" id="tile-type-picker">
@@ -1266,7 +1331,7 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
 </div>
 
 <!-- MODALS -->
-<div class="modal-overlay" id="modal-add">
+<div class="modal-overlay" id="modal-add" onclick="if(event.target===this)closeModal('modal-add')">
   <div class="modal-box" style="max-width:440px">
     <h3>Ajouter un élève</h3>
     <p>La connexion se fait avec le prénom et nom. Le mot de passe par défaut est généré automatiquement.</p>
@@ -1286,7 +1351,7 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
     </div>
   </div>
 </div>
-<div class="modal-overlay" id="modal-edit-student">
+<div class="modal-overlay" id="modal-edit-student" onclick="if(event.target===this)closeModal('modal-edit-student')">
   <div class="modal-box" style="max-width:440px">
     <h3>Modifier l'élève</h3>
     <div class="field-label">Prénom Nom</div><input type="text" id="e-name">
@@ -1304,7 +1369,7 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
     </div>
   </div>
 </div>
-<div class="modal-overlay" id="modal-skill">
+<div class="modal-overlay" id="modal-skill" onclick="if(event.target===this)closeModal('modal-skill')">
   <div class="modal-box">
     <h3 id="sk-modal-title">Ajouter une compétence</h3>
     <p id="sk-modal-sub"></p>
@@ -1330,17 +1395,29 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
     </div>
   </div>
 </div>
-<div class="modal-overlay" id="modal-exam">
+<div class="modal-overlay" id="modal-exam" onclick="if(event.target===this)closeModal('modal-exam')">
   <div class="modal-box" style="text-align:center">
     <div style="margin-bottom:8px"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
     <h3 id="exam-modal-title" style="text-align:center;margin-bottom:8px">Valider l'examen de passage</h3>
     <p id="exam-modal-sub"></p>
     <div class="field-label" style="text-align:left">Note obtenue (sur 20)</div>
-    <input type="number" id="exam-note" min="0" max="20" step="0.5" placeholder="ex: 14.5" style="text-align:center;font-size:18px;letter-spacing:1px">
-    <div class="err" id="exam-err">La note doit être supérieure ou égale à 10 pour valider</div>
+    <input type="number" id="exam-note" min="0" max="20" step="0.5" placeholder="ex: 14.5" style="text-align:center;font-size:18px;letter-spacing:1px" oninput="onExamNoteInput()">
+    <div id="exam-mention-row" style="display:none;margin-bottom:10px">
+      <div class="field-label" style="text-align:left">Mention <span style="font-weight:400;opacity:.6">(optionnel)</span></div>
+      <select id="exam-mention" style="margin-bottom:0">
+        <option value="">— Sans mention —</option>
+        <option value="Passable">Passable (10–11)</option>
+        <option value="Assez bien">Assez bien (12–13)</option>
+        <option value="Bien">Bien (14–15)</option>
+        <option value="Très bien">Très bien (16–17)</option>
+        <option value="Excellent">Excellent (18–20)</option>
+      </select>
+    </div>
+    <div class="err" id="exam-err"></div>
+    <div id="exam-warn" style="font-size:11px;color:var(--ct-warning);margin-bottom:8px;display:none;padding:6px 10px;background:var(--cb-warning);border-radius:var(--br-sm);border:0.5px solid var(--cbr-warning)"></div>
     <div class="modal-footer">
       <button class="btn" onclick="closeModal('modal-exam')">Annuler</button>
-      <button class="btn btn-success" onclick="confirmExam()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Valider l'examen</button>
+      <button class="btn btn-success" id="exam-confirm-btn" onclick="confirmExam()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Valider l'examen</button>
     </div>
   </div>
 </div>
@@ -1368,6 +1445,13 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
 </div>
 
 <script>
+/* ════════════════════════════════════════════════════════
+   ██████  CONFIGURATION FIREBASE  ██████
+   → Remplacez les valeurs ci-dessous par les vôtres
+     après avoir créé votre projet sur console.firebase.google.com
+   ════════════════════════════════════════════════════════ */
+
+/* ════════════════════════════════════════════════════════ */
 
 /* ═══════════════════════════════════════════════════════
    §1 — CONSTANTES & DONNÉES PAR DÉFAUT
@@ -1376,7 +1460,7 @@ const SK='sax_v11';
 const COLORS_POOL=['#378ADD','#1D9E75','#7F77DD','#D85A30','#EF9F27'];
 var BRANCHES=[
   {id:'identite',label:'Identité du musicien',color:'#7F77DD'},
-  {id:'percevoir',label:'Percevoir, Comprendre & produire',color:'#378ADD'},
+  {id:'percevoir',label:'Percevoir & produire',color:'#378ADD'},
   {id:'autonomie',label:'Autonomie',color:'#1D9E75'},
   {id:'corps',label:'Corps & musique',color:'#EF9F27'},
 ];
@@ -1717,7 +1801,7 @@ function show(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   if(id==='sc-settings'){show('sc-home');showProfTab('parametres');return;}
-  if(id==='sc-home'){showProfTab(_currentProfTab||'accueil');}
+  if(id==='sc-home'){showProfTab(_currentProfTab||'eleves');}
 }
 function openModal(id){document.getElementById(id).classList.add('open')}
 function closeModal(id){document.getElementById(id).classList.remove('open')}
@@ -1796,7 +1880,7 @@ function doLoginProf(){
   document.getElementById('login-err-prof').style.display='none';
   if(v===profCode){
     profMode=true;
-    try{sessionStorage.setItem('sax_session',JSON.stringify({role:'prof',tab:'accueil'}));}catch(e){}
+    try{sessionStorage.setItem('sax_session',JSON.stringify({role:'prof',tab:'eleves'}));}catch(e){}
     show('sc-home');renderHome();return;
   }
   document.getElementById('login-err-prof').style.display='block';
@@ -1834,6 +1918,12 @@ function changeStudentPassword(){
   currentStudent.password=nw;saveLocal();
   ['profile-pwd-current','profile-pwd-new','profile-pwd-confirm'].forEach(id=>document.getElementById(id).value='');
   ok.style.display='block';setTimeout(()=>ok.style.display='none',3000);
+}
+function deleteStudent(id){
+  const s=students.find(x=>x.id===id);if(!s)return;
+  if(!confirm('Supprimer définitivement l\'élève "'+s.name+'" ?\nToutes ses données de progression seront perdues.'))return;
+  students=students.filter(x=>x.id!==id);
+  saveLocal();renderHome();
 }
 function resetStudentPassword(id){
   const s=students.find(x=>x.id===id);if(!s)return;
@@ -1953,16 +2043,19 @@ function renderHome(){
         ? '<div style="margin-top:3px"><span style="font-size:10px;padding:2px 8px;border-radius:99px;background:rgba(239,159,39,.12);color:#EF9F27;border:0.5px solid rgba(239,159,39,.4);font-weight:600;white-space:nowrap;font-family:var(--font-mono)">' + _cycleYear + '</span><span style="font-size:10px;color:var(--ct-tertiary);margin-left:5px">— examen</span></div>'
         : '<div style="margin-top:3px;display:flex;align-items:center;gap:6px"><span style="font-size:10px;padding:1px 7px;border-radius:99px;background:' + s.color + '22;color:' + s.color + ';border:0.5px solid ' + s.color + '66;font-weight:700;font-family:var(--font-mono)">' + _cycleYear + '</span><span style="font-size:10px;color:var(--ct-secondary)">' + done + '/' + total + ' (' + pct + '%)</span></div><div style="height:3px;background:var(--cb-secondary);border-radius:99px;overflow:hidden;margin-top:4px"><div style="height:100%;border-radius:99px;width:' + pct + '%;background:' + s.color + '"></div></div>';
       row.innerHTML=`
-        <div class="avatar" style="background:${s.color}22;color:${s.color};width:36px;height:36px;font-size:12px">${initials(s.name)}</div>
+        <div class="avatar" style="background:${s.color}22;color:${s.color};width:36px;height:36px;font-size:12px;flex-shrink:0">${initials(s.name)}</div>
         <div style="flex:1;min-width:0">
-          <div style="font-size:13px;font-weight:500;color:var(--ct-primary)">${s.name}</div>
+          <div style="font-size:13px;font-weight:500;color:var(--ct-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.name}</div>
           ${_examHtml}
         </div>
-        ${_validerBtn}
-        <button class="btn btn-sm" onclick="openTree('${s.id}')">Arbre</button>
-        <button class="btn btn-warn btn-sm" onclick="openTreeEdit('${s.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Éditer</button>
-        <button class="btn btn-sm" onclick="openEditStudentModal('${s.id}')">Profil</button>
-        <button class="btn btn-sm" title="Réinitialiser le mot de passe" onclick="resetStudentPassword('${s.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/><polyline points="16 16 18 18 22 14" transform="translate(-6,-3) scale(0.7)"/></svg> </button>
+        <div class="std-row-actions" style="display:flex;gap:4px;flex-shrink:0;flex-wrap:nowrap">
+          ${_validerBtn}
+          <button class="btn btn-sm" onclick="openTree('${s.id}')" title="Voir l'arbre"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> <span class="btn-label-hide">Arbre</span></button>
+          <button class="btn btn-sm" onclick="openTreeEdit('${s.id}')" title="Éditer"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> <span class="btn-label-hide">Éditer</span></button>
+          <button class="btn btn-sm" onclick="openEditStudentModal('${s.id}')" title="Profil"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> <span class="btn-label-hide">Profil</span></button>
+          <button class="btn btn-sm" title="Réinitialiser le mot de passe" onclick="resetStudentPassword('${s.id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg></button>
+          <button class="btn btn-danger btn-sm" title="Supprimer" onclick="deleteStudent('${s.id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+        </div>
       `;
       grp.appendChild(row);
     }
@@ -1972,30 +2065,77 @@ function renderHome(){
 }
 
 /* ── EXAM ── */
+
+function onExamNoteInput(){
+  const v=parseFloat(document.getElementById('exam-note').value);
+  const err=document.getElementById('exam-err');
+  const warn=document.getElementById('exam-warn');
+  const mentionRow=document.getElementById('exam-mention-row');
+  const btn=document.getElementById('exam-confirm-btn');
+  err.style.display='none';warn.style.display='none';
+  if(isNaN(v)){mentionRow.style.display='none';return;}
+  if(v>20){err.textContent='La note ne peut pas dépasser 20';err.style.display='block';mentionRow.style.display='none';return;}
+  if(v<10){
+    warn.textContent='Note < 10 — l\'examen ne sera pas validé, mais la note sera enregistrée.';
+    warn.style.display='block';mentionRow.style.display='none';
+    btn.textContent='Enregistrer sans valider';
+    btn.className='btn btn-warn';
+  } else {
+    btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Valider l\'examen';
+    btn.className='btn btn-success';
+    mentionRow.style.display='block';
+    // Auto-remplir la mention selon la note
+    const sel=document.getElementById('exam-mention');
+    if(v>=18)sel.value='Excellent';
+    else if(v>=16)sel.value='Très bien';
+    else if(v>=14)sel.value='Bien';
+    else if(v>=12)sel.value='Assez bien';
+    else if(v>=10)sel.value='Passable';
+    else sel.value='';
+  }
+}
 function openExamModal(studentId){
   const s=students.find(x=>x.id===studentId);if(!s)return;
   currentStudent=s;
-  document.getElementById('exam-modal-title').textContent=`Valider l'examen — ${s.name}`;
-  document.getElementById('exam-modal-sub').textContent=`Entrez la note obtenue par ${s.name} à l'examen de fin de Cycle ${s.cycle}. La note doit être ≥ 10 pour valider le passage au Cycle ${s.cycle+1}.`;
-  document.getElementById('exam-note').value='';document.getElementById('exam-err').style.display='none';
+  document.getElementById('exam-modal-title').textContent='Valider l\'examen — '+s.name;
+  document.getElementById('exam-modal-sub').textContent='Entrez la note obtenue par '+s.name+' à l\'examen de fin de Cycle '+s.cycle+'. La note doit être ≥ 10 pour valider le passage au Cycle '+(s.cycle+1)+'.';
+  document.getElementById('exam-note').value='';
+  document.getElementById('exam-err').style.display='none';
+  document.getElementById('exam-warn').style.display='none';
+  document.getElementById('exam-mention-row').style.display='none';
+  var btn=document.getElementById('exam-confirm-btn');
+  btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Valider l\'examen';
+  btn.className='btn btn-success';
   openModal('modal-exam');
 }
 function confirmExam(){
   const noteVal=parseFloat(document.getElementById('exam-note').value);
   const err=document.getElementById('exam-err');err.style.display='none';
-  if(isNaN(noteVal)||noteVal<10){err.style.display='block';return}
+  if(isNaN(noteVal)){err.textContent='Entrez une note';err.style.display='block';return;}
+  if(noteVal<0||noteVal>20){err.textContent='La note doit être entre 0 et 20';err.style.display='block';return;}
   if(!currentStudent)return;
+  const noteVal20=Math.min(20,Math.max(0,noteVal));
+  const mention=document.getElementById('exam-mention').value||'';
   const c=currentStudent.cycle;
   if(!currentStudent.examPassed)currentStudent.examPassed={};
   if(!currentStudent.examData)currentStudent.examData={};
   const today=new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'});
-  currentStudent.examPassed[c]=true;
-  currentStudent.examData[c]={note:noteVal,date:today};
-  currentStudent.cycle=Math.min(3,c+1);
-  saveLocal();closeModal('modal-exam');
-  showCongrats(currentStudent,c,noteVal,today);
+  if(noteVal20>=10){
+    currentStudent.examPassed[c]=true;
+    currentStudent.examData[c]={note:noteVal20,date:today,mention:mention};
+    currentStudent.cycle=Math.min(3,c+1);
+    saveLocal();closeModal('modal-exam');
+    showCongrats(currentStudent,c,noteVal20,today,mention);
+  } else {
+    // Enregistrer sans valider
+    if(!currentStudent.examData[c])currentStudent.examData[c]={};
+    currentStudent.examData[c]={note:noteVal20,date:today,mention:'',failed:true};
+    saveLocal();closeModal('modal-exam');
+    alert('Note enregistrée ('+noteVal20+'/20). L\'examen n\'est pas validé — '+currentStudent.name+' reste en Cycle '+c+'.');
+    renderHome();
+  }
 }
-function showCongrats(student,cycle,note,date){
+function showCongrats(student,cycle,note,date,mention){
   pendingCongratsStudent=student;
   if(profMode){
     /* Mode prof : message sobre, pas de "Tu as réussi" */
@@ -2008,7 +2148,8 @@ function showCongrats(student,cycle,note,date){
     document.getElementById('congrats-sub').textContent=`Tu as réussi l'examen de passage du Cycle ${cycle} avec une belle maîtrise de toutes tes compétences !`;
     document.getElementById('congrats-next').textContent=cycle<3?`Bienvenue dans le Cycle ${cycle+1} !`:`Félicitations pour l'obtention du Cycle 3 !`;
   }
-  document.getElementById('congrats-note').innerHTML='<div style="display:inline-flex;align-items:center;gap:8px;padding:8px 20px;border-radius:99px;background:linear-gradient(135deg,rgba(96,165,250,0.15),rgba(167,139,250,0.15));border:1px solid rgba(96,165,250,0.4)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><span style="font-size:20px;font-weight:700;color:#60a5fa">'+note+' / 20</span></div>';
+  var mentionHtml=mention?'<div style="margin-top:6px;font-size:12px;padding:3px 12px;border-radius:99px;background:rgba(167,139,250,0.15);color:#a78bfa;border:0.5px solid rgba(167,139,250,0.4);display:inline-block">'+mention+'</div>':'';
+  document.getElementById('congrats-note').innerHTML='<div style="display:inline-flex;align-items:center;gap:8px;padding:8px 20px;border-radius:99px;background:linear-gradient(135deg,rgba(96,165,250,0.15),rgba(167,139,250,0.15));border:1px solid rgba(96,165,250,0.4)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><span style="font-size:20px;font-weight:700;color:#60a5fa">'+note+' / 20</span></div>'+mentionHtml;
   document.getElementById('congrats-date').textContent=`Obtenu le ${date}`;
   document.getElementById('congrats-overlay').classList.add('active');
   spawnCongratsStars();
@@ -2055,7 +2196,7 @@ const AVATAR_EMOJIS=['🎷','🎵','🎶','🎸','🎹','🎺','🎻','🥁','�
 function openTree(id){
   currentStudent=students.find(s=>s.id===id);if(!currentStudent)return;
   currentCycle=currentStudent.cycle;selSkill=null;hovSkill=null;editMode=false;
-  _nodesCache=null;
+  _nodesCache=null;_treeResetView();
   closePopup();cancelAnim();
   document.getElementById('btn-edit-mode').style.display=profMode?'block':'none';
   // Bouton retour et badge : visibles seulement en mode prof
@@ -2087,7 +2228,10 @@ function saveAndBack(){saveLocal();toggleEditMode();updateProfileBar()}
 
 function renderTreeScreen(){
   updateProfileBar();
-  const mb=document.getElementById('mode-badge');mb.textContent=profMode?'Mode prof':'Lecture seule';mb.className='badge '+(profMode?'badge-prof':'badge-eleve');
+  const mb=document.getElementById('mode-badge');
+  mb.textContent=profMode?'':'Lecture seule';
+  mb.className='badge '+(profMode?'badge-prof':'badge-eleve');
+  mb.style.display=profMode?'none':'inline-block';
   const cs=cycleStatus(currentStudent,currentCycle);
   const isExam=cs==='awaiting_exam';
 
@@ -2183,14 +2327,14 @@ function openProfileDrawer(){
   ['profile-pwd-current','profile-pwd-new','profile-pwd-confirm'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
   const errEl=document.getElementById('profile-pwd-err');if(errEl)errEl.style.display='none';
   const okEl=document.getElementById('profile-pwd-ok');if(okEl)okEl.style.display='none';
-  const rows=[];for(let c=1;c<=3;c++){if(passed[c]&&data[c])rows.push({c,note:data[c].note,date:data[c].date})}
+  const rows=[];for(let c=1;c<=3;c++){if(passed[c]&&data[c])rows.push({c,note:data[c].note,date:data[c].date,mention:data[c].mention||''})}
   let histHtml='';
   if(rows.length){
     histHtml='<div style="font-size:11px;font-weight:500;color:var(--ct-secondary);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">Historique des examens</div>';
-    for(const r of rows){const col=r.note>=16?'#34d399':r.note>=13?'#60a5fa':r.note>=10?'#fbbf24':'#f87171';
+    for(const r of rows){const col=r.note>=16?'#34d399':r.note>=13?'#60a5fa':r.note>=10?'#fbbf24':'#f87171';r.mention=r.mention||'';
       histHtml+=`<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--cb-secondary);border-radius:var(--br-md);margin-bottom:6px">
         <div style="font-size:12px;flex:1;color:var(--ct-primary)">Cycle ${r.c}</div>
-        <div style="font-size:14px;font-weight:600;color:${col}">${r.note} / 20</div>
+        <div><div style="font-size:14px;font-weight:600;color:${col}">${r.note} / 20</div>${r.mention?'<div style="font-size:10px;color:var(--ct-tertiary);">'+r.mention+'</div>':''}</div>
         <div style="font-size:11px;color:var(--ct-tertiary);font-family:var(--font-mono)">${r.date}</div></div>`}
   }
   document.getElementById('profile-exam-history').innerHTML=histHtml;
@@ -2220,35 +2364,71 @@ function hexA(hex,a){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,
 
 /* Cache des positions calculées — mis à jour une fois par frame */
 let _nodesCache=null;
+// Zoom / pan de l'arbre
+let _treeZoom=1,_treeOffX=0,_treeOffY=0;
+let _treePanning=false,_treePanSX=0,_treePanSY=0,_treePanOX=0,_treePanOY=0;
+let _treePinchDist=0;
+function _treeResetView(){_treeZoom=1;_treeOffX=0;_treeOffY=0;}
 function getNodes(){return _nodesCache||calcNodes()}
 
 function calcNodes(){
   const cv=document.getElementById('cv');
   const W=cv.width||window.innerWidth,H=cv.height||window.innerHeight;
-  const cx=W/2,cy=H/2,RBR=Math.min(W,H)*0.19,RSK=Math.min(W,H)*0.36;
+  const isMobile=W<600;
+  const mobileScale=isMobile?0.72:1;
+  const cx=W/2,cy=H/2,RBR=Math.min(W,H)*0.19*mobileScale;
+  const R=Math.min(W,H)*mobileScale;
   const toRad=d=>d*Math.PI/180;
   const skList=skillsData[currentCycle]||[];
   const brSk={};for(const br of BRANCHES)brSk[br.id]=skList.filter(s=>s.b===br.id);
   const nm={};
+  // Rayon de départ : étalé, laisse de l'air entre nœuds et familles
+  const RSK_START=R*0.44;
   for(const br of BRANCHES){
     const a=toRad(BRANCH_ANGLES[br.id]);
     nm[br.id]={x:cx+Math.cos(a)*RBR,y:cy+Math.sin(a)*RBR};
     const bs=brSk[br.id]||[],n=bs.length;if(!n)continue;
-    const maxSpread=toRad(Math.min(46,n*12));
-    for(let i=0;i<n;i++){const off=n>1?(i/(n-1)-0.5)*2*maxSpread:0;nm[bs[i].id]={x:cx+Math.cos(a+off)*RSK,y:cy+Math.sin(a+off)*RSK}}
+    // Placement initial en éventail serré — la répulsion les écartera si besoin
+    const maxSpread=toRad(Math.min(75,n*13));
+    for(let i=0;i<n;i++){
+      const off=n>1?(i/(n-1)-0.5)*2*maxSpread:0;
+      nm[bs[i].id]={x:cx+Math.cos(a+off)*RSK_START,y:cy+Math.sin(a+off)*RSK_START,_br:br.id};
+    }
   }
-  const MIN=Math.min(W,H)*0.096,ids=skList.map(s=>s.id);
-  for(let iter=0;iter<160;iter++){
+  // Répulsion intra-branche uniquement, sans rayon max imposé
+  const nBr=BRANCHES.length||4;
+  const halfSector=toRad((360/nBr)*0.48);
+  const idBr={};for(const br of BRANCHES){for(const sk of(brSk[br.id]||[]))idBr[sk.id]=br.id;}
+  const MIN=R*0.14,ids=skList.map(s=>s.id);
+  for(let iter=0;iter<300;iter++){
     let moved=false;
     for(let i=0;i<ids.length;i++){for(let j=i+1;j<ids.length;j++){
+      // Répulsion active entre tous les nœuds (intra ET inter-familles)
       const a=nm[ids[i]],b=nm[ids[j]];if(!a||!b)continue;
       const dx=b.x-a.x,dy=b.y-a.y,dist=Math.sqrt(dx*dx+dy*dy)||0.001;
       if(dist<MIN){const p=(MIN-dist)/2+0.5,nx=dx/dist,ny=dy/dist;a.x-=nx*p;a.y-=ny*p;b.x+=nx*p;b.y+=ny*p;moved=true}
     }}
-    const lo=RSK-RSK*0.18,hi=RSK+RSK*0.18;
-    for(const id of ids){const n2=nm[id];if(!n2)continue;const dx=n2.x-cx,dy=n2.y-cy,d=Math.sqrt(dx*dx+dy*dy)||1;const c2=Math.max(lo,Math.min(hi,d));n2.x=cx+dx/d*c2;n2.y=cy+dy/d*c2}
+    // Contrainte sectorielle uniquement (pas de rayon min/max)
+    for(const br of BRANCHES){
+      const brAngle=toRad(BRANCH_ANGLES[br.id]);
+      for(const sk of(brSk[br.id]||[])){
+        const nd=nm[sk.id];if(!nd)continue;
+        const dx=nd.x-cx,dy=nd.y-cy;
+        let rel=Math.atan2(dy,dx)-brAngle;
+        while(rel>Math.PI)rel-=Math.PI*2;while(rel<-Math.PI)rel+=Math.PI*2;
+        if(Math.abs(rel)>halfSector){
+          const cl=Math.max(-halfSector,Math.min(halfSector,rel));
+          const r2=Math.sqrt(dx*dx+dy*dy)||RSK_START;
+          nd.x=cx+Math.cos(brAngle+cl)*r2;nd.y=cy+Math.sin(brAngle+cl)*r2;moved=true;
+        }
+        // Distance minimale au centre (évite chevauchement cycle) ET aux nœuds famille
+        const r3=Math.sqrt((nd.x-cx)**2+(nd.y-cy)**2);
+        if(r3<RBR*1.45){const a2=Math.atan2(nd.y-cy,nd.x-cx);nd.x=cx+Math.cos(a2)*RBR*1.45;nd.y=cy+Math.sin(a2)*RBR*1.45;}
+      }
+    }
     if(!moved)break;
   }
+  const RSK=RSK_START;
   return{nm,brSk,cx,cy,W,H,RBR,RSK};
 }
 
@@ -2275,7 +2455,29 @@ function drawRadial(){
     const _light=document.documentElement.classList.contains('light');
     _nodesCache=calcNodes(); // mise à jour du cache une seule fois par frame
     const{nm,brSk,cx,cy,RSK}=_nodesCache;
-    const RC=Math.min(W,H)*0.075,RBN=Math.min(W,H)*0.044,RSN=Math.min(W,H)*0.040;
+    // Appliquer le zoom / pan
+    ctx.save();
+    ctx.translate(cx+_treeOffX,cy+_treeOffY);
+    ctx.scale(_treeZoom,_treeZoom);
+    ctx.translate(-cx,-cy);
+    const isMobile2=W<600;
+    const mS=isMobile2?0.72:1;
+    const RC=Math.min(W,H)*0.075*mS,RBN=Math.min(W,H)*0.044*mS;
+    const RSN_BASE=Math.min(W,H)*0.042*mS;
+    // Pré-calcul du rayon par nœud (adapté à la longueur du texte)
+    const _nRad={};
+    (function(){
+      for(const _br of BRANCHES){for(const _sk of brSk[_br.id]||[]){
+        const _words=_sk.l.split(' ');
+        let _lines;
+        if(_words.length===1)_lines=[_sk.l];
+        else{const _mid=Math.ceil(_words.length/2);_lines=[_words.slice(0,_mid).join(' '),_words.slice(_mid).join(' ')];}
+        const _maxCh=Math.max(..._lines.map(l=>l.length));
+        const _estW=_maxCh*5.9; // ~5.9px/char à 9px
+        _nRad[_sk.id]=Math.max(RSN_BASE,_estW/1.55);
+      }}
+    })();
+    const RSN=RSN_BASE; // conservé pour les hit-tests (utilisé ailleurs)
     const st=currentStudent.skillStates||{};const stOf=id=>st[id]||'locked';
 
     /* ── Fond radial lisse — aucune ligne visible ── */
@@ -2345,29 +2547,30 @@ function drawRadial(){
     /* Noeuds compétences */
     for(const br of BRANCHES){for(const skill of brSk[br.id]||[]){
       const{x:sx,y:sy}=nm[skill.id]||{};if(!sx)continue;
+      const RSN_n=_nRad[skill.id]||RSN_BASE;
       const s=stOf(skill.id);const isH=hovSkill===skill.id,isS=selSkill?.id===skill.id;
       ctx.save();
       if(isH||isS){ctx.translate(sx,sy);ctx.scale(isH?1.55:1.22,isH?1.55:1.22);ctx.translate(-sx,-sy)}
       const glA=s==='locked'?(_light?0.02:0.055):(_light?0.08:0.25)+0.07*Math.sin(t3d+sx*0.007);
-      const gr=ctx.createRadialGradient(sx,sy,0,sx,sy,RSN*2.8);gr.addColorStop(0,hexA(br.color,glA));gr.addColorStop(1,'rgba(0,0,0,0)');ctx.beginPath();ctx.arc(sx,sy,RSN*2.8,0,Math.PI*2);ctx.fillStyle=gr;ctx.fill();
-      if(isS||isH){ctx.beginPath();ctx.arc(sx,sy,RSN+RSN*0.4,0,Math.PI*2);ctx.strokeStyle=br.color;ctx.globalAlpha=.38;ctx.lineWidth=1.5;ctx.shadowColor=br.color;ctx.shadowBlur=18;ctx.stroke()}
-      ctx.globalAlpha=1;ctx.beginPath();ctx.arc(sx,sy,RSN,0,Math.PI*2);
-      const fg=ctx.createRadialGradient(sx-RSN*.3,sy-RSN*.3,RSN*.1,sx,sy,RSN);
+      const gr=ctx.createRadialGradient(sx,sy,0,sx,sy,RSN_n*2.8);gr.addColorStop(0,hexA(br.color,glA));gr.addColorStop(1,'rgba(0,0,0,0)');ctx.beginPath();ctx.arc(sx,sy,RSN_n*2.8,0,Math.PI*2);ctx.fillStyle=gr;ctx.fill();
+      if(isS||isH){ctx.beginPath();ctx.arc(sx,sy,RSN_n+RSN_n*0.4,0,Math.PI*2);ctx.strokeStyle=br.color;ctx.globalAlpha=.38;ctx.lineWidth=1.5;ctx.shadowColor=br.color;ctx.shadowBlur=18;ctx.stroke()}
+      ctx.globalAlpha=1;ctx.beginPath();ctx.arc(sx,sy,RSN_n,0,Math.PI*2);
+      const fg=ctx.createRadialGradient(sx-RSN_n*.3,sy-RSN_n*.3,RSN_n*.1,sx,sy,RSN_n);
       if(s==='done'){fg.addColorStop(0,_light?'#c8e0ff':'#1e4a72');fg.addColorStop(1,_light?'#a0c8f8':'#0a1e38')}
       else if(s==='progress'){fg.addColorStop(0,_light?'#fff0c0':'#4a3000');fg.addColorStop(1,_light?'#ffe090':'#1e1200')}
       else{fg.addColorStop(0,_light?'#e8ecf8':'#101828');fg.addColorStop(1,_light?'#d8e0f0':'#060c16')}
       ctx.fillStyle=fg;ctx.fill();
-      ctx.beginPath();ctx.arc(sx,sy,RSN,0,Math.PI*2);ctx.strokeStyle=br.color;ctx.lineWidth=s==='locked'?.7:1.8;ctx.globalAlpha=s==='locked'?.18:.82;if(!_light){ctx.shadowColor=br.color;ctx.shadowBlur=s==='locked'?0:9;}ctx.stroke();
-      if(s!=='locked'){ctx.beginPath();ctx.arc(sx-RSN*.3,sy-RSN*.3,RSN*.22,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,0.07)';ctx.globalAlpha=1;ctx.fill()}
+      ctx.beginPath();ctx.arc(sx,sy,RSN_n,0,Math.PI*2);ctx.strokeStyle=br.color;ctx.lineWidth=s==='locked'?.7:1.8;ctx.globalAlpha=s==='locked'?.18:.82;if(!_light){ctx.shadowColor=br.color;ctx.shadowBlur=s==='locked'?0:9;}ctx.stroke();
+      if(s!=='locked'){ctx.beginPath();ctx.arc(sx-RSN_n*.3,sy-RSN_n*.3,RSN_n*.22,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,0.07)';ctx.globalAlpha=1;ctx.fill()}
       // Taille de police adaptée pour rentrer dans le nœud — max 2 lignes
-      const maxW=RSN*1.7;
-      let fs2=Math.round(RSN*0.36);
+      const maxW=RSN_n*1.7;
+      let fs2=Math.round(RSN_n*0.38);
       ctx.globalAlpha=s==='locked'?.22:1;ctx.fillStyle=br.color;ctx.textAlign='center';ctx.textBaseline='middle';ctx.shadowColor=br.color;ctx.shadowBlur=s==='locked'?0:4;
       const words=skill.l.split(' ');
       // Trouver la taille de police qui fait tenir le texte
       function autoSize(lines){
-        let fs=Math.round(RSN*0.38);
-        while(fs>8){
+        let fs=Math.round(RSN_n*0.38);
+        while(fs>7){
           ctx.font=`500 ${fs}px sans-serif`;
           const fits=lines.every(function(l){return ctx.measureText(l).width<=maxW;});
           if(fits)return fs;
@@ -2387,6 +2590,7 @@ function drawRadial(){
       else{ctx.fillText(lines[0],sx,sy-fs2*0.62);ctx.fillText(lines[1],sx,sy+fs2*0.62);}
       ctx.restore();
     }}
+    ctx.restore(); // zoom/pan
     animFrame=requestAnimationFrame(frame);
   }
   frame();
@@ -2394,23 +2598,94 @@ function drawRadial(){
 
 /* Events canvas — coordonnées directes (canvas = plein écran) */
 const cv2=document.getElementById('cv');
+// Convertir coordonnées écran → monde (pour zoom/pan)
+function _cvToWorld(ex,ey){
+  const W=cv2.width,H=cv2.height,cx=W/2,cy=H/2;
+  return{x:(ex-cx-_treeOffX)/_treeZoom+cx,y:(ey-cy-_treeOffY)/_treeZoom+cy};
+}
+// Convertir monde → écran (pour positionner la popup)
+function _worldToScreen(wx,wy){
+  const W=cv2.width,H=cv2.height,cx=W/2,cy=H/2;
+  return{x:(wx-cx)*_treeZoom+cx+_treeOffX,y:(wy-cy)*_treeZoom+cy+_treeOffY};
+}
 cv2.onclick=e=>{
+  if(_treePanning)return;
   if(!currentStudent)return;
-  const nodes=getNodes();
-  const{nm}=nodes;
+  const{nm}=getNodes();
   const RSN=Math.min(cv2.width,cv2.height)*0.034;
   const skList=skillsData[currentCycle]||[];
-  for(const skill of skList){const p=nm[skill.id];if(p&&Math.hypot(e.clientX-p.x,e.clientY-p.y)<=RSN*1.5){selSkill=skill;lastPopupX=p.x;lastPopupY=p.y;showPopup(skill,p.x,p.y,e.clientX,e.clientY);return}}
+  const w=_cvToWorld(e.clientX,e.clientY);
+  for(const skill of skList){const p=nm[skill.id];if(p&&Math.hypot(w.x-p.x,w.y-p.y)<=RSN*1.5/_treeZoom){
+    selSkill=skill;
+    const sc=_worldToScreen(p.x,p.y);
+    lastPopupX=sc.x;lastPopupY=sc.y;
+    showPopup(skill,sc.x,sc.y,e.clientX,e.clientY);return}}
   closePopup();
 };
 cv2.onmousemove=e=>{
   if(!currentStudent)return;
+  // Drag to pan
+  if(_treePanning){
+    _treeOffX=_treePanOX+(e.clientX-_treePanSX);
+    _treeOffY=_treePanOY+(e.clientY-_treePanSY);
+    return;
+  }
   const{nm}=getNodes();const RSN=Math.min(cv2.width,cv2.height)*0.034;
   const skList=skillsData[currentCycle]||[];
-  let found=null;for(const skill of skList){const p=nm[skill.id];if(p&&Math.hypot(e.clientX-p.x,e.clientY-p.y)<=RSN*1.5){found=skill.id;break}}
-  hovSkill=found;cv2.style.cursor=found?'pointer':'default';
+  const w=_cvToWorld(e.clientX,e.clientY);
+  let found=null;for(const skill of skList){const p=nm[skill.id];if(p&&Math.hypot(w.x-p.x,w.y-p.y)<=RSN*1.5/_treeZoom){found=skill.id;break}}
+  hovSkill=found;cv2.style.cursor=found?'pointer':(_treeZoom>1.05?'grab':'default');
 };
-cv2.onmouseleave=()=>{hovSkill=null;cv2.style.cursor='default'};
+cv2.onmousedown=e=>{
+  if(e.button!==0)return;
+  const{nm}=getNodes();const RSN=Math.min(cv2.width,cv2.height)*0.034;
+  const skList=skillsData[currentCycle]||[];
+  const w=_cvToWorld(e.clientX,e.clientY);
+  const onNode=skList.some(sk=>{const p=nm[sk.id];return p&&Math.hypot(w.x-p.x,w.y-p.y)<=RSN*1.5/_treeZoom;});
+  if(!onNode){_treePanning=true;_treePanSX=e.clientX;_treePanSY=e.clientY;_treePanOX=_treeOffX;_treePanOY=_treeOffY;cv2.style.cursor='grabbing';}
+};
+cv2.onmouseup=()=>{
+  if(_treePanning){_treePanning=false;cv2.style.cursor=_treeZoom>1.05?'grab':'default';}
+};
+cv2.onmouseleave=()=>{hovSkill=null;_treePanning=false;cv2.style.cursor='default'};
+
+// Zoom molette
+cv2.addEventListener('wheel',function(e){
+  e.preventDefault();
+  const factor=e.deltaY<0?1.12:1/1.12;
+  const newZ=Math.max(0.4,Math.min(4,_treeZoom*factor));
+  // Zoomer autour du pointeur
+  const W=cv2.width,H=cv2.height,cx=W/2,cy=H/2;
+  const mx=e.clientX,my=e.clientY;
+  _treeOffX=(mx-cx-(_treeOffX-(mx-cx-_treeOffX)*(newZ/_treeZoom-1)))-((mx-cx));
+  // Formule simplifiée : zoom autour du curseur
+  const ratio=newZ/_treeZoom;
+  _treeOffX=_treeOffX*ratio+(mx-cx)*(1-ratio);
+  _treeOffY=_treeOffY*ratio+(my-cy)*(1-ratio);
+  _treeZoom=newZ;
+},{passive:false});
+
+// Touch : pinch zoom + pan
+cv2.addEventListener('touchstart',function(e){
+  if(e.touches.length===2){
+    _treePinchDist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+    _treePanning=false;
+  } else if(e.touches.length===1){
+    _treePanning=true;_treePanSX=e.touches[0].clientX;_treePanSY=e.touches[0].clientY;_treePanOX=_treeOffX;_treePanOY=_treeOffY;
+  }
+},{passive:true});
+cv2.addEventListener('touchmove',function(e){
+  if(e.touches.length===2){
+    const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+    const ratio=d/(_treePinchDist||d);
+    _treePinchDist=d;
+    _treeZoom=Math.max(0.4,Math.min(4,_treeZoom*ratio));
+  } else if(e.touches.length===1&&_treePanning){
+    _treeOffX=_treePanOX+(e.touches[0].clientX-_treePanSX);
+    _treeOffY=_treePanOY+(e.touches[0].clientY-_treePanSY);
+  }
+},{passive:true});
+cv2.addEventListener('touchend',function(){_treePanning=false;},{passive:true});
 
 /* Popup */
 function showPopup(skill,nodeX,nodeY,clientX,clientY){
@@ -2442,6 +2717,10 @@ function showPopup(skill,nodeX,nodeY,clientX,clientY){
 function closePopup(){document.getElementById('popup').classList.remove('visible');selSkill=null}
 function setSkFromPopup(id,state){
   if(!profMode)return;if(!currentStudent.skillStates)currentStudent.skillStates={};
+  const prev=currentStudent.skillStates[id]||'locked';
+  if(prev==='done'&&state!=='done'){
+    if(!_checkExamCancellation(currentCycle))return;
+  }
   if(state==='locked')delete currentStudent.skillStates[id];else currentStudent.skillStates[id]=state;
   saveLocal();const skill=skillsData[currentCycle].find(s=>s.id===id);if(skill)showPopup(skill,lastPopupX,lastPopupY);
   updateProfileBar();if(cycleStatus(currentStudent,currentCycle)==='awaiting_exam'){closePopup();renderTreeScreen()}
@@ -2464,7 +2743,28 @@ function renderEditPanel(){
 function toggleBranch(t,c){document.getElementById(t).classList.toggle('open');document.getElementById(c).classList.toggle('open')}
 function setBranchDone(bId){if(!currentStudent.skillStates)currentStudent.skillStates={};skillsData[currentCycle].filter(s=>s.b===bId).forEach(s=>currentStudent.skillStates[s.id]='done');saveLocal();renderEditPanel();updateProfileBar();if(cycleStatus(currentStudent,currentCycle)==='awaiting_exam'){saveAndBack();renderTreeScreen()}}
 function setAllDone(){if(!currentStudent.skillStates)currentStudent.skillStates={};skillsData[currentCycle].forEach(s=>currentStudent.skillStates[s.id]='done');saveLocal();renderEditPanel();updateProfileBar();if(cycleStatus(currentStudent,currentCycle)==='awaiting_exam'){saveAndBack();renderTreeScreen()}}
-function setSkEdit(id,state){if(!currentStudent.skillStates)currentStudent.skillStates={};if(state==='locked')delete currentStudent.skillStates[id];else currentStudent.skillStates[id]=state;saveLocal();renderEditPanel();updateProfileBar()}
+// Vérifie si invalider une compétence doit annuler l'examen du cycle
+function _checkExamCancellation(cycle){
+  if(!currentStudent.examPassed||!currentStudent.examPassed[cycle])return true;// pas d'examen validé, on continue
+  const ok=confirm('Ce cycle a déjà un examen validé (Cycle '+cycle+').\nInvalider cette compétence annulera l\'examen et remettra l\'élève au Cycle '+cycle+'.\n\nConfirmer ?');
+  if(!ok)return false;
+  // Annuler l'examen
+  delete currentStudent.examPassed[cycle];
+  if(currentStudent.examData)delete currentStudent.examData[cycle];
+  // Remettre le cycle si l'élève était passé au suivant
+  if(currentStudent.cycle>cycle)currentStudent.cycle=cycle;
+  return true;
+}
+function setSkEdit(id,state){
+  if(!currentStudent.skillStates)currentStudent.skillStates={};
+  const prev=currentStudent.skillStates[id]||'locked';
+  // Si on rétrograde une compétence 'done' → vérifier examen
+  if(prev==='done'&&state!=='done'){
+    if(!_checkExamCancellation(currentCycle))return;
+  }
+  if(state==='locked')delete currentStudent.skillStates[id];else currentStudent.skillStates[id]=state;
+  saveLocal();renderEditPanel();updateProfileBar();
+}
 
 /* ── COMPÉTENCES ── */
 function showCompetencesEditor(){ceCycle=1;if(profMode){show('sc-home');showProfTab('competences');}else{renderCEScreen();show('sc-competences');}}
@@ -2578,9 +2878,38 @@ function previewMedia(){
   }
 }
 
-function youtubeEmbedHtml(info,sizeClass){
+function youtubeEmbedHtml(info,sizeClass,tileId){
   const h=sizeClass==='sm'?'120px':sizeClass==='lg'?'200px':'155px';
-  return `<iframe style="width:100%;height:${h};border:none;display:block" src="${info.embedUrl}" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;fullscreen" sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox" loading="lazy"></iframe>`;
+  const embedUrl=info.embedUrl;
+  const trackJs=tileId&&!boardIsProfMode?`trackInteraction('${tileId}');`:'';
+  return `<div style="position:relative;border-radius:6px;overflow:hidden;margin-bottom:0">
+    <iframe style="width:100%;height:${h};border:none;display:block" src="${embedUrl}" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;fullscreen" sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox" loading="lazy"></iframe>
+    <div style="position:absolute;inset:0;cursor:pointer;z-index:1" onclick="this.style.display='none';${trackJs}" title="Lancer la vidéo"></div>
+    <button onclick="event.stopPropagation();openYoutubeExpand('${embedUrl.replace(/'/g,"\\'")}');" title="Agrandir" style="position:absolute;bottom:6px;right:6px;background:rgba(0,0,0,0.65);border:none;border-radius:6px;cursor:pointer;padding:4px 7px;display:flex;align-items:center;gap:4px;color:#fff;font-size:10px;font-family:var(--font-sans);backdrop-filter:blur(4px);z-index:2"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg> Agrandir</button>
+  </div>`;
+}
+
+function openYoutubeExpand(embedUrl){
+  var ov=document.getElementById('yt-expand-overlay');
+  if(!ov){
+    ov=document.createElement('div');
+    ov.id='yt-expand-overlay';
+    ov.style.cssText='position:fixed;inset:0;z-index:9997;background:rgba(0,0,0,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px';
+    ov.innerHTML='<div style="width:100%;max-width:860px;position:relative">'
+      +'<button id="yt-expand-close" style="position:absolute;top:-36px;right:0;background:none;border:none;color:#fff;font-size:22px;cursor:pointer;opacity:.8;padding:4px 8px;line-height:1">✕</button>'
+      +'<div id="yt-expand-frame-wrap" style="position:relative;padding-bottom:56.25%;height:0;border-radius:10px;overflow:hidden;background:#000">'
+      +'<iframe id="yt-expand-frame" style="position:absolute;inset:0;width:100%;height:100%;border:none" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;fullscreen" sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox"></iframe>'
+      +'</div></div>';
+    document.body.appendChild(ov);
+    document.getElementById('yt-expand-close').onclick=function(){closeYoutubeExpand();};
+    ov.addEventListener('click',function(e){if(e.target===ov)closeYoutubeExpand();});
+  }
+  document.getElementById('yt-expand-frame').src=embedUrl+'&autoplay=1';
+  ov.style.display='flex';
+}
+function closeYoutubeExpand(){
+  var ov=document.getElementById('yt-expand-overlay');
+  if(ov){ov.style.display='none';document.getElementById('yt-expand-frame').src='';}
 }
 
 function spotifyOpenBtn(info,title,tileId){
@@ -2696,9 +3025,11 @@ function buildTileEl(tile,colIdx,tileIdx,colId){
     if(tile.type==='image'&&(tile.imgData||tile.url)){
       const imgSrc=tile.imgData||tile.url;
       if(_isPdfTile){
-        previewHtml=`<div class="tile-preview-placeholder" style="cursor:pointer;flex-direction:column;gap:4px" onclick="event.stopPropagation();openPdfViewerById('${tile.id}','${(tile.title||'Document').replace(/'/g,"\\'")}');trackInteraction('${tile.id}')">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--ct-info)" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          <span style="font-size:10px;color:var(--ct-info)">PDF</span></div>`;
+        previewHtml=`<div style="position:relative;overflow:hidden;height:110px;cursor:pointer;border-bottom:0.5px solid var(--cbr-tertiary)" onclick="event.stopPropagation();openPdfViewerById('${tile.id}','${(tile.title||'Document').replace(/'/g,"\\'")}');trackInteraction('${tile.id}')">
+          <iframe src="${imgSrc}#toolbar=0&navpanes=0&scrollbar=0&view=FitH" style="width:100%;height:350px;border:none;pointer-events:none;transform-origin:top left;transform:scale(0.4);width:250%;height:900px;" loading="lazy"></iframe>
+          <div style="position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:flex-end;padding:6px;background:linear-gradient(to top,rgba(0,0,0,0.5) 0%,transparent 60%)">
+            <span style="font-size:9px;padding:2px 6px;border-radius:99px;background:rgba(96,165,250,0.9);color:#fff;font-weight:500">PDF · Cliquer pour ouvrir</span>
+          </div></div>`;
       } else {
         previewHtml=`<img class="tile-preview" src="${imgSrc}" draggable="false" style="cursor:zoom-in" onclick="event.stopPropagation();openTilePreview(this.src,'${(tile.title||'image').replace(/'/g,"\\'")}','image');trackInteraction('${tile.id}')" onerror="this.style.display='none'">`;
       }
@@ -2709,7 +3040,7 @@ function buildTileEl(tile,colIdx,tileIdx,colId){
     } else if(tile.type==='media'){
       const info=parseMediaUrl(tile.mediaUrl);
       if(info){
-        if(info.platform==='youtube')previewHtml=youtubeEmbedHtml(info,sizeClass);
+        if(info.platform==='youtube')previewHtml=youtubeEmbedHtml(info,sizeClass,tile.id);
         else previewHtml=spotifyOpenBtn(info,tile.title,tile.id);
       }
     } else if(tile.type==='audio'){
@@ -2729,7 +3060,7 @@ function buildTileEl(tile,colIdx,tileIdx,colId){
   }
 
   let bodyClick='';
-  if(tile.type==='link')bodyClick=`onclick="trackInteraction('${tile.id}');window.open(${JSON.stringify(tile.url)},'_blank')" style="cursor:pointer"`;
+  if(tile.type==='link')bodyClick=`onclick="trackInteraction('${tile.id}');_openTileLink(${JSON.stringify(tile.url)})" style="cursor:pointer"`;
   else if(tile.type==='text')bodyClick=`onclick="event.stopPropagation();openTilePreview('${tile.id}','${(tile.title||'').replace(/'/g,"\\'")}','text')" style="cursor:pointer"`;
   else if(tile.type==='download')bodyClick=`onclick="event.stopPropagation();downloadTileFile('${tile.id}');trackInteraction('${tile.id}')" style="cursor:pointer"`;
 
@@ -2785,6 +3116,15 @@ function buildTileEl(tile,colIdx,tileIdx,colId){
       ap.innerHTML=ap.innerHTML?'':`<audio controls autoplay src="${tile.audioData}" style="width:100%;height:34px"></audio>`;
     });
     el.querySelector('.tile-body').style.cursor='pointer';
+  }
+  // Clic sur toute la tuile pour les liens
+  if(tile.type==='link'&&tile.url){
+    el.style.cursor='pointer';
+    el.addEventListener('click',function(e){
+      if(e.target.closest('.tile-gear-btn,.tile-expand-btn,.tile-grab'))return;
+      trackInteraction(tile.id);
+      _openTileLink(tile.url);
+    });
   }
   if(boardIsProfMode){
     el.addEventListener('dragstart',e=>{dragTile={colIdx,tileIdx};e.dataTransfer.effectAllowed='move';setTimeout(()=>el.classList.add('dragging'),0);});
@@ -2925,6 +3265,15 @@ function openTilePreview(tileIdOrSrc, title, kind){
   win.appendChild(body);
   document.body.appendChild(win);
   _tilePreviewWin=win;
+  // Fermer si clic en dehors
+  setTimeout(function(){
+    document.addEventListener('click', function _tpvOuter(e){
+      if(_tilePreviewWin && !_tilePreviewWin.contains(e.target)){
+        closeTilePreview();
+        document.removeEventListener('click', _tpvOuter, true);
+      }
+    }, true);
+  }, 200);
 
   // Drag
   var dragging=false,ox=0,oy=0,startL=0,startT=0;
@@ -2963,6 +3312,15 @@ function closeTilePreview(){
   if(_tilePreviewWin){_tilePreviewWin.remove();_tilePreviewWin=null;}
 }
 
+function _openTileLink(url){
+  if(!url)return;
+  var a=document.createElement('a');
+  a.href=url;a.target='_blank';a.rel='noopener noreferrer';
+  a.style.display='none';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function(){a.remove();},100);
+}
 function escHtml(s){
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
@@ -3170,7 +3528,7 @@ function openToolboxScreen(){
   }
   // Élève depuis l'arbre (ou prof depuis l'arbre) → garder sc-toolbox
   _metroPanelOpen=false;_sharePanelOpen=false;
-  var mp=document.getElementById('metro-panel');if(mp)mp.style.transform='translateY(100%)';
+  var mp=document.getElementById('metro-panel');if(mp)mp.style.display='none';
   var sp=document.getElementById('share-panel');if(sp)sp.style.transform='translateY(100%)';
   show('sc-toolbox');
 }
@@ -3453,7 +3811,7 @@ function hidePwd(id){
 }
 
 /* ══ NAVIGATION PROF ══ */
-var _currentProfTab='accueil';
+var _currentProfTab='eleves';
 
 /* ═══════════════════════════════════════════════════════
    §11 — ONGLETS & COMPÉTENCES (interface prof)
@@ -3466,7 +3824,7 @@ function showProfTab(tab){
     if(raw){var sess=JSON.parse(raw);sess.tab=tab;sessionStorage.setItem('sax_session',JSON.stringify(sess));}
   }catch(e){}
   // Onglets nav
-  ['accueil','eleves','competences','outils','parametres'].forEach(function(t){
+  ['eleves','competences','parametres'].forEach(function(t){
     var btn=document.getElementById('ptab-'+t);
     var panel=document.getElementById('ptab-content-'+t);
     if(btn) btn.classList.toggle('active', t===tab);
@@ -3581,6 +3939,9 @@ renderHome=function(){
 
 function initDefaultSkillsToFirebase(){
   if(!confirm('Initialiser Firebase avec les compétences par défaut ?\nCela remplacera les compétences actuelles des 3 cycles.')) return;
+  var pwd=window.prompt('Confirmez avec votre code professeur :');
+  if(pwd===null)return;
+  if(pwd!==profCode){alert('Code incorrect.');return;}
   for(let c=1;c<=3;c++) skillsData[c] = JSON.parse(JSON.stringify(DEFAULT_SKILLS[c]));
   BRANCHES = [
     {id:'identite',label:'Identité du musicien',color:'#7F77DD'},
@@ -3641,8 +4002,8 @@ function renderCEHome(){
       html+='<div style="font-size:11px;color:var(--ct-secondary)">'+sk.d+'</div>';
       if(sk.todo) html+='<div style="font-size:11px;color:var(--ct-tertiary);margin-top:2px;font-style:italic">'+sk.todo+'</div>';
       html+='</div>';
-      html+='<button class="icon-btn" data-cycle="'+ceCycle+'" data-id="'+sk.id+'" onclick="openEditSkModal(+this.dataset.cycle,this.dataset.id)">✏</button>';
-      html+='<button class="icon-btn del" data-cycle="'+ceCycle+'" data-id="'+sk.id+'" onclick="askDeleteSkill(+this.dataset.cycle,this.dataset.id)">✕</button>';
+      html+='<button class="icon-btn" data-cycle="'+ceCycle+'" data-id="'+sk.id+'" onclick="openEditSkModal(+this.dataset.cycle,this.dataset.id)" title="Modifier"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>';
+      html+='<button class="icon-btn del" data-cycle="'+ceCycle+'" data-id="'+sk.id+'" onclick="askDeleteSkill(+this.dataset.cycle,this.dataset.id)" title="Supprimer"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></button>';
       html+='</div>';
     });
     html+='</div>';
@@ -3879,16 +4240,16 @@ function toggleMetroPanel(){
   _metroPanelOpen = !_metroPanelOpen;
   var p = document.getElementById('metro-panel');
   if(!p) return;
-  p.style.transform = _metroPanelOpen ? 'translateY(0)' : 'translateY(100%)';
+  p.style.display = _metroPanelOpen ? 'block' : 'none';
   var card = document.getElementById('card-metro');
   if(card) card.classList.toggle('active', _metroPanelOpen);
-  if(_metroPanelOpen) _buildBeats();
+  if(_metroPanelOpen){_buildBeats();setTimeout(function(){p.scrollIntoView({behavior:'smooth',block:'nearest'});},80);}
   else _stopMetro();
 }
 function closeMetroPanel(){
   _metroPanelOpen = false;
   var p = document.getElementById('metro-panel');
-  if(p) p.style.transform = 'translateY(100%)';
+  if(p) p.style.display = 'none';
   var card = document.getElementById('card-metro');
   if(card) card.classList.remove('active');
   _stopMetro();
@@ -4040,22 +4401,41 @@ function buildShareTile(tile, colIdx, tileIdx, colId){
     _lpA.appendChild(_fimg);_lpA.appendChild(_dspan);_lpA.appendChild(_extIcon);_lpDiv.appendChild(_lpA);
     wrap.appendChild(_lpDiv);
   } else if(tile.type==='image'&&(tile.imgData||tile.url)){
-    var img=document.createElement('img');
-    img.src=tile.imgData||tile.url;
-    img.style.cssText='width:100%;height:80px;object-fit:cover;border-radius:6px;display:block;margin-bottom:6px';
-    img.onerror=function(){this.style.display='none';};
-    wrap.appendChild(img);
+    var _src=tile.imgData||tile.url;
+    var _isPdfSrc=_src.startsWith('data:application/pdf')||(tile.url||'').toLowerCase().endsWith('.pdf');
+    if(_isPdfSrc){
+      // Aperçu PDF : icône cliquable pour ouvrir la visionneuse
+      var pdfPrev=document.createElement('div');
+      pdfPrev.style.cssText='display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;height:80px;background:var(--cb-info);border-radius:6px;margin-bottom:6px;cursor:pointer;border:0.5px solid var(--cbr-info)';
+      pdfPrev.innerHTML='<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--ct-info)" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span style="font-size:10px;color:var(--ct-info);font-weight:500">Ouvrir le PDF</span>';
+      (function(_tid,_s,_t){pdfPrev.onclick=function(){trackInteraction(_tid);openPdfViewer(_t,_s);};})(tile.id,_src,tile.title||'Document');
+      wrap.appendChild(pdfPrev);
+    } else {
+      var img=document.createElement('img');
+      img.src=_src;
+      img.style.cssText='width:100%;height:80px;object-fit:cover;border-radius:6px;display:block;margin-bottom:6px';
+      img.onerror=function(){this.style.display='none';};
+      wrap.appendChild(img);
+    }
   } else if(tile.type==='media'){
     var info=parseMediaUrl(tile.mediaUrl);
     if(info&&info.platform==='youtube'){
+      var ytWrap=document.createElement('div');
+      ytWrap.style.cssText='position:relative;border-radius:6px;overflow:hidden;margin-bottom:6px';
       var iframe=document.createElement('iframe');
       iframe.src=info.embedUrl;
-      iframe.style.cssText='width:100%;height:120px;border:none;display:block;border-radius:6px;margin-bottom:6px';
+      iframe.style.cssText='width:100%;height:120px;border:none;display:block';
       iframe.setAttribute('allow','autoplay;fullscreen');
-      // fullscreen déjà dans allow=
       iframe.setAttribute('sandbox','allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox');
       iframe.loading='lazy';
-      wrap.appendChild(iframe);
+      var ytExpandBtn=document.createElement('button');
+      ytExpandBtn.title='Agrandir';
+      ytExpandBtn.style.cssText='position:absolute;bottom:6px;right:6px;background:rgba(0,0,0,0.65);border:none;border-radius:6px;cursor:pointer;padding:4px 7px;display:flex;align-items:center;gap:4px;color:#fff;font-size:10px;font-family:var(--font-sans);backdrop-filter:blur(4px);z-index:2';
+      ytExpandBtn.innerHTML='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg> Agrandir';
+      (function(_eu){ytExpandBtn.onclick=function(e){e.stopPropagation();openYoutubeExpand(_eu);};})(info.embedUrl);
+      ytWrap.appendChild(iframe);
+      ytWrap.appendChild(ytExpandBtn);
+      wrap.appendChild(ytWrap);
     } else if(info&&info.platform==='spotify'){
       var sdiv=document.createElement('div');
       sdiv.style.cssText='cursor:pointer;display:flex;align-items:center;gap:8px;padding:8px;background:#111827;border-radius:8px;margin-bottom:6px';
@@ -4341,7 +4721,7 @@ function _restoreSession(){
 </script>
 
 <!-- Modal Familles de compétences -->
-<div class="modal-overlay" id="modal-families">
+<div class="modal-overlay" id="modal-families" onclick="if(event.target===this)closeModal('modal-families')">
   <div class="modal-box" style="max-width:440px">
     <h3>Gérer les familles de compétences</h3>
     <div id="family-list" style="margin-bottom:14px"></div>
@@ -4370,7 +4750,7 @@ function _restoreSession(){
     </div>
   </div>
 </div>
-<div class="modal-overlay" id="modal-interactions">
+<div class="modal-overlay" id="modal-interactions" onclick="if(event.target===this)closeModal('modal-interactions')">
   <div class="modal-box" style="max-width:520px;max-height:88vh;overflow-y:auto">
     <h3>Interactions élèves</h3>
     <p style="margin-bottom:12px">Consultations des ressources par élève.</p>
@@ -4402,9 +4782,9 @@ function _restoreSession(){
 /* ── Corps scrollable ── */
 .ag-body{flex:1;overflow-y:auto;overflow-x:hidden}
 /* ── Vue MOIS ── */
-.ag-month-grid{display:grid;grid-template-columns:repeat(7,1fr);border-left:0.5px solid var(--cbr-tertiary);border-top:0.5px solid var(--cbr-tertiary)}
+.ag-month-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-left:0.5px solid var(--cbr-tertiary);border-top:0.5px solid var(--cbr-tertiary);width:100%}
 .ag-month-daylabel{text-align:center;font-size:10px;color:var(--ct-tertiary);padding:5px 0;font-weight:600;border-right:0.5px solid var(--cbr-tertiary);border-bottom:0.5px solid var(--cbr-tertiary);background:var(--cb-primary)}
-.ag-month-cell{min-height:72px;border-right:0.5px solid var(--cbr-tertiary);border-bottom:0.5px solid var(--cbr-tertiary);padding:4px;cursor:pointer;transition:background .1s;position:relative}
+.ag-month-cell{min-height:72px;border-right:0.5px solid var(--cbr-tertiary);border-bottom:0.5px solid var(--cbr-tertiary);padding:4px;cursor:pointer;transition:background .1s;position:relative;overflow:hidden;min-width:0}
 .ag-month-cell:hover{background:var(--cb-secondary)}
 .ag-month-cell.today{background:var(--cb-info)}
 .ag-month-cell.other-month .ag-month-num{opacity:.3}
@@ -4413,7 +4793,7 @@ function _restoreSession(){
 .ag-month-chip{font-size:9px;padding:1px 5px;border-radius:3px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;margin-bottom:1px;line-height:1.4}
 .ag-month-more{font-size:9px;color:var(--ct-tertiary);padding-left:2px}
 /* ── Vue SEMAINE ── */
-.ag-week-wrap{display:grid;grid-template-columns:44px repeat(7,1fr);border-left:0.5px solid var(--cbr-tertiary);border-top:0.5px solid var(--cbr-tertiary)}
+.ag-week-wrap{display:grid;grid-template-columns:44px repeat(7,minmax(0,1fr));border-left:0.5px solid var(--cbr-tertiary);border-top:0.5px solid var(--cbr-tertiary);width:100%}
 .ag-week-daylabel{text-align:center;padding:5px 2px;border-right:0.5px solid var(--cbr-tertiary);border-bottom:0.5px solid var(--cbr-tertiary);font-size:10px;color:var(--ct-tertiary);font-weight:600;background:var(--cb-primary);cursor:pointer;transition:background .1s}
 .ag-week-daylabel:hover{background:var(--cb-secondary)}
 .ag-week-daylabel.today{background:var(--cb-info);color:var(--ct-info)}
@@ -5485,7 +5865,7 @@ function openAgSync(){
           S'abonner dans Google Agenda
         </button>
         <div style="font-size:10px;color:var(--ct-tertiary)">
-          ⚠️ Nécessite d'avoir déployé le fichier <code>generate-ics.js</code> sur GitHub. Se met à jour toutes les 6h.
+          ⚠️ Nécessite d'avoir déployé le fichier <code>generate-ics.js</code> sur GitHub. Se met à jour toutes les <strong style="color:var(--ct-warning)">6h</strong> pour les abonnés — délai natif de Google Agenda.
         </div>
       </div>
 
@@ -5807,6 +6187,7 @@ function openSuggestionsPanel(){
     modal = document.createElement('div');
     modal.id = 'modal-suggestions';
     modal.className = 'modal-overlay';
+    modal.setAttribute('onclick',"if(event.target===this)closeModal('modal-suggestions')");
     modal.innerHTML = '<div class="modal-box" style="max-width:500px;max-height:85vh;overflow-y:auto">'
       +'<h3>Suggestions des élèves</h3>'
       +'<div id="suggestions-list" style="margin-top:12px"></div>'
@@ -5833,7 +6214,23 @@ function _renderSuggestionsList(){
         +'<span style="font-size:10px;padding:2px 6px;border-radius:99px;background:var(--cb-info);color:var(--ct-info)">'+s.type+'</span>'
         +'</div>'
         +'<div style="font-size:11px;color:var(--ct-tertiary);margin-bottom:8px">De '+s.studentName+' · '+s.date+'</div>'
-        +(s.url?'<div style="font-size:11px;color:var(--ct-secondary);margin-bottom:8px;word-break:break-all">'+s.url+'</div>':'')
+        +(s.url?'<div style="font-size:11px;color:var(--ct-secondary);margin-bottom:6px;word-break:break-all"><a href="'+s.url+'" target="_blank" rel="noopener" style="color:var(--ct-info);text-decoration:none">'+s.url+'</a></div>'+(function(){
+          var _info=typeof parseMediaUrl==='function'?parseMediaUrl(s.url):null;
+          if(_info&&_info.platform==='youtube'){
+            return '<div style="position:relative;border-radius:6px;overflow:hidden;margin-bottom:8px">'
+              +'<iframe src="'+_info.embedUrl+'" style="width:100%;height:130px;border:none;display:block" allow="autoplay;fullscreen" sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox" loading="lazy"></iframe>'
+              +'<button onclick="event.stopPropagation();openYoutubeExpand(\''+_info.embedUrl.replace(/'/g,"\\'")+'\')" title="Agrandir" style="position:absolute;bottom:6px;right:6px;background:rgba(0,0,0,0.65);border:none;border-radius:6px;cursor:pointer;padding:4px 7px;display:flex;align-items:center;gap:4px;color:#fff;font-size:10px;font-family:var(--font-sans);backdrop-filter:blur(4px)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg> Agrandir</button>'
+              +'</div>';
+          }
+          try{var _dom=new URL(s.url).hostname.replace('www.','');
+            return '<div style="display:flex;align-items:center;gap:6px;padding:6px 8px;background:var(--cb-primary);border-radius:6px;margin-bottom:8px">'
+              +'<img src="https://www.google.com/s2/favicons?domain='+_dom+'&sz=32" width="14" height="14" style="border-radius:2px;flex-shrink:0" onerror="this.style.display=\'none\'">'
+              +'<span style="font-size:11px;color:var(--ct-tertiary)">'+_dom+'</span>'
+              +'<a href="'+s.url+'" target="_blank" rel="noopener" style="margin-left:auto;display:flex;align-items:center;color:var(--ct-info);font-size:10px;gap:3px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Ouvrir</a>'
+              +'</div>';
+          }catch(e){return '';}
+        }()):'')
+        +(s.mediaUrl&&(function(){var _mi=typeof parseMediaUrl==='function'?parseMediaUrl(s.mediaUrl):null;if(_mi&&_mi.platform==='youtube')return '<div style="position:relative;border-radius:6px;overflow:hidden;margin-bottom:8px"><iframe src="'+_mi.embedUrl+'" style="width:100%;height:130px;border:none;display:block" allow="autoplay;fullscreen" sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox" loading="lazy"></iframe><button onclick="event.stopPropagation();openYoutubeExpand(\''+_mi.embedUrl.replace(/'/g,"\\'")+'\');" title="Agrandir" style="position:absolute;bottom:6px;right:6px;background:rgba(0,0,0,0.65);border:none;border-radius:6px;cursor:pointer;padding:4px 7px;display:flex;align-items:center;gap:4px;color:#fff;font-size:10px;font-family:var(--font-sans);backdrop-filter:blur(4px)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg> Agrandir</button></div>';return '';}()))
         +'<div style="display:flex;gap:6px">'
         +'<button class="btn btn-success btn-sm" onclick="approveSuggestion(\''+s.id+'\')">✓ Ajouter au partage</button>'
         +'<button class="btn btn-danger btn-sm" onclick="rejectSuggestion(\''+s.id+'\')">Refuser</button>'
@@ -5920,6 +6317,14 @@ window.show = function(id){
 // Alias pour rétrocompatibilité
 window._showOrig = _sfabOrigShow;
 setTimeout(_updateStudentFab, 1500);
+
+// Fermer la popup de compétence si on clique en dehors (hors canvas)
+document.addEventListener('click', function(e){
+  const popup=document.getElementById('popup');
+  if(popup && popup.classList.contains('visible') && !popup.contains(e.target) && e.target.id!=='cv'){
+    closePopup();
+  }
+});
 
 // Fermer le menu si on clique ailleurs
 document.addEventListener('click', function(e){
