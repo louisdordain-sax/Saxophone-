@@ -489,7 +489,7 @@ html.light .toolbox-grid-hint{opacity:0.07}
 .pwd-eye:hover{color:var(--ct-primary)}
 
 /* ── NAVIGATION PROF PERMANENTE ── */
-.prof-shell{display:flex;flex-direction:column;min-height:100vh}
+.prof-shell{display:flex;flex-direction:column;min-height:100vh;min-height:100dvh}
 .prof-nav{position:sticky;top:0;z-index:30;background:var(--cb-primary);
   border-bottom:0.5px solid var(--cbr-tertiary);display:flex;align-items:stretch;
   padding:0 16px;gap:0;flex-shrink:0}
@@ -528,7 +528,7 @@ html.light .home-card:hover{background:var(--cb-info)}
 .home-card-sub{font-size:11px;color:var(--ct-tertiary)}
 
 /* ── LOGIN CENTRÉ ── */
-#sc-login{display:none;min-height:100vh;align-items:center;justify-content:center}
+#sc-login{display:none;min-height:100vh;min-height:100dvh;align-items:center;justify-content:center;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
 #sc-login.active{display:flex}
 
 
@@ -575,22 +575,23 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
   .prof-content input, .prof-content select, .prof-content textarea { box-sizing: border-box; }
   /* Home cards sur mobile : 2 colonnes */
   .home-cards { grid-template-columns: repeat(2, 1fr) !important; }
-  /* Grille toolbox : toujours 3 colonnes */
-  #toolbox-scroll .home-card { padding: 12px 6px !important; }
+  /* Grille toolbox : 2 colonnes sur mobile (plus grande zone de tap) */
+  #toolbox-scroll .home-card { padding: 14px 8px !important; }
+  #toolbox-scroll [style*="grid-template-columns:repeat(3"] { grid-template-columns: repeat(2,1fr) !important; }
 
   /* ── NAV PROF MOBILE : barre basse fixe ── */
-  .prof-shell { padding-bottom: 56px; }
+  .prof-shell { padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px)); }
   .prof-nav {
     position: fixed !important;
     top: auto !important;
     bottom: 0; left: 0; right: 0;
-    padding: 0 !important;
+    padding: 0 0 env(safe-area-inset-bottom, 0px) 0 !important;
     gap: 0 !important;
     z-index: 50;
     border-top: 0.5px solid var(--cbr-tertiary);
     border-bottom: none !important;
     box-shadow: 0 -2px 12px rgba(0,0,0,0.18);
-    height: 56px;
+    height: calc(56px + env(safe-area-inset-bottom, 0px));
   }
   .prof-tab {
     flex: 1;
@@ -635,13 +636,25 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
   /* Le canvas reste en position absolute inset:0, le HUD est déjà fixed */
   /* On réduit les rayons via CSS custom property */
   #sc-tree { overflow: hidden; }
-  /* La topbar HUD reste sticky en haut */
+  /* Forcer la topbar HUD en fixed sur mobile */
   .hud-topbar { position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; }
-  .hud-tabs { position: fixed !important; top: 48px !important; right: 8px !important; }
-  .hud-profile { position: fixed !important; bottom: 30px !important; left: 8px !important; }
-  .hud-botbar { position: fixed !important; }
+  .hud-tabs { position: fixed !important; top: 52px !important; right: 8px !important; left: auto !important; }
+  .hud-profile { position: fixed !important; bottom: 24px !important; left: 8px !important; bottom: env(safe-area-inset-bottom, 24px) !important; }
+  .hud-botbar { position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; padding-bottom: env(safe-area-inset-bottom, 10px) !important; }
+  /* Popup compétence : largeur maximale sur mobile */
+  .popup { width: min(88vw, 220px) !important; font-size: 12px !important; }
+  /* Réduire la topbar arbre sur mobile */
+  .hud-topbar .btn { font-size: 11px !important; padding: 5px 10px !important; }
+  /* Bouton recentrer plus petit */
+  #btn-recenter-tree { font-size: 11px !important; padding: 5px 14px !important; }
 
-  /* ── AGENDA : colonnes à largeur fixe (ne bougent pas avec le contenu) ── */
+  /* ── AGENDA ── */
+  .ag-topbar { padding: 8px 10px !important; gap: 6px !important; }
+  .ag-topbar .btn { padding: 5px 9px !important; font-size: 11px !important; }
+  .ag-topbar .btn-sm { padding: 4px 8px !important; }
+  /* Nom du mois : tronquer si besoin */
+  #ag-period-label { font-size: 13px !important; }
+  /* Agenda : colonnes à largeur strictement fixe */
   .ag-month-grid {
     display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
@@ -731,13 +744,9 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3 8-8"/><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
       Compétences
     </button>
-    <button class="prof-tab" id="ptab-partage" onclick="openBoard(true)">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      Partage
-    </button>
-    <button class="prof-tab" id="ptab-agenda" onclick="openAgenda()">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-      Agenda
+    <button class="prof-tab" id="ptab-outils" onclick="showProfTab('outils')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.77 3.77z"/></svg>
+      Outils
     </button>
 
     <div class="prof-nav-end">
@@ -788,7 +797,20 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
     </div>
 
     <!-- Onglet Outils (vide - Partage et Agenda sont dans la nav) -->
-    <div id="ptab-content-outils" style="display:none"></div>
+    <div id="ptab-content-outils" style="display:none">
+      <div class="home-cards" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr))">
+        <!-- Partage -->
+        <div class="home-card" onclick="openBoard(true)">
+          <div class="home-card-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+          <div class="home-card-title">Partage</div>
+        </div>
+        <!-- Agenda -->
+        <div class="home-card" id="card-agenda" onclick="openAgenda()">
+          <div class="home-card-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+          <div class="home-card-title">Agenda</div>
+        </div>
+      </div>
+    </div>
 
 
       <!-- Tiroir Métronome (réservé aux élèves, masqué ici) -->
@@ -962,7 +984,7 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
     <span class="badge" id="mode-badge" style="backdrop-filter:blur(4px);display:none"></span>
     <div style="flex:1"></div>
     <button class="btn btn-sm" onclick="openToolboxScreen()" title="Boîte à outils" style="backdrop-filter:blur(4px);background:rgba(15,20,32,0.7);margin-right:4px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.77 3.77z"/></svg> Outils</button>
-    <button class="btn btn-warn btn-sm" id="btn-edit-mode" onclick="toggleEditMode()" style="display:none;backdrop-filter:blur(4px);background:rgba(58,40,0,0.7)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Éditer</button>
+    <button class="btn btn-sm" id="btn-edit-mode" onclick="toggleEditMode()" style="display:none;backdrop-filter:blur(4px);background:rgba(15,20,32,0.75)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Éditer</button>
   </div>
 
   <!-- HUD tabs cycles (haut droit) -->
@@ -2374,41 +2396,42 @@ function getNodes(){return _nodesCache||calcNodes()}
 function calcNodes(){
   const cv=document.getElementById('cv');
   const W=cv.width||window.innerWidth,H=cv.height||window.innerHeight;
-  const isMobile=W<600;
-  const mobileScale=isMobile?0.72:1;
-  const cx=W/2,cy=H/2,RBR=Math.min(W,H)*0.19*mobileScale;
-  const R=Math.min(W,H)*mobileScale;
+  // Facteur de scale basé sur la taille réelle de l'écran (pas juste mobile/desktop)
+  // On vise qu'avec 8 branches et ~8 nœuds par branche tout tienne sans zoom
+  const BASE=Math.min(W,H);
+  const mS=Math.min(1, BASE/520); // 520px = référence bureau ; réduit linéairement en dessous
+  const cx=W/2,cy=H/2;
+  const RBR=BASE*0.18*mS;
+  const R=BASE*mS;
   const toRad=d=>d*Math.PI/180;
   const skList=skillsData[currentCycle]||[];
   const brSk={};for(const br of BRANCHES)brSk[br.id]=skList.filter(s=>s.b===br.id);
   const nm={};
-  // Rayon de départ : étalé, laisse de l'air entre nœuds et familles
   const RSK_START=R*0.44;
   for(const br of BRANCHES){
     const a=toRad(BRANCH_ANGLES[br.id]);
     nm[br.id]={x:cx+Math.cos(a)*RBR,y:cy+Math.sin(a)*RBR};
     const bs=brSk[br.id]||[],n=bs.length;if(!n)continue;
-    // Placement initial en éventail serré — la répulsion les écartera si besoin
     const maxSpread=toRad(Math.min(75,n*13));
     for(let i=0;i<n;i++){
       const off=n>1?(i/(n-1)-0.5)*2*maxSpread:0;
       nm[bs[i].id]={x:cx+Math.cos(a+off)*RSK_START,y:cy+Math.sin(a+off)*RSK_START,_br:br.id};
     }
   }
-  // Répulsion intra-branche uniquement, sans rayon max imposé
   const nBr=BRANCHES.length||4;
   const halfSector=toRad((360/nBr)*0.48);
   const idBr={};for(const br of BRANCHES){for(const sk of(brSk[br.id]||[]))idBr[sk.id]=br.id;}
-  const MIN=R*0.14,ids=skList.map(s=>s.id);
+  // MIN : distance minimale entre centres de nœuds = 2.5× le rayon de base d'un nœud
+  const RSN_BASE_C=BASE*0.042*mS;
+  const MIN=RSN_BASE_C*2.6;
+  const ids=skList.map(s=>s.id);
   for(let iter=0;iter<300;iter++){
     let moved=false;
     for(let i=0;i<ids.length;i++){for(let j=i+1;j<ids.length;j++){
-      // Répulsion active entre tous les nœuds (intra ET inter-familles)
       const a=nm[ids[i]],b=nm[ids[j]];if(!a||!b)continue;
       const dx=b.x-a.x,dy=b.y-a.y,dist=Math.sqrt(dx*dx+dy*dy)||0.001;
       if(dist<MIN){const p=(MIN-dist)/2+0.5,nx=dx/dist,ny=dy/dist;a.x-=nx*p;a.y-=ny*p;b.x+=nx*p;b.y+=ny*p;moved=true}
     }}
-    // Contrainte sectorielle uniquement (pas de rayon min/max)
     for(const br of BRANCHES){
       const brAngle=toRad(BRANCH_ANGLES[br.id]);
       for(const sk of(brSk[br.id]||[])){
@@ -2421,15 +2444,13 @@ function calcNodes(){
           const r2=Math.sqrt(dx*dx+dy*dy)||RSK_START;
           nd.x=cx+Math.cos(brAngle+cl)*r2;nd.y=cy+Math.sin(brAngle+cl)*r2;moved=true;
         }
-        // Distance minimale au centre (évite chevauchement cycle) ET aux nœuds famille
         const r3=Math.sqrt((nd.x-cx)**2+(nd.y-cy)**2);
         if(r3<RBR*1.45){const a2=Math.atan2(nd.y-cy,nd.x-cx);nd.x=cx+Math.cos(a2)*RBR*1.45;nd.y=cy+Math.sin(a2)*RBR*1.45;}
       }
     }
     if(!moved)break;
   }
-  const RSK=RSK_START;
-  return{nm,brSk,cx,cy,W,H,RBR,RSK};
+  return{nm,brSk,cx,cy,W,H,RBR,RSK:RSK_START,mS};
 }
 
 function drawSegArc(ctx,cx,cy,r,n,states,col,lw,gap){
@@ -2454,16 +2475,16 @@ function drawRadial(){
     const ctx=cv.getContext('2d');ctx.clearRect(0,0,W,H);
     const _light=document.documentElement.classList.contains('light');
     _nodesCache=calcNodes(); // mise à jour du cache une seule fois par frame
-    const{nm,brSk,cx,cy,RSK}=_nodesCache;
+    const{nm,brSk,cx,cy,RSK,mS}=_nodesCache;
     // Appliquer le zoom / pan
     ctx.save();
     ctx.translate(cx+_treeOffX,cy+_treeOffY);
     ctx.scale(_treeZoom,_treeZoom);
     ctx.translate(-cx,-cy);
-    const isMobile2=W<600;
-    const mS=isMobile2?0.72:1;
-    const RC=Math.min(W,H)*0.075*mS,RBN=Math.min(W,H)*0.044*mS;
-    const RSN_BASE=Math.min(W,H)*0.042*mS;
+    // Tous les rayons de dessin proportionnels à l'écran via mS
+    const BASE=Math.min(W,H);
+    const RC=BASE*0.075*mS,RBN=BASE*0.044*mS;
+    const RSN_BASE=BASE*0.042*mS;
     // Pré-calcul du rayon par nœud (adapté à la longueur du texte)
     const _nRad={};
     (function(){
@@ -2611,8 +2632,9 @@ function _worldToScreen(wx,wy){
 cv2.onclick=e=>{
   if(_treePanning)return;
   if(!currentStudent)return;
-  const{nm}=getNodes();
-  const RSN=Math.min(cv2.width,cv2.height)*0.034;
+  const cache=getNodes();
+  const{nm,mS}=cache;
+  const RSN=Math.min(cv2.width,cv2.height)*0.042*(mS||1);
   const skList=skillsData[currentCycle]||[];
   const w=_cvToWorld(e.clientX,e.clientY);
   for(const skill of skList){const p=nm[skill.id];if(p&&Math.hypot(w.x-p.x,w.y-p.y)<=RSN*1.5/_treeZoom){
@@ -2624,13 +2646,12 @@ cv2.onclick=e=>{
 };
 cv2.onmousemove=e=>{
   if(!currentStudent)return;
-  // Drag to pan
   if(_treePanning){
     _treeOffX=_treePanOX+(e.clientX-_treePanSX);
     _treeOffY=_treePanOY+(e.clientY-_treePanSY);
     return;
   }
-  const{nm}=getNodes();const RSN=Math.min(cv2.width,cv2.height)*0.034;
+  const{nm,mS}=getNodes();const RSN=Math.min(cv2.width,cv2.height)*0.042*(mS||1);
   const skList=skillsData[currentCycle]||[];
   const w=_cvToWorld(e.clientX,e.clientY);
   let found=null;for(const skill of skList){const p=nm[skill.id];if(p&&Math.hypot(w.x-p.x,w.y-p.y)<=RSN*1.5/_treeZoom){found=skill.id;break}}
@@ -2638,7 +2659,7 @@ cv2.onmousemove=e=>{
 };
 cv2.onmousedown=e=>{
   if(e.button!==0)return;
-  const{nm}=getNodes();const RSN=Math.min(cv2.width,cv2.height)*0.034;
+  const{nm,mS}=getNodes();const RSN=Math.min(cv2.width,cv2.height)*0.042*(mS||1);
   const skList=skillsData[currentCycle]||[];
   const w=_cvToWorld(e.clientX,e.clientY);
   const onNode=skList.some(sk=>{const p=nm[sk.id];return p&&Math.hypot(w.x-p.x,w.y-p.y)<=RSN*1.5/_treeZoom;});
@@ -3824,7 +3845,7 @@ function showProfTab(tab){
     if(raw){var sess=JSON.parse(raw);sess.tab=tab;sessionStorage.setItem('sax_session',JSON.stringify(sess));}
   }catch(e){}
   // Onglets nav
-  ['eleves','competences','parametres'].forEach(function(t){
+  ['eleves','competences','outils','parametres'].forEach(function(t){
     var btn=document.getElementById('ptab-'+t);
     var panel=document.getElementById('ptab-content-'+t);
     if(btn) btn.classList.toggle('active', t===tab);
@@ -6325,6 +6346,75 @@ document.addEventListener('click', function(e){
     closePopup();
   }
 });
+
+// ═══════════════════════════════════════════════════════
+// BOUTON RETOUR NATIF (Android / navigateur)
+// Intercepte popstate pour naviguer dans l'app au lieu de quitter
+// ═══════════════════════════════════════════════════════
+(function(){
+  // On pousse un état à chaque transition d'écran principal
+  // et on intercepte le "retour" pour appeler la bonne fonction
+
+  function _appBack(){
+    // Modals ouvertes — les fermer en priorité
+    const openModal=document.querySelector('.modal-overlay.open');
+    if(openModal){closeModal(openModal.id);_pushState();return;}
+    // Overlay YouTube
+    const yt=document.getElementById('yt-expand-overlay');
+    if(yt&&yt.style.display==='flex'){closeYoutubeExpand();_pushState();return;}
+    // PDF viewer
+    const pdf=document.getElementById('modal-pdf-viewer');
+    if(pdf&&pdf.style.display==='flex'){closePdfViewer();_pushState();return;}
+    // Profile drawer
+    const pd=document.getElementById('profile-drawer');
+    if(pd&&!pd.classList.contains('hidden')){closeProfileDrawer();_pushState();return;}
+    // Lightbox
+    const lb=document.getElementById('lightbox');
+    if(lb&&lb.classList.contains('open')){if(typeof closeLightbox==='function')closeLightbox();_pushState();return;}
+    // Popup compétence
+    const popup=document.getElementById('popup');
+    if(popup&&popup.classList.contains('visible')){closePopup();_pushState();return;}
+    // Vue édition arbre
+    const ve=document.getElementById('view-edit');
+    if(ve&&ve.style.display!=='none'){toggleEditMode();_pushState();return;}
+    // Board ouvert
+    const board=document.getElementById('sc-board');
+    if(board&&board.classList.contains('board-open')){closeBoardScreen();_pushState();return;}
+    // Agenda ouvert
+    const agenda=document.getElementById('sc-agenda');
+    if(agenda&&agenda.classList.contains('active')){closeAgenda();_pushState();return;}
+    // Toolbox élève
+    const tb=document.getElementById('sc-toolbox');
+    if(tb&&tb.classList.contains('active')){closeToolboxScreen();_pushState();return;}
+    // Arbre → retour login/home
+    const tree=document.getElementById('sc-tree');
+    if(tree&&tree.classList.contains('active')){goBack();_pushState();return;}
+    // Login step2 → step1
+    const s2e=document.getElementById('login-step2-eleve');
+    const s2p=document.getElementById('login-step2-prof');
+    if((s2e&&s2e.style.display!=='none')||(s2p&&s2p.style.display!=='none')){backToStep1();_pushState();return;}
+    // Déjà à la racine (login ou home prof) : ne rien faire = rester dans l'app
+    _pushState();
+  }
+
+  function _pushState(){
+    history.pushState({app:true},'','');
+  }
+
+  // Pousser l'état initial immédiatement
+  history.replaceState({app:true},'','');
+
+  // Intercepter le retour
+  window.addEventListener('popstate',function(e){
+    // Toujours repousser un état pour rester dans l'historique
+    _appBack();
+  });
+
+  // Pousser un état à chaque changement d'écran significatif
+  // On ne wrappe plus window.show ici car _sfabOrigShow le fait déjà —
+  // le pushState est intégré directement dans _appBack() via popstate.
+  // L'état initial est replacé au chargement.
+})();
 
 // Fermer le menu si on clique ailleurs
 document.addEventListener('click', function(e){
