@@ -216,7 +216,17 @@ html.light .hud-botbar{background:linear-gradient(to top,rgba(242,245,255,1) 0%,
 .hud-tab.active{background:rgba(30,58,95,0.85);color:var(--ct-info);border-color:var(--cbr-info)}
 
 /* Popup compétence */
-.popup{position:fixed;background:rgba(6,9,20,0.97);border:0.5px solid rgba(55,138,221,0.4);border-radius:var(--br-lg);padding:12px 14px;width:220px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:30;
+
+/* ── AUTO-ÉVALUATION ÉLÈVE ── */
+.self-eval-wrap{margin-top:10px;border-top:0.5px solid rgba(55,138,221,0.2);padding-top:10px}
+.self-eval-label{font-size:11px;color:var(--ct-secondary);margin-bottom:6px}
+.self-eval-slider{width:100%;accent-color:#378ADD;cursor:pointer;height:4px;margin:0 0 4px}
+.self-eval-ticks{display:flex;justify-content:space-between;font-size:9px;color:var(--ct-tertiary);font-family:var(--font-mono);margin-bottom:6px}
+.self-eval-score{font-size:22px;font-weight:700;font-family:var(--font-mono);text-align:center;margin:4px 0;transition:color .2s}
+.self-eval-send{width:100%;margin-top:4px;font-size:11px;padding:5px 0;border-radius:99px}
+.self-eval-prof-score{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:2px 8px;border-radius:99px;border:0.5px solid;margin-top:4px}
+.eval-pending-badge{display:inline-block;min-width:16px;height:16px;border-radius:99px;background:#f87171;color:#fff;font-size:9px;font-weight:700;text-align:center;line-height:16px;padding:0 4px;margin-left:4px;vertical-align:middle}
+.popup{position:fixed;background:rgba(6,9,20,0.97);border:0.5px solid rgba(55,138,221,0.4);border-radius:var(--br-lg);padding:12px 14px;width:240px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:30;
   box-shadow:0 0 24px rgba(55,138,221,0.15);backdrop-filter:blur(6px)}
 .popup.visible{opacity:1;pointer-events:auto}
 .popup-title{font-size:13px;font-weight:500;color:var(--ct-primary);margin-bottom:2px}
@@ -420,7 +430,7 @@ html.light .tile:hover .tile-gear-btn{opacity:1}
 html.light #tile-preview-win{background:#fff;border-color:var(--cbr-tertiary);box-shadow:0 8px 32px rgba(80,100,150,0.18)}
 
 /* ── BOUTON EXPAND APERÇU ── */
-.tile-expand-btn{margin-left:auto;flex-shrink:0;background:none;border:0.5px solid var(--cbr-tertiary);border-radius:4px;padding:2px 5px;color:var(--ct-tertiary);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center}
+.tile-expand-btn{margin-left:auto;flex-shrink:0;background:none;border:0.5px solid var(--cbr-tertiary);border-radius:50%;width:28px;height:28px;padding:0;color:var(--ct-tertiary);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;justify-content:center}
 .tile-expand-btn:hover{border-color:var(--cbr-info);color:var(--ct-info);background:var(--cb-info)}
 
 /* ── SOUS-ONGLETS FICHIERS ── */
@@ -783,7 +793,7 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
         <div style="font-size:10px;color:var(--ct-tertiary);margin-bottom:10px">Ton choix est mémorisé sur cet appareil.</div>
       </div>
       <input type="text" id="login-code-eleve" placeholder="Prénom Nom" style="text-align:center;font-size:15px" onkeydown="if(event.keyCode===13)document.getElementById('login-pwd-eleve').focus()">
-      <div class="pwd-wrap"><input type="password" id="login-pwd-eleve" placeholder="Mot de passe" style="text-align:center;font-size:14px;letter-spacing:1px;width:100%" oninput="peekLastChar('login-pwd-eleve')" onkeydown="if(event.key==='Enter')doLoginEleve()"><button type="button" class="pwd-eye" onmousedown="showPwd('login-pwd-eleve')" onmouseup="hidePwd('login-pwd-eleve')" onmouseleave="hidePwd('login-pwd-eleve')" ontouchstart="showPwd('login-pwd-eleve')" ontouchend="hidePwd('login-pwd-eleve')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+      <div class="pwd-wrap"><input type="password" id="login-pwd-eleve" placeholder="Mot de passe" style="text-align:center;font-size:14px;letter-spacing:1px;width:100%" onkeydown="if(event.key==='Enter')doLoginEleve()" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"><button type="button" class="pwd-eye" onmousedown="showPwd('login-pwd-eleve')" onmouseup="hidePwd('login-pwd-eleve')" onmouseleave="hidePwd('login-pwd-eleve')" ontouchstart="showPwd('login-pwd-eleve')" ontouchend="hidePwd('login-pwd-eleve')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
       <div style="font-size:10px;color:var(--ct-tertiary);margin-bottom:10px;margin-top:-6px">Mot de passe par défaut : initiale + nom (ex: <em>ldurand</em>)</div>
       <div class="err" id="login-err-eleve">Prénom / nom ou mot de passe incorrect</div>
       <button class="btn btn-info" style="width:100%;padding:9px;text-align:center" onclick="doLoginEleve()">Entrer</button>
@@ -792,7 +802,7 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
     <!-- Étape 2 prof : code uniquement -->
     <div id="login-step2-prof" style="display:none;background:var(--cb-primary);border:0.5px solid var(--cbr-tertiary);border-radius:var(--br-lg);padding:16px">
       <button onclick="backToStep1()" style="background:none;border:none;color:var(--ct-tertiary);cursor:pointer;font-size:12px;margin-bottom:10px;padding:0;display:flex;align-items:center;gap:4px;font-family:var(--font-sans)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg> Retour</button>
-      <div class="pwd-wrap"><input type="password" id="login-code-prof" placeholder="Code professeur" style="text-align:center;font-size:15px;letter-spacing:3px;width:100%" oninput="peekLastChar('login-code-prof')" onkeydown="if(event.key==='Enter')doLoginProf()"><button type="button" class="pwd-eye" onmousedown="showPwd('login-code-prof')" onmouseup="hidePwd('login-code-prof')" onmouseleave="hidePwd('login-code-prof')" ontouchstart="showPwd('login-code-prof')" ontouchend="hidePwd('login-code-prof')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+      <div class="pwd-wrap"><input type="password" id="login-code-prof" placeholder="Code professeur" style="text-align:center;font-size:15px;letter-spacing:3px;width:100%" onkeydown="if(event.key==='Enter')doLoginProf()" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"><button type="button" class="pwd-eye" onmousedown="showPwd('login-code-prof')" onmouseup="hidePwd('login-code-prof')" onmouseleave="hidePwd('login-code-prof')" ontouchstart="showPwd('login-code-prof')" ontouchend="hidePwd('login-code-prof')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
       <div class="err" id="login-err-prof">Code incorrect</div>
       <button class="btn btn-warn" style="width:100%;padding:9px;text-align:center" onclick="doLoginProf()">Entrer</button>
     </div>
@@ -933,13 +943,14 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;margin-right:4px"><polygon points="5 3 19 12 5 21 5 3"/></svg> Démarrer
         </button>
       </div>
-      <!-- Playlist Spotify -->
+      <!-- Playlist YouTube -->
       <div style="background:var(--cb-secondary);border:0.5px solid var(--cbr-tertiary);border-radius:14px;padding:14px 14px 10px;margin-bottom:8px">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="#1DB954"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#FF0000"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.8 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
           <span style="font-size:13px;font-weight:600;color:var(--ct-primary)">Playlist du cours</span>
+          <span id="yt-pl-label-prof" style="font-size:10px;color:var(--ct-tertiary)"></span>
         </div>
-        <iframe style="border-radius:10px;display:block" src="https://open.spotify.com/embed/playlist/5xBFp4hSf9Nc3NkbmASlRe?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        <div id="yt-pl-div-prof"></div>
       </div>
     </div>
 
@@ -1017,16 +1028,21 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
     <h4><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Changer le code d'accès professeur</h4>
     <p>Choisissez un code d'au moins 6 caractères.</p>
     <div class="field-label">Code actuel</div>
-    <input type="password" id="pw-current" placeholder="••••••••" style="letter-spacing:2px">
+    <input type="password" id="pw-current" placeholder="••••••••" style="letter-spacing:2px" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
     <div class="field-label">Nouveau code</div>
-    <input type="password" id="pw-new" placeholder="••••••••" style="letter-spacing:2px" oninput="updatePwStrength()">
+    <input type="password" id="pw-new" placeholder="••••••••" style="letter-spacing:2px" oninput="updatePwStrength()" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
     <div id="pw-strength-bar" class="pw-strength" style="width:0%;background:#378ADD"></div>
     <div id="pw-strength-label" style="font-size:11px;color:var(--ct-tertiary);margin-bottom:10px"></div>
     <div class="field-label">Confirmer le nouveau code</div>
-    <input type="password" id="pw-confirm" placeholder="••••••••" style="letter-spacing:2px">
+    <input type="password" id="pw-confirm" placeholder="••••••••" style="letter-spacing:2px" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
     <div class="err" id="pw-err">Erreur</div>
     <div id="pw-ok" style="font-size:11px;color:var(--ct-success);margin-bottom:8px;display:none">✓ Code modifié avec succès</div>
     <button class="btn btn-info" onclick="changePassword()">Enregistrer le nouveau code</button>
+  </div>
+  <div class="settings-card">
+    <h4><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:middle;margin-right:4px"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42C1 8.13 1 12 1 12s0 3.87.46 5.58a2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.96-1.96C23 15.87 23 12 23 12s0-3.87-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg> Playlist YouTube du cours</h4>
+    <p>L'URL de la playlist apparaît dans la boîte à outils des élèves et dans l'onglet Outils du prof. Accepte une playlist ou une vidéo unique.</p>
+    <div id="yt-playlist-setting"></div>
   </div>
       </div>
     </div>
@@ -1035,50 +1051,6 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
 </div><!-- /prof-shell -->
 </div>
 
-<!-- SETTINGS PROF -->
-<div id="sc-settings" class="screen">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem">
-    <div>
-      <div style="font-size:17px;font-weight:500;color:var(--ct-primary)">Paramètres</div>
-      <div style="font-size:12px;color:var(--ct-secondary)">Compte professeur</div>
-    </div>
-    <button class="btn" onclick="show('sc-home')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg> Retour</button>
-  </div>
-  <div class="settings-card">
-    <h4><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:middle;margin-right:4px"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Apparence</h4>
-    <p>Thème de l'interface pour les élèves et le professeur.</p>
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--cb-secondary);border-radius:var(--br-md);border:0.5px solid var(--cbr-tertiary)">
-      <div>
-        <div style="font-size:13px;font-weight:500;color:var(--ct-primary)" id="theme-label-settings">Thème sombre</div>
-        <div style="font-size:11px;color:var(--ct-tertiary)">Appliqué à toutes les vues</div>
-      </div>
-      <button class="btn" id="theme-btn-settings" onclick="toggleTheme()" style="font-size:12px;padding:7px 14px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg> Passer en clair</button>
-    </div>
-  </div>
-  <div class="settings-card">
-    <h4><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:middle;margin-right:4px"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Gérer les écoles / classes</h4>
-    <p>Créez vos classes pour organiser vos élèves. Chaque école apparaît comme un groupe dans la liste des élèves et comme un sélecteur sur la page de connexion élève.</p>
-    <div id="schools-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px"></div>
-    <div style="display:flex;gap:8px">
-      <input type="text" id="new-school-name" placeholder="Nom de l'école / classe" style="margin-bottom:0;flex:1" onkeydown="if(event.key==='Enter')addSchool()">
-      <button class="btn btn-info" onclick="addSchool()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Ajouter</button>
-    </div>
-  </div>
-  <div class="settings-card">
-    <h4><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Changer le code d'accès professeur</h4>
-    <p>Choisissez un code d'au moins 6 caractères.</p>
-    <div class="field-label">Code actuel</div>
-    <input type="password" id="pw-current" placeholder="••••••••" style="letter-spacing:2px">
-    <div class="field-label">Nouveau code</div>
-    <input type="password" id="pw-new" placeholder="••••••••" style="letter-spacing:2px" oninput="updatePwStrength()">
-    <div id="pw-strength-bar" class="pw-strength" style="width:0%;background:#378ADD"></div>
-    <div id="pw-strength-label" style="font-size:11px;color:var(--ct-tertiary);margin-bottom:10px"></div>
-    <div class="field-label">Confirmer le nouveau code</div>
-    <input type="password" id="pw-confirm" placeholder="••••••••" style="letter-spacing:2px">
-    <div class="err" id="pw-err">Erreur</div>
-    <div id="pw-ok" style="font-size:11px;color:var(--ct-success);margin-bottom:8px;display:none">✓ Code modifié avec succès</div>
-    <button class="btn btn-info" onclick="changePassword()">Enregistrer le nouveau code</button>
-  </div>
 </div>
 
 <!-- TREE — PLEIN ÉCRAN -->
@@ -1213,11 +1185,11 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
     <div style="margin-top:14px;padding:12px;background:var(--cb-secondary);border-radius:var(--br-lg);border:0.5px solid var(--cbr-tertiary)">
       <div style="font-size:11px;font-weight:500;color:var(--ct-secondary);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Changer mon mot de passe</div>
       <div class="field-label">Mot de passe actuel</div>
-      <input type="password" id="profile-pwd-current" placeholder="••••••••" style="letter-spacing:2px;margin-bottom:8px">
+      <input type="password" id="profile-pwd-current" placeholder="••••••••" style="letter-spacing:2px;margin-bottom:8px" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
       <div class="field-label">Nouveau mot de passe</div>
-      <input type="password" id="profile-pwd-new" placeholder="••••••••" style="letter-spacing:2px;margin-bottom:8px">
+      <input type="password" id="profile-pwd-new" placeholder="••••••••" style="letter-spacing:2px;margin-bottom:8px" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
       <div class="field-label">Confirmer</div>
-      <input type="password" id="profile-pwd-confirm" placeholder="••••••••" style="letter-spacing:2px;margin-bottom:8px">
+      <input type="password" id="profile-pwd-confirm" placeholder="••••••••" style="letter-spacing:2px;margin-bottom:8px" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
       <div class="err" id="profile-pwd-err" style="display:none">Erreur</div>
       <div id="profile-pwd-ok" style="font-size:11px;color:var(--ct-success);margin-bottom:8px;display:none">✓ Mot de passe modifié !</div>
       <button class="btn btn-info" style="width:100%" onclick="changeStudentPassword()">Enregistrer</button>
@@ -1309,13 +1281,14 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
         </button>
       </div>
 
-      <!-- Playlist Spotify (toujours visible) -->
+      <!-- Playlist YouTube (toujours visible) -->
       <div style="background:var(--cb-secondary);border:0.5px solid var(--cbr-tertiary);border-radius:14px;padding:14px 14px 10px;margin-bottom:8px">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="#1DB954"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#FF0000"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.8 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
           <span style="font-size:13px;font-weight:600;color:var(--ct-primary)">Playlist du cours</span>
+          <span id="yt-pl-label-toolbox" style="font-size:10px;color:var(--ct-tertiary)"></span>
         </div>
-        <iframe style="border-radius:10px;display:block" src="https://open.spotify.com/embed/playlist/5xBFp4hSf9Nc3NkbmASlRe?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        <div id="yt-pl-div-toolbox"></div>
       </div>
 
     </div>
@@ -1346,11 +1319,14 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
       <div id="board-main-title" class="board-header-title" style="flex:1;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Espace de partage</div>
       <!-- Actions prof : icônes de même taille, serrées à droite -->
       <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;min-width:56px;justify-content:flex-end">
-        <button class="btn btn-sm" onclick="openSuggestionsPanel()" id="btn-suggestions" style="display:none;width:30px;height:30px;padding:0;position:relative;align-items:center;justify-content:center" title="Suggestions">
-          <span id="suggestions-badge" style="display:none;position:absolute;top:-4px;right:-4px;background:#f87171;color:#fff;border-radius:99px;padding:0 4px;font-size:9px;font-weight:700;min-width:14px;text-align:center"></span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        </button>
-        <button class="btn btn-sm" id="btn-board-interactions" onclick="openInteractionsModal()" style="display:none;width:30px;height:30px;padding:0;align-items:center;justify-content:center" title="Interactions">
+        <!-- Badge hors du bouton pour éviter toute influence sur la hauteur -->
+        <div style="position:relative;display:none;width:30px;height:30px" id="btn-suggestions-wrap">
+          <span id="suggestions-badge" style="display:none;position:absolute;top:-4px;right:-4px;z-index:1;background:#f87171;color:#fff;border-radius:99px;padding:0 4px;font-size:9px;font-weight:700;min-width:14px;text-align:center;pointer-events:none"></span>
+          <button class="btn btn-sm" onclick="openSuggestionsPanel()" id="btn-suggestions" style="width:30px;height:30px;padding:0;display:flex;align-items:center;justify-content:center;line-height:1" title="Suggestions">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </button>
+        </div>
+        <button class="btn btn-sm" id="btn-board-interactions" onclick="openInteractionsModal()" style="display:none;width:30px;height:30px;padding:0;align-items:center;justify-content:center;line-height:1" title="Interactions">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
         </button>
       </div>
@@ -1672,8 +1648,12 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
     <button class="ag-nav-btn" onclick="agNav(-1)">&#8249;</button>
     <button class="ag-today-btn" onclick="agGoToday()">Aujourd'hui</button>
     <div class="ag-period-label" id="ag-period-label"></div>
+    <select id="ag-school-filter" style="display:none;margin-bottom:0;font-size:11px;padding:4px 8px;height:28px;border-radius:99px;width:auto;min-width:0;max-width:110px;flex-shrink:0" onchange="renderAgenda();_renderSchoolLegend()"></select>
     <button class="ag-nav-btn" onclick="agNav(1)">&#8250;</button>
   </div>
+
+  <!-- Légende écoles -->
+  <div id="ag-school-legend" style="display:none;padding:5px 14px 6px;gap:10px;flex-wrap:wrap;border-bottom:0.5px solid var(--cbr-tertiary);flex-shrink:0"></div>
 
   <!-- Corps -->
   <div class="ag-body" id="ag-body"></div>
@@ -1733,24 +1713,6 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
 <div class="modal-overlay" id="modal-evt">
   <div class="modal-box" style="max-width:440px;max-height:90vh;overflow-y:auto">
     <h3 id="evt-modal-title">Ajouter un événement</h3>
-
-    <!-- Type avec couleur -->
-    <div class="field-label">Type</div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px">
-      <button class="btn evt-type-btn" id="etyp-cours"   data-type="cours"   onclick="selectEvtType(this)" style="flex-direction:column;gap:3px;padding:8px 4px;font-size:11px">
-        <span style="font-size:18px">🎵</span>Cours
-        <span style="width:18px;height:4px;border-radius:99px;background:#378ADD;margin-top:2px"></span>
-      </button>
-      <button class="btn evt-type-btn" id="etyp-examen"  data-type="examen"  onclick="selectEvtType(this)" style="flex-direction:column;gap:3px;padding:8px 4px;font-size:11px">
-        <span style="font-size:18px">🎓</span>Examen
-        <span style="width:18px;height:4px;border-radius:99px;background:#EF9F27;margin-top:2px"></span>
-      </button>
-      <button class="btn evt-type-btn" id="etyp-concert" data-type="concert" onclick="selectEvtType(this)" style="flex-direction:column;gap:3px;padding:8px 4px;font-size:11px">
-        <span style="font-size:18px">🎤</span>Concert
-        <span style="width:18px;height:4px;border-radius:99px;background:#7F77DD;margin-top:2px"></span>
-      </button>
-    </div>
-
     <div class="field-label">Titre</div>
     <input type="text" id="evt-title" placeholder="ex: Cours de saxophone">
 
@@ -1781,6 +1743,11 @@ html.light .congrats-overlay .btn-info:hover{background:#163060!important;border
 
     <div class="field-label">Note <span style="opacity:.5;font-weight:400">(optionnel)</span></div>
     <textarea id="evt-note" rows="2" placeholder="Informations complémentaires..."></textarea>
+
+    <div class="field-label">École</div>
+    <select id="evt-school" style="margin-bottom:10px">
+      <option value="">— Choisir une école —</option>
+    </select>
 
     <div class="err" id="evt-err">Titre et date requis</div>
     <div class="modal-footer" style="justify-content:space-between">
@@ -2204,12 +2171,12 @@ function _initFirebase(){
 /* ── STORAGE (Firebase Realtime Database) ── */
 function saveLocal(){
   // Sauvegarde localStorage (fallback hors-ligne)
-  try{localStorage.setItem(SK,JSON.stringify({students,profCode,schools,boardColumns,tileInteractions,skillsData,branches:BRANCHES}))}catch(e){}
+  try{localStorage.setItem(SK,JSON.stringify({students,profCode,schools,boardColumns,tileInteractions,skillsData,branches:BRANCHES,ytPlaylistUrl}))}catch(e){}
   // Sauvegarde Firebase (debouncée 800ms pour éviter les écritures en rafale)
   if(_saveTimeout) clearTimeout(_saveTimeout);
   _saveTimeout = setTimeout(async ()=>{
     if(!_db) return;
-    const payload = {students,profCode,schools,boardColumns,tileInteractions,skillsData,branches:BRANCHES};
+    const payload = {students,profCode,schools,boardColumns,tileInteractions,skillsData,branches:BRANCHES,ytPlaylistUrl};
     try{
       await _db.ref(FIREBASE_PATH).set(payload);
       _showSyncIndicator('✓ Synchronisé', '#34d399');
@@ -2274,6 +2241,7 @@ async function loadLocal(){
     profCode         = cloudData.profCode === 'PROF2025' ? DEFAULT_PROF_CODE : (cloudData.profCode || DEFAULT_PROF_CODE);
     schools          = cloudData.schools        || [];
     boardColumns     = cloudData.boardColumns   || [];
+    ytPlaylistUrl    = cloudData.ytPlaylistUrl  || '';
     tileInteractions = cloudData.tileInteractions || {};
     // Charger les compétences depuis Firebase si elles ont déjà été sauvegardées
     if(cloudData.skillsData && typeof cloudData.skillsData === 'object'){
@@ -2439,7 +2407,9 @@ function doLoginProf(){
   if(v===profCode){
     profMode=true;
     try{sessionStorage.setItem('sax_session',JSON.stringify({role:'prof',tab:'eleves'}));}catch(e){}
-    show('sc-home');renderHome();return;
+    show('sc-home');renderHome();
+    setTimeout(_loadProfNotifications, 1500);
+    return;
   }
   document.getElementById('login-err-prof').style.display='block';
 }
@@ -2540,8 +2510,210 @@ function populateSchoolFilters(){
   hf.innerHTML='<option value="">Toutes les écoles</option>'+schools.map(s=>`<option value="${s}">${s}</option>`).join('');
   if(cur)hf.value=cur;
   buildSchoolSelect('login-school');
+  const es=document.getElementById('evt-school');
+  if(es){
+    const prev=es.value;
+    es.innerHTML='<option value="">— Choisir une école —</option>'+schools.map(s=>`<option value="${s}">${s}</option>`).join('');
+    if(prev) es.value=prev;
+  }
 }
-function renderSettings(){renderSchoolsList();populateSchoolFilters()}
+function renderSettings(){renderSchoolsList();populateSchoolFilters();renderYtPlaylistSetting();}
+
+/* ── PLAYLIST YOUTUBE ── */
+function renderYtPlaylistSetting(){
+  var c=document.getElementById('yt-playlist-setting');if(!c)return;
+  c.innerHTML='<div class="field-label">URL de la playlist YouTube</div>'
+    +'<input type="url" id="yt-playlist-url-input" placeholder="https://www.youtube.com/playlist?list=..." value="'+escHtml(ytPlaylistUrl)+'" style="margin-bottom:8px">'
+    +'<div style="display:flex;gap:8px">'
+    +'<button class="btn btn-info btn-sm" onclick="saveYtPlaylistUrl()">Enregistrer</button>'
+    +'</div>';
+}
+function saveYtPlaylistUrl(){
+  var v=(document.getElementById('yt-playlist-url-input').value||'').trim();
+  ytPlaylistUrl=v;
+  saveLocal();
+  renderYtPlaylist('yt-pl-div-prof','yt-pl-label-prof');
+  renderYtPlaylist('yt-pl-div-toolbox','yt-pl-label-toolbox');
+  renderYtPlaylistSetting();
+  _showSyncIndicator('✓ Playlist enregistrée','#34d399');
+}
+
+/* ── YOUTUBE PLAYLIST : iframe player + liste RSS ── */
+function _ytParseUrl(rawUrl){
+  if(!rawUrl) return {listId:'',videoId:''};
+  var listId='', videoId='';
+  var m=rawUrl.match(/[?&]list=([A-Za-z0-9_-]+)/);
+  if(m) listId=m[1];
+  m=rawUrl.match(/(?:youtube\.com\/watch\?.*v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+  if(m) videoId=m[1];
+  return {listId:listId, videoId:videoId};
+}
+
+function renderYtPlaylist(divId, labelId){
+  var div=document.getElementById(divId);
+  if(!div) return;
+  var info=_ytParseUrl(ytPlaylistUrl);
+
+  if(!info.listId && !info.videoId){
+    div.innerHTML='<div style="padding:12px;text-align:center;font-size:12px;color:var(--ct-tertiary)">Aucune playlist configurée.<br>'+(profMode?'Ajoutez une URL dans les Paramètres.':'')+'</div>';
+    return;
+  }
+
+  // Construire l'URL d'embed
+  var embedSrc;
+  if(info.listId){
+    embedSrc = info.videoId
+      ? 'https://www.youtube-nocookie.com/embed/'+info.videoId+'?list='+info.listId+'&rel=0&modestbranding=1'
+      : 'https://www.youtube-nocookie.com/embed/videoseries?list='+info.listId+'&rel=0&modestbranding=1';
+  } else {
+    embedSrc = 'https://www.youtube-nocookie.com/embed/'+info.videoId+'?rel=0&modestbranding=1';
+  }
+
+  // Player iframe (ratio 16:9)
+  div.innerHTML =
+    '<div style="position:relative;border-radius:10px 10px 0 0;overflow:hidden;background:#000;padding-bottom:56.25%;height:0">'
+    +'<iframe id="'+divId+'-frame" src="'+embedSrc+'" '
+    +'style="position:absolute;top:0;left:0;width:100%;height:100%;border:none" '
+    +'allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;fullscreen" '
+    +'allowfullscreen loading="lazy"></iframe>'
+    +'</div>'
+    +(info.listId
+      ? '<div id="'+divId+'-list" style="border:0.5px solid var(--cbr-tertiary);border-top:none;border-radius:0 0 10px 10px;overflow:hidden">'
+        +'<div style="padding:10px;text-align:center;font-size:11px;color:var(--ct-tertiary)">Chargement de la liste…</div>'
+        +'</div>'
+      : '');
+
+  // Charger la liste via RSS si playlist
+  if(info.listId) _ytFetchList(divId, info.listId, embedSrc);
+}
+
+function _ytFetchList(divId, listId, baseEmbedSrc){
+  var listDiv=document.getElementById(divId+'-list');
+  if(!listDiv) return;
+  // Flux RSS YouTube (pas de clé API requise)
+  var rssUrl='https://www.youtube.com/feeds/videos.xml?playlist_id='+listId;
+  var proxyUrl='https://api.allorigins.win/raw?url='+encodeURIComponent(rssUrl);
+  fetch(proxyUrl)
+    .then(function(r){ return r.text(); })
+    .then(function(xml){
+      var parser=new DOMParser();
+      var doc=parser.parseFromString(xml,'text/xml');
+      var entries=Array.from(doc.querySelectorAll('entry'));
+      if(!entries.length){ listDiv.style.display='none'; return; }
+      var html='<div style="max-height:240px;overflow-y:auto">';
+      entries.forEach(function(entry, i){
+        var title=(entry.querySelector('title')||{}).textContent||('Vidéo '+(i+1));
+        var vidId='';
+        var vidEl=entry.querySelector('videoId');
+        if(!vidEl) vidEl=entry.querySelector('[name="videoId"]');
+        // yt:videoId element
+        var ns=entry.getElementsByTagNameNS('http://www.youtube.com/xml/schemas/2015','videoId');
+        if(ns.length) vidId=ns[0].textContent;
+        if(!vidId){
+          var link=entry.querySelector('link[rel="alternate"]');
+          if(link){ var m=link.getAttribute('href').match(/v=([A-Za-z0-9_-]{11})/); if(m) vidId=m[1]; }
+        }
+        var thumb=vidId?'https://img.youtube.com/vi/'+vidId+'/mqdefault.jpg':'';
+        var newSrc=vidId
+          ?'https://www.youtube-nocookie.com/embed/'+vidId+'?list='+listId+'&rel=0&modestbranding=1&autoplay=1'
+          :baseEmbedSrc;
+        html+='<div onclick="_ytSwitchVideo(\''+divId+'\',\''+escHtml(newSrc)+'\')" '
+          +'style="display:flex;align-items:center;gap:8px;padding:7px 10px;cursor:pointer;border-bottom:0.5px solid var(--cbr-tertiary);transition:background .15s" '
+          +'onmouseover="this.style.background=\'var(--cb-info)\'" onmouseout="this.style.background=\'\'"> '
+          +(thumb
+            ?'<img src="'+thumb+'" style="width:68px;height:38px;object-fit:cover;border-radius:4px;flex-shrink:0" loading="lazy" onerror="this.style.display=\'none\'">'
+            :'<div style="width:68px;height:38px;background:var(--cbr-tertiary);border-radius:4px;flex-shrink:0"></div>')
+          +'<span style="font-size:11px;color:var(--ct-primary);line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">'+escHtml(title)+'</span>'
+          +'</div>';
+      });
+      html+='</div>';
+      listDiv.innerHTML=html;
+    })
+    .catch(function(){
+      // RSS indisponible : masquer la liste proprement
+      listDiv.innerHTML='<div style="padding:8px 10px;font-size:11px;color:var(--ct-tertiary);text-align:center">Liste non disponible</div>';
+    });
+}
+
+function _ytSwitchVideo(divId, newSrc){
+  var frame=document.getElementById(divId+'-frame');
+  if(frame) frame.src=newSrc;
+}
+
+
+
+/* ── AUTO-ÉVALUATION ÉLÈVE ── */
+function _evalColor(v){
+  if(v>=9) return '#34d399'; // excellent
+  if(v>=8) return '#60d090'; // très bien
+  if(v>=6) return '#EF9F27'; // bien
+  if(v>=4) return '#f59e5a'; // moyen
+  return '#f87171'; // à travailler
+}
+
+function submitSelfEval(skillId){
+  var slider=document.getElementById('pop-eval-slider');
+  if(!slider) return;
+  var score=parseInt(slider.value);
+  if(!currentStudent.selfEval) currentStudent.selfEval={};
+  currentStudent.selfEval[skillId]=score;
+  saveLocal();
+  // Notification Firebase pour le prof si score ≥ 8
+  if(score>=8) _notifyProfSelfEval(skillId, score);
+  // Feedback visuel
+  var btn=document.querySelector('.self-eval-send');
+  if(btn){btn.textContent='✓ Envoyé !';btn.classList.remove('btn-info');btn.classList.add('btn-success');btn.disabled=true;}
+}
+
+function _notifyProfSelfEval(skillId, score){
+  if(!_db) return;
+  var notif={
+    id:'notif_'+Date.now(),
+    type:'selfEval',
+    studentId:currentStudent.id,
+    studentName:currentStudent.name,
+    skillId:skillId,
+    score:score,
+    date:new Date().toLocaleDateString('fr-FR'),
+    read:false
+  };
+  _db.ref('sax_notifications/'+notif.id).set(notif);
+}
+
+/* Charge les notifications prof et met à jour le badge */
+var _profNotifications=[];
+function _loadProfNotifications(){
+  if(!_db||!profMode) return;
+  _db.ref('sax_notifications').on('value',function(snap){
+    var d=snap.val();
+    _profNotifications=d?Object.values(d).filter(Boolean):[];
+    _updateNotifBadge();
+  });
+}
+function _updateNotifBadge(){
+  var unread=_profNotifications.filter(function(n){return !n.read&&n.score>=8;});
+  // Badge sur le tab élèves
+  var tab=document.getElementById('ptab-eleves');
+  if(tab){
+    var badge=document.getElementById('notif-tab-badge');
+    if(!badge){
+      badge=document.createElement('span');
+      badge.id='notif-tab-badge';
+      badge.className='eval-pending-badge';
+      tab.appendChild(badge);
+    }
+    if(unread.length){badge.textContent=unread.length;badge.style.display='inline-block';}
+    else badge.style.display='none';
+  }
+  renderHome(); // refresh la liste pour mettre à jour les badges par élève
+}
+function _markNotifsReadFor(studentId){
+  _profNotifications.filter(function(n){return n.studentId===studentId&&!n.read;}).forEach(function(n){
+    n.read=true;
+    if(_db) _db.ref('sax_notifications/'+n.id+'/read').set(true);
+  });
+  _updateNotifBadge();
+}
 
 /* ── CYCLE STATUS ── */
 function cycleStatus(student,cycle){
@@ -2604,6 +2776,11 @@ function renderHome(){
       var _validerBtn = cs==='awaiting_exam'
         ? '<button class="btn btn-success btn-sm" style="white-space:nowrap" onclick="openExamModal(\'' + s.id + '\')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> Valider</button>'
         : '';
+      // Badge auto-éval en attente (score ≥ 8)
+      var _pendingEvals=Object.entries(s.selfEval||{}).filter(function(e){return e[1]>=8;});
+      var _evalBadge=_pendingEvals.length
+        ?`<span class="eval-pending-badge" title="${_pendingEvals.length} auto-éval(s) ≥ 8/10 en attente de validation">${_pendingEvals.length}</span>`
+        :'';
       var _cycleYear = getCycleYear(s);
       var _examHtml = cs==='awaiting_exam'
         ? '<div style="margin-top:3px"><span style="font-size:10px;padding:2px 8px;border-radius:99px;background:rgba(239,159,39,.12);color:#EF9F27;border:0.5px solid rgba(239,159,39,.4);font-weight:600;white-space:nowrap;font-family:var(--font-mono)">' + _cycleYear + '</span><span style="font-size:10px;color:var(--ct-tertiary);margin-left:5px">— examen</span></div>'
@@ -2611,7 +2788,7 @@ function renderHome(){
       row.innerHTML=`
         <div class="avatar" style="background:${s.color}22;color:${s.color};width:36px;height:36px;font-size:12px;flex-shrink:0">${initials(s.name)}</div>
         <div style="flex:1;min-width:0">
-          <div style="font-size:13px;font-weight:500;color:var(--ct-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.name}</div>
+          <div style="font-size:13px;font-weight:500;color:var(--ct-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.name}${_evalBadge}</div>
           ${_examHtml}
         </div>
         <div class="std-row-actions" style="display:flex;gap:4px;flex-shrink:0;flex-wrap:nowrap">
@@ -2764,6 +2941,8 @@ function openTree(id){
   currentCycle=currentStudent.cycle;selSkill=null;hovSkill=null;editMode=false;
   _nodesCache=null;_treeResetView();
   closePopup();cancelAnim();
+  // Marquer les auto-évals de cet élève comme lues (prof)
+  if(profMode) _markNotifsReadFor(id);
   // Bouton Outils : visible en mode élève, masqué en mode prof (prévisualisation)
   const btnTools=document.getElementById('btn-tools-tree');
   if(btnTools) btnTools.style.display=profMode?'none':'inline-flex';
@@ -3398,8 +3577,31 @@ function showPopup(skill,nodeX,nodeY,clientX,clientY){
   if(state==='done')todoEl.innerHTML='<strong>Bravo !</strong> Cette compétence est acquise.';
   else todoEl.innerHTML=`<strong>Pour progresser :</strong> ${skill.todo||'Continue tes efforts !'}`;
   const btns=document.getElementById('pop-btns');
-  if(profMode){btns.innerHTML=`<button class="sb ${state==='locked'?'sl':''}" onclick="setSkFromPopup('${skill.id}','locked')">—</button><button class="sb ${state==='progress'?'sp2':''}" onclick="setSkFromPopup('${skill.id}','progress')">En cours</button><button class="sb ${state==='done'?'sd':''}" onclick="setSkFromPopup('${skill.id}','done')">✓ Maîtrisée</button>`}
-  else btns.innerHTML='';
+  if(profMode){
+    // Score d'auto-évaluation de l'élève
+    const selfEvals=currentStudent.selfEval||{};
+    const score=selfEvals[skill.id];
+    const scoreTxt=score!=null
+      ?`<div class="self-eval-prof-score" style="border-color:${score>=8?'var(--cbr-success)':'var(--cbr-tertiary)'};background:${score>=8?'var(--cb-success)':'var(--cb-secondary)'};color:${score>=8?'var(--ct-success)':'var(--ct-secondary)'}">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          Auto-éval élève : <strong>${score}/10</strong>${score>=8?' — à valider':''}
+        </div>`
+      :'';
+    btns.innerHTML=`<div style="width:100%">${scoreTxt}<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:${score!=null?'8px':'0'}"><button class="sb ${state==='locked'?'sl':''}" onclick="setSkFromPopup('${skill.id}','locked')">—</button><button class="sb ${state==='progress'?'sp2':''}" onclick="setSkFromPopup('${skill.id}','progress')">En cours</button><button class="sb ${state==='done'?'sd':''}" onclick="setSkFromPopup('${skill.id}','done')">✓ Maîtrisée</button></div></div>`;
+  } else {
+    // Mode élève : curseur auto-évaluation
+    const selfEvals=currentStudent.selfEval||{};
+    const curScore=selfEvals[skill.id]??null;
+    const displayScore=curScore!=null?curScore:5;
+    btns.innerHTML=`<div class="self-eval-wrap" style="width:100%">
+      <div class="self-eval-label">Mon auto-évaluation</div>
+      <div class="self-eval-score" id="pop-eval-score" style="color:${_evalColor(displayScore)}">${displayScore}/10</div>
+      <input type="range" class="self-eval-slider" id="pop-eval-slider" min="0" max="10" step="1" value="${displayScore}"
+        oninput="var v=+this.value;document.getElementById('pop-eval-score').textContent=v+'/10';document.getElementById('pop-eval-score').style.color=_evalColor(v)">
+      <div class="self-eval-ticks"><span>0</span><span>2</span><span>4</span><span>5</span><span>6</span><span>8</span><span>10</span></div>
+      <button class="btn self-eval-send btn-info" onclick="submitSelfEval('${skill.id}')">Envoyer mon évaluation</button>
+    </div>`;
+  }
   /* Positionnement relatif au viewport — jamais hors écran */
   const popup=document.getElementById('popup');
   const px=clientX||nodeX,py=clientY||nodeY;
@@ -3425,6 +3627,14 @@ function setSkFromPopup(id,state){
     if(!_checkExamCancellation(currentCycle))return;
   }
   if(state==='locked')delete currentStudent.skillStates[id];else currentStudent.skillStates[id]=state;
+  // Si le prof valide 'done', effacer l'auto-éval en attente
+  if(state==='done'&&currentStudent.selfEval&&currentStudent.selfEval[id]!=null){
+    delete currentStudent.selfEval[id];
+    // Marquer la notif Firebase comme lue
+    _profNotifications.filter(n=>n.skillId===id&&n.studentId===currentStudent.id).forEach(n=>{
+      n.read=true;if(_db)_db.ref('sax_notifications/'+n.id+'/read').set(true);
+    });
+  }
   saveLocal();const skill=skillsData[currentCycle].find(s=>s.id===id);if(skill)showPopup(skill,lastPopupX,lastPopupY);
   updateProfileBar();if(cycleStatus(currentStudent,currentCycle)==='awaiting_exam'){closePopup();renderTreeScreen()}
 }
@@ -3728,11 +3938,20 @@ function buildTileEl(tile,colIdx,tileIdx,colId){
     if(tile.type==='image'&&(tile.imgData||tile.url)){
       const imgSrc=tile.imgData||tile.url;
       if(_isPdfTile){
-        previewHtml=`<div style="position:relative;overflow:hidden;height:110px;cursor:pointer;border-bottom:0.5px solid var(--cbr-tertiary)" onclick="event.stopPropagation();openPdfViewerById('${tile.id}','${(tile.title||'Document').replace(/'/g,"\\'")}');trackInteraction('${tile.id}')">
-          <iframe src="${imgSrc}#toolbar=0&navpanes=0&scrollbar=0&view=FitH" style="width:100%;height:350px;border:none;pointer-events:none;transform-origin:top left;transform:scale(0.4);width:250%;height:900px;" loading="lazy"></iframe>
-          <div style="position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:flex-end;padding:6px;background:linear-gradient(to top,rgba(0,0,0,0.5) 0%,transparent 60%)">
-            <span style="font-size:9px;padding:2px 6px;border-radius:99px;background:rgba(96,165,250,0.9);color:#fff;font-weight:500">PDF · Cliquer pour ouvrir</span>
-          </div></div>`;
+        // Sur Android, les iframes PDF sont cassées → placeholder cliquable
+        const _isAndroid = /android/i.test(navigator.userAgent);
+        if(_isAndroid){
+          previewHtml=`<div style="position:relative;overflow:hidden;height:110px;cursor:pointer;border-bottom:0.5px solid var(--cbr-tertiary);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:var(--cb-secondary)" onclick="event.stopPropagation();openPdfViewerById('${tile.id}','${(tile.title||'Document').replace(/'/g,"\\'")}');trackInteraction('${tile.id}')">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--ct-danger)" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            <span style="font-size:10px;color:var(--ct-secondary)">Appuyer pour ouvrir le PDF</span>
+          </div>`;
+        } else {
+          previewHtml=`<div style="position:relative;overflow:hidden;height:110px;cursor:pointer;border-bottom:0.5px solid var(--cbr-tertiary)" onclick="event.stopPropagation();openPdfViewerById('${tile.id}','${(tile.title||'Document').replace(/'/g,"\\'")}');trackInteraction('${tile.id}')">
+            <iframe src="${imgSrc}#toolbar=0&navpanes=0&scrollbar=0&view=FitH" style="width:250%;height:900px;border:none;pointer-events:none;transform-origin:top left;transform:scale(0.4);" loading="lazy"></iframe>
+            <div style="position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:flex-end;padding:6px;background:linear-gradient(to top,rgba(0,0,0,0.5) 0%,transparent 60%)">
+              <span style="font-size:9px;padding:2px 6px;border-radius:99px;background:rgba(96,165,250,0.9);color:#fff;font-weight:500">PDF · Cliquer pour ouvrir</span>
+            </div></div>`;
+        }
       } else {
         previewHtml=`<img class="tile-preview" src="${imgSrc}" draggable="false" style="cursor:zoom-in" onclick="event.stopPropagation();openTilePreview(this.src,'${(tile.title||'image').replace(/'/g,"\\'")}','image');trackInteraction('${tile.id}')" onerror="this.style.display='none'">`;
       }
@@ -3782,11 +4001,11 @@ function buildTileEl(tile,colIdx,tileIdx,colId){
   const canPreview = tile.type==='image'||tile.type==='audio'||tile.type==='text'||tile.type==='link';
   let previewBtnHtml = '';
   if(isPdf){
-    previewBtnHtml = `<button class="tile-expand-btn" onclick="event.stopPropagation();openPdfViewerById('${tile.id}','${(tile.title||'Document').replace(/'/g,"\\'")}');trackInteraction('${tile.id}')" title="Ouvrir le PDF"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></button>`;
+    previewBtnHtml = `<button class="tile-expand-btn" onclick="event.stopPropagation();(function(){var t=null;boardColumns.forEach(function(c){c.tiles.forEach(function(x){if(x.id==='${tile.id}')t=x;});});if(t&&t.imgData){var a=document.createElement('a');a.href=t.imgData;a.download='${(tile.title||'document').replace(/'/g,'').replace(/[^a-z0-9]/gi,'_')}.pdf';a.click();}})();" title="Télécharger le PDF"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>`;
   } else if(tile.type==='download'){
     previewBtnHtml = `<button class="tile-expand-btn" onclick="event.stopPropagation();downloadTileFile('${tile.id}');trackInteraction('${tile.id}')" title="Télécharger"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>`;
   } else if(canPreview){
-    previewBtnHtml = `<button class="tile-expand-btn" onclick="event.stopPropagation();openTilePreview('${tile.type==='image'?_imgSrcForType.replace(/'/g,"\\'"):tile.id}','${(tile.title||'').replace(/'/g,"\\'")}','${tile.type}')" title="Aperçu agrandi"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button>`;
+    previewBtnHtml = `<button class="tile-expand-btn" onclick="event.stopPropagation();openTilePreview('${tile.type==='image'?_imgSrcForType.replace(/'/g,"\\'"):tile.id}','${(tile.title||'').replace(/'/g,"\\'")}','${tile.type}')" title="Aperçu agrandi"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button>`;
   }
 
   // Badge : label et couleur (PDF détecté dynamiquement)
@@ -4041,7 +4260,7 @@ function openBoard(isProf){
   // board-mode-badge supprimé
   
   const ib=document.getElementById('btn-board-interactions');if(ib){ib.style.display=isProf?'flex':'none';}
-  const sb=document.getElementById('btn-suggestions');if(sb){sb.style.display=isProf?'flex':'none';}
+  const sbWrap=document.getElementById('btn-suggestions-wrap');if(sbWrap){sbWrap.style.display=isProf?'flex':'none';}
   if(isProf) setTimeout(_loadSuggestions, 500);
   renderBoard();
   // Masquer tous les écrans .screen
@@ -4086,7 +4305,8 @@ function _updateThemeBtns(){
 
 /* ══ TRACKING INTERACTIONS ══ */
 function trackInteraction(tileId){
-  if(!tileId||boardIsProfMode||!currentStudent)return;
+  // Ne jamais incrémenter depuis un compte prof ou un aperçu prof
+  if(!tileId||boardIsProfMode||profMode||!currentStudent)return;
   if(!tileInteractions[tileId])tileInteractions[tileId]=[];
   const today=new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'});
   const ex=tileInteractions[tileId].find(function(e){return e.studentId===currentStudent.id;});
@@ -4235,6 +4455,7 @@ function openToolboxScreen(){
   var mp=document.getElementById('metro-panel');if(mp)mp.style.display='none';
   var sp=document.getElementById('share-panel');if(sp)sp.style.transform='translateY(100%)';
   show('sc-toolbox');
+  setTimeout(function(){ renderYtPlaylist('yt-pl-div-toolbox','yt-pl-label-toolbox'); },50);
 }
 function closeToolboxScreen(){
   _stopMetro();
@@ -4537,6 +4758,11 @@ function showProfTab(tab){
   if(tab==='eleves') renderHome();
   if(tab==='competences') renderCEHome();
   if(tab==='parametres') renderSettingsHome();
+  if(tab==='outils'){
+    setTimeout(function(){
+      renderYtPlaylist('yt-pl-div-prof','yt-pl-label-prof');
+    },50);
+  }
   if(tab==='accueil'){
     var sc=document.getElementById('hw-student-count');
     if(sc) sc.textContent=students.length+' élève'+(students.length!==1?'s':'');
@@ -5111,7 +5337,7 @@ function buildShareTile(tile, colIdx, tileIdx, colId){
       // Aperçu PDF : icône cliquable pour ouvrir la visionneuse
       var pdfPrev=document.createElement('div');
       pdfPrev.style.cssText='display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;height:80px;background:var(--cb-info);border-radius:6px;margin-bottom:6px;cursor:pointer;border:0.5px solid var(--cbr-info)';
-      pdfPrev.innerHTML='<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--ct-info)" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span style="font-size:10px;color:var(--ct-info);font-weight:500">Ouvrir le PDF</span>';
+      pdfPrev.innerHTML='<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--ct-info)" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>';
       (function(_tid,_s,_t){pdfPrev.onclick=function(){trackInteraction(_tid);openPdfViewer(_t,_s);};})(tile.id,_src,tile.title||'Document');
       wrap.appendChild(pdfPrev);
     } else {
@@ -5457,7 +5683,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   const sl = document.getElementById('sc-login');
   if(sl) sl.style.display='none';
 });
-loadLocal().then(()=>{ _restoreSession(); });
+loadLocal().then(()=>{ _restoreSession(); setTimeout(function(){ renderYtPlaylist('yt-pl-div-prof','yt-pl-label-prof'); renderYtPlaylist('yt-pl-div-toolbox','yt-pl-label-toolbox'); }, 200); });
 
 function _restoreSession(){
   try{
@@ -5468,6 +5694,7 @@ function _restoreSession(){
       profMode=true; show('sc-home');
       if(session.tab) showProfTab(session.tab);
       else renderHome();
+      setTimeout(_loadProfNotifications, 2000);
       return;
     }
     if(session.role==='eleve' && session.studentId){
@@ -5492,6 +5719,45 @@ function _restoreSession(){
    ════════════════════════════════════════════════════════════════ */
 /* ── VISIONNEUSE PDF ── */
 function openPdfViewer(title, dataUrl){
+  var isAndroid = /android/i.test(navigator.userAgent);
+
+  if(isAndroid){
+    // Android : convertir en Blob URL et ouvrir (déclenche le lecteur PDF natif)
+    try{
+      var blob;
+      if(dataUrl.startsWith('data:')){
+        var parts = dataUrl.split(',');
+        var mime  = parts[0].match(/:(.*?);/)[1];
+        var bin   = atob(parts[1]);
+        var arr   = new Uint8Array(bin.length);
+        for(var i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i);
+        blob = new Blob([arr], {type: mime});
+      } else {
+        // URL distante → fetch puis blob
+        fetch(dataUrl)
+          .then(function(r){ return r.blob(); })
+          .then(function(b){
+            var burl = URL.createObjectURL(b);
+            var w = window.open(burl, '_blank');
+            if(!w){ location.href = burl; }
+            setTimeout(function(){ URL.revokeObjectURL(burl); }, 10000);
+          });
+        return;
+      }
+      var blobUrl = URL.createObjectURL(blob);
+      // Ouvrir sans attribut download → lecteur PDF natif
+      var w = window.open(blobUrl, '_blank');
+      if(!w){ location.href = blobUrl; } // fallback si popup bloquée
+      setTimeout(function(){ URL.revokeObjectURL(blobUrl); }, 10000);
+    }catch(e){
+      // Dernier recours : lien direct
+      var a=document.createElement('a'); a.href=dataUrl; a.target='_blank'; a.rel='noopener';
+      document.body.appendChild(a); a.click(); a.remove();
+    }
+    return;
+  }
+
+  // Desktop / iOS : viewer iframe inline
   var modal = document.getElementById('modal-pdf-viewer');
   if(!modal){
     modal = document.createElement('div');
@@ -5532,15 +5798,69 @@ function openPdfViewerById(tileId, title){
    §9 — AGENDA
    ═══════════════════════════════════════════════════════ */
 var agendaEvents = [];
+
+/* Retourne les événements filtrés selon l'école de l'utilisateur connecté.
+   Le prof voit tout (ou filtre via le sélecteur). L'élève ne voit que son école. */
+function _agendaEventsFiltered(){
+  if(profMode){
+    var sel=document.getElementById('ag-school-filter');
+    var chosen=sel?sel.value:'';
+    if(chosen) return agendaEvents.filter(function(e){ return e.school===chosen; });
+    return agendaEvents;
+  }
+  var school = currentStudent ? (currentStudent.school||'') : '';
+  if(!school) return agendaEvents;
+  return agendaEvents.filter(function(e){ return e.school===school; });
+}
+
+/* Popule le sélecteur d'école prof dans la topbar agenda */
+function _populateAgSchoolFilter(){
+  var sel=document.getElementById('ag-school-filter');
+  if(!sel) return;
+  if(!profMode){ sel.style.display='none'; return; }
+  var prev=sel.value;
+  sel.innerHTML='<option value="">Toutes les écoles</option>'
+    +schools.map(function(s){ return '<option value="'+escHtml(s)+'">'+escHtml(s)+'</option>'; }).join('');
+  if(prev) sel.value=prev;
+  sel.style.display=schools.length?'block':'none';
+}
+
+/* Légende des couleurs d'école dans l'agenda */
+function _renderSchoolLegend(){
+  var leg = document.getElementById('ag-school-legend');
+  if(!leg) return;
+  if(!profMode){ leg.style.display='none'; return; }
+  // Si filtre actif → une seule école → pas de légende nécessaire
+  var sel=document.getElementById('ag-school-filter');
+  var chosen=sel?sel.value:'';
+  var list=chosen?[chosen]:schools;
+  if(!list.length){ leg.style.display='none'; return; }
+  leg.style.display='flex';
+  leg.innerHTML = list.map(function(s){
+    var col = _schoolColor(s);
+    return '<span style="display:inline-flex;align-items:center;gap:5px;font-size:10px;color:var(--ct-secondary)">'
+      +'<span style="width:10px;height:10px;border-radius:50%;background:'+col+';flex-shrink:0;display:inline-block"></span>'
+      +escHtml(s)+'</span>';
+  }).join('');
+}
+var ytPlaylistUrl = ''; // URL YouTube playlist du cours
 var _agView = 'month';
 var _agDate = new Date(); _agDate.setHours(0,0,0,0);
 var _agSelDate = null;
-var _evtType = 'cours';
 var _editEvtId = null;
 
-var EVT_COLORS = {cours:'#378ADD', examen:'#EF9F27', concert:'#7F77DD'};
 var EVT_LABELS = {cours:'Cours', examen:'Examen', concert:'Concert / Audition'};
-var EVT_EMOJIS = {cours:'🎵', examen:'🎓', concert:'🎤'};
+/* Couleurs d'école — palette de 8 teintes bien distinctes */
+var SCHOOL_COLOR_PALETTE = [
+  '#378ADD','#1D9E75','#D85A30','#7F77DD',
+  '#EF9F27','#e05c8a','#2abfbf','#8B5CF6'
+];
+function _schoolColor(schoolName){
+  if(!schoolName) return '#555e78';
+  var idx = schools.indexOf(schoolName);
+  if(idx === -1) idx = 0;
+  return SCHOOL_COLOR_PALETTE[idx % SCHOOL_COLOR_PALETTE.length];
+}
 var MONTHS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
 var DAYS_FR_LONG = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
 var DAYS_FR_SHORT = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
@@ -5555,6 +5875,8 @@ function openAgenda(){
   const sca = document.getElementById('sc-agenda');
   sca.style.display = 'flex';
   sca.classList.add('active');
+  _populateAgSchoolFilter();
+  _renderSchoolLegend();
   renderAgenda();
   _initAgendaSwipe();
 }
@@ -5686,14 +6008,14 @@ function renderMonthView(body){
   // Jours du mois
   for(var day=1;day<=daysInMonth;day++){
     var dt=new Date(y,m,day), iso=fmtISO(dt);
-    var evts=agendaEvents.filter(function(e){ return e.date===iso; }).sort(function(a,b){ return (a.timeStart||'00:00').localeCompare(b.timeStart||'00:00'); });
+    var evts=_agendaEventsFiltered().filter(function(e){ return e.date===iso; }).sort(function(a,b){ return (a.timeStart||'00:00').localeCompare(b.timeStart||'00:00'); });
     var cell=document.createElement('div');
     cell.className='ag-month-cell'+(iso===today?' today':'')+(iso===_agSelDate?' selected':'');
     var num=document.createElement('div'); num.className='ag-month-num'; num.textContent=day; cell.appendChild(num);
     var shown=evts.slice(0,2);
     shown.forEach(function(e){
       var chip=document.createElement('div'); chip.className='ag-month-chip';
-      chip.style.background=EVT_COLORS[e.type||'cours'];
+      chip.style.background=_schoolColor(e.school);
       chip.textContent=(e.timeStart?e.timeStart+' ':'')+e.title;
       cell.appendChild(chip);
     });
@@ -5745,7 +6067,7 @@ function renderWeekView(body){
       col.style.height='48px';
       col.style.position='relative';
       // Événements pour cette heure/jour
-      agendaEvents.filter(function(e){ return e.date===isoD; }).forEach(function(e){
+      _agendaEventsFiltered().filter(function(e){ return e.date===isoD; }).forEach(function(e){
         var startH=e.timeStart?parseInt(e.timeStart.split(':')[0]):null;
         var startM=e.timeStart?parseInt(e.timeStart.split(':')[1]):null;
         if(startH===h){
@@ -5755,7 +6077,7 @@ function renderWeekView(body){
           var topPx=(startM/60)*48;
           var heightPx=Math.max(20,(durMins/60)*48);
           var ev=document.createElement('div'); ev.className='ag-week-event';
-          ev.style.cssText='top:'+topPx+'px;height:'+heightPx+'px;background:'+EVT_COLORS[e.type||'cours'];
+          ev.style.cssText='top:'+topPx+'px;height:'+heightPx+'px;background:'+_schoolColor(e.school);
           ev.textContent=e.title;
           (function(evt){ ev.onclick=function(e2){ e2.stopPropagation(); _agSelDate=evt.date; _renderEvtPanel(evt.date); }; })(e);
           col.appendChild(ev);
@@ -5763,7 +6085,7 @@ function renderWeekView(body){
           // Journée entière — afficher en haut de h=0
           if(h===0){
             var ev2=document.createElement('div'); ev2.className='ag-week-event';
-            ev2.style.cssText='top:2px;height:20px;background:'+EVT_COLORS[e.type||'cours'];
+            ev2.style.cssText='top:2px;height:20px;background:'+_schoolColor(e.school)+';'
             ev2.textContent=e.title;
             col.appendChild(ev2);
           }
@@ -5839,7 +6161,7 @@ function renderDayView(body){
   wrap.appendChild(dayHdr);
 
   // Tous les événements du jour
-  var dayEvts = agendaEvents.filter(function(e){ return e.date===iso; });
+  var dayEvts = _agendaEventsFiltered().filter(function(e){ return e.date===iso; });
   var timedEvts = dayEvts.filter(function(e){ return !!e.timeStart; });
   var allDayEvts = dayEvts.filter(function(e){ return !e.timeStart; });
 
@@ -5880,8 +6202,8 @@ function renderDayView(body){
   // Événements journée entière en haut
   allDayEvts.forEach(function(e){
     var ev=document.createElement('div'); ev.className='ag-day-event';
-    ev.style.cssText='top:2px;left:4px;right:4px;height:22px;background:'+EVT_COLORS[e.type||'cours']+';pointer-events:auto';
-    ev.textContent='🗓 '+e.title+(e.lieu?' – '+e.lieu:'');
+    ev.style.cssText='top:2px;left:4px;right:4px;height:22px;background:'+_schoolColor(e.school)+';pointer-events:auto';
+    ev.textContent=e.title+(e.lieu?' – '+e.lieu:'');
     (function(evt){ ev.onclick=function(ev2){ ev2.stopPropagation(); openEvtDetail(evt, evt.date); }; })(e);
     overlay.appendChild(ev);
   });
@@ -5907,11 +6229,11 @@ function renderDayView(body){
       +'left:calc('+leftPct+'% + '+GAP+'px);'
       +'width:calc('+widthPct+'% - '+(GAP*2)+'px);'
       +'right:auto;'
-      +'background:'+EVT_COLORS[e.type||'cours']+';'
+      +'background:'+_schoolColor(e.school)+';'
       +'pointer-events:auto;'
       +'box-shadow:0 1px 4px rgba(0,0,0,0.25)';
     ev.innerHTML='<div style="font-weight:600;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+e.title+'</div>'
-      +(e.lieu && heightPx>36?'<div style="opacity:.8;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">📍 '+e.lieu+'</div>':'')
+            +(e.lieu && heightPx>36?'<div style="opacity:.8;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">📍 '+e.lieu+'</div>':'')
       +(e.timeStart && heightPx>24?'<div style="opacity:.7;font-size:9px">'+e.timeStart+(e.timeEnd?' – '+e.timeEnd:'')+'</div>':'');
     (function(evt){ ev.onclick=function(ev2){ ev2.stopPropagation(); openEvtDetail(evt, evt.date); }; })(e);
     overlay.appendChild(ev);
@@ -5934,17 +6256,17 @@ function _renderEvtPanel(dateISO){
   if(!dateISO){ panel.style.display='none'; return; }
   var d=isoToDate(dateISO);
   title.textContent=DAYS_FR_LONG[d.getDay()]+' '+d.getDate()+' '+MONTHS_FR[d.getMonth()]+' '+d.getFullYear();
-  var evts=agendaEvents.filter(function(e){ return e.date===dateISO; }).sort(function(a,b){ return (a.timeStart||'').localeCompare(b.timeStart||''); });
+  var evts=_agendaEventsFiltered().filter(function(e){ return e.date===dateISO; }).sort(function(a,b){ return (a.timeStart||'').localeCompare(b.timeStart||''); });
   list.innerHTML='';
   if(!evts.length){ list.innerHTML='<div style="font-size:12px;color:var(--ct-tertiary);text-align:center;padding:8px">Aucun événement</div>'; panel.style.display='block'; return; }
   evts.forEach(function(evt){
     var item=document.createElement('div'); item.className='ag-evt-item';
     item.style.cursor='pointer';
     item.title=profMode?'Cliquer pour modifier':'Cliquer pour voir les détails';
-    var bar=document.createElement('div'); bar.className='ag-evt-bar'; bar.style.background=EVT_COLORS[evt.type||'cours']; item.appendChild(bar);
+    var bar=document.createElement('div'); bar.className='ag-evt-bar'; bar.style.background=_schoolColor(evt.school); item.appendChild(bar);
     var body2=document.createElement('div'); body2.style.flex='1';
     var hours=(evt.timeStart?evt.timeStart+(evt.timeEnd?' – '+evt.timeEnd:''):'Journée entière');
-    body2.innerHTML='<div class="ag-evt-title">'+EVT_EMOJIS[evt.type||'cours']+' '+evt.title+'</div>'
+    body2.innerHTML='<div class="ag-evt-title">'+evt.title+'</div>'
       +'<div class="ag-evt-meta">'+hours+(evt.lieu?' · 📍 '+evt.lieu:'')+'</div>'
       +(evt.note?'<div style="font-size:10px;color:var(--ct-tertiary);margin-top:2px">'+evt.note+'</div>':''  );
     item.appendChild(body2);
@@ -5965,6 +6287,7 @@ function openEvtDetail(evt, dateISO){
   if(profMode){
     // Mode prof : ouvrir le modal d'édition pré-rempli
     _editEvtId = evt.id;
+    populateSchoolFilters(); // refresh evt-school list before setting value
     document.getElementById('evt-modal-title').textContent = 'Modifier l\'événement';
     document.getElementById('evt-title').value = evt.title || '';
     document.getElementById('evt-date').value = evt.date || '';
@@ -5972,10 +6295,13 @@ function openEvtDetail(evt, dateISO){
     document.getElementById('evt-time-end').value = evt.timeEnd || '';
     document.getElementById('evt-lieu').value = evt.lieu || '';
     document.getElementById('evt-note').value = evt.note || '';
+    var _es=document.getElementById('evt-school');
+    if(_es){
+      _es.innerHTML='<option value="">— Choisir une école —</option>'+schools.map(function(s){return'<option value="'+s+'">'+s+'</option>';}).join('');
+      _es.value=evt.school||'';
+    }
     document.getElementById('evt-err').style.display = 'none';
     // Sélectionner le bon type
-    var typeBtn = document.getElementById('etyp-'+( evt.type||'cours'));
-    if(typeBtn) selectEvtType(typeBtn);
     // Afficher le bouton Supprimer en mode édition
     var db=document.getElementById('evt-del-btn');db.style.display='inline-flex';db.style.flexDirection='row';db.style.alignItems='center';db.style.justifyContent='center';db.style.gap='5px';
     _syncTimeButtons();
@@ -5992,13 +6318,14 @@ function openEvtDetail(evt, dateISO){
     }
     var hours = evt.timeStart ? evt.timeStart+(evt.timeEnd?' – '+evt.timeEnd:'') : 'Journée entière';
     var d = isoToDate(evt.date);
-    document.getElementById('evtd-color-bar').style.background = EVT_COLORS[evt.type||'cours'];
-    document.getElementById('evtd-title').textContent = EVT_EMOJIS[evt.type||'cours']+' '+evt.title;
+    document.getElementById('evtd-color-bar').style.background = _schoolColor(evt.school);
+    document.getElementById('evtd-title').textContent = evt.title;
     document.getElementById('evtd-body').innerHTML =
       '<div>📅 '+DAYS_FR_LONG[d.getDay()]+' '+d.getDate()+' '+MONTHS_FR[d.getMonth()]+' '+d.getFullYear()+'</div>'
       +'<div>🕐 '+hours+'</div>'
-      +(evt.lieu?'<div>📍 '+evt.lieu+'</div>':''  )
-      +(evt.note?'<div style="margin-top:6px;padding:8px;background:var(--cb-secondary);border-radius:6px;color:var(--ct-primary)">'+evt.note+'</div>':''  );
+      +(evt.school?'<div>🏫 '+evt.school+'</div>':'')
+      +(evt.lieu?'<div>📍 '+evt.lieu+'</div>':'')
+      +(evt.note?'<div style="margin-top:6px;padding:8px;background:var(--cb-secondary);border-radius:6px;color:var(--ct-primary)">'+evt.note+'</div>':'');
     document.getElementById('evtd-gcal').href = _buildGCalUrl(evt);
     openModal('modal-evt-detail');
   }
@@ -6026,13 +6353,9 @@ function _buildGCalUrl(evt){
 function _addHour(t){ var p=t.split(':'); var h=parseInt(p[0])+1; return pad(Math.min(h,23))+':'+p[1]; }
 
 /* ── Modal ajout/édition ── */
-function selectEvtType(btn){
-  document.querySelectorAll('.evt-type-btn').forEach(function(b){ b.classList.remove('btn-info'); });
-  btn.classList.add('btn-info');
-  _evtType=btn.dataset.type;
-}
 function openAddEvtModal(){
   _editEvtId=null;
+  populateSchoolFilters(); // refresh evt-school list
   document.getElementById('evt-modal-title').textContent='Ajouter un événement';
   document.getElementById('evt-title').value='';
   document.getElementById('evt-date').value=_agSelDate||fmtISO(_agDate);
@@ -6044,9 +6367,13 @@ function openAddEvtModal(){
   document.getElementById('btn-time-end').classList.remove('has-value');
   document.getElementById('evt-lieu').value='';
   document.getElementById('evt-note').value='';
+  var evtSch=document.getElementById('evt-school');
+  if(evtSch){
+    evtSch.innerHTML='<option value="">— Choisir une école —</option>'+schools.map(function(s){return'<option value="'+s+'">'+s+'</option>';}).join('');
+    evtSch.value='';
+  }
   document.getElementById('evt-err').style.display='none';
   document.getElementById('evt-del-btn').style.display='none';
-  selectEvtType(document.getElementById('etyp-cours'));
   _syncTimeButtons();
   openModal('modal-evt');
 }
@@ -6067,17 +6394,16 @@ function confirmAddEvt(){
   var te=document.getElementById('evt-time-end').value;
   var lieu=document.getElementById('evt-lieu').value.trim();
   var note=document.getElementById('evt-note').value.trim();
+  var school=(document.getElementById('evt-school')||{}).value||'';
   var err=document.getElementById('evt-err'); err.style.display='none';
-  if(!title||!date){ err.style.display='block'; return; }
+  if(!title||!date||!school){ err.textContent='Titre, date et école requis'; err.style.display='block'; return; }
   if(_editEvtId){
-    // Mode édition : mettre à jour l'événement existant
     var idx=agendaEvents.findIndex(function(e){ return e.id===_editEvtId; });
     if(idx!==-1){
-      agendaEvents[idx]=Object.assign(agendaEvents[idx],{title:title,date:date,timeStart:ts,timeEnd:te,lieu:lieu,note:note,type:_evtType,color:EVT_COLORS[_evtType]});
+      agendaEvents[idx]=Object.assign(agendaEvents[idx],{title,date,timeStart:ts,timeEnd:te,lieu,note,school});
     }
   } else {
-    // Nouveau événement
-    agendaEvents.push({id:'evt'+Date.now(),title:title,date:date,timeStart:ts,timeEnd:te,lieu:lieu,note:note,type:_evtType,color:EVT_COLORS[_evtType]});
+    agendaEvents.push({id:'evt'+Date.now(),title,date,timeStart:ts,timeEnd:te,lieu,note,school});
   }
   _editEvtId=null;
   _saveAgendaEvents();
@@ -6455,7 +6781,7 @@ function _buildICS(events){
     }
     var desc = (evt.note || '');
     var location = evt.lieu || '';
-    var summary = EVT_EMOJIS[evt.type||'cours'] + ' ' + evt.title;
+    var summary = evt.title;
 
     lines.push('BEGIN:VEVENT');
     lines.push('UID:' + (evt.id || ('evt'+Date.now())) + '@saxophone-competences');
@@ -6470,9 +6796,6 @@ function _buildICS(events){
     lines.push('SUMMARY:' + _icsEscape(summary));
     if(location) lines.push('LOCATION:' + _icsEscape(location));
     if(desc)     lines.push('DESCRIPTION:' + _icsEscape(desc));
-    // Couleur par type (propriété non standard mais supportée par Google)
-    var colorMap = {cours:'1', examen:'5', concert:'9'};
-    if(colorMap[evt.type]) lines.push('COLOR:' + colorMap[evt.type]);
     lines.push('END:VEVENT');
   });
 
